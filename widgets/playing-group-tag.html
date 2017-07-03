@@ -1,0 +1,83 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../iron-icons/social-icons.html">
+<link rel="import" href="../../paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../nuxeo-ui-elements/nuxeo-routing-behavior.html">
+<link rel="import" href="../../nuxeo-ui-elements/widgets/nuxeo-tag.html">
+
+<!--
+An element for showing a group entity with a tooltip.
+
+Example:
+
+    <playing-group-tag group="[[group]]"></playing-group-tag>
+
+@group Playing UI
+@element playing-group-tag
+-->
+<dom-module id="playing-group-tag">
+  <template>
+
+    <nuxeo-tag icon="nuxeo:group">
+      <template is="dom-if" if="[[!disabled]]">
+        <a href$="[[_href(group)]]">[[_label(group)]]</a>
+      </template>
+      <template is="dom-if" if="[[disabled]]">
+        [[_label(group)]]
+      </template>
+      <template is="dom-if" if="[[_isEntity(group)]]">
+        <paper-tooltip id="tooltip" position="top" offset="0" animation-delay="0">[[_name(group)]]</paper-tooltip>
+      </template>
+    </nuxeo-tag>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-group-tag',
+      behaviors: [Nuxeo.RoutingBehavior],
+      properties: {
+
+        /**
+         * Group entity or a string
+         */
+        group: Object,
+
+        /**
+         * Disable link
+         */
+        disabled: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      ready: function() {
+        if (this.$.tooltip) {
+          document.body.appendChild(this.$.tooltip);
+        }
+      },
+
+      _isEntity: function(group) {
+        return group && group['entity-type'] && group['entity-type'] === 'group';
+      },
+
+      _name: function(group) {
+        return this._isEntity(group) ? group.groupname : group.replace('group:', '');
+      },
+
+      _label: function(group) {
+        if (this._isEntity(group)) {
+          return group.grouplabel;
+        } else {
+          return group.replace('group:', '');
+        }
+      },
+
+      _href: function(group) {
+        return this.urlFor('group', this._name(group));
+      }
+
+    });
+  </script>
+</dom-module>

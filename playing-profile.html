@@ -1,0 +1,43 @@
+<!--
+`playing-profile`
+@group Playing UI
+@element playing-profile
+-->
+<dom-module id="playing-profile">
+  <template>
+    <mostly-connection id="nxcon" user="{{currentUser}}"></mostly-connection>
+
+    <mostly-page>
+      <div class="header">[[i18n('profile.heading')]]</div>
+      <div class="content">
+        <paper-card>
+          <playing-user-profile username="[[_username(currentUser)]]"></playing-user-profile>
+        </paper-card>
+      </div>
+    </mostly-page>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-profile',
+      behaviors: [Mostly.I18nBehavior],
+      properties: {
+        currentUser: Object
+      },
+
+      ready: function() {
+        this.$.nxcon.connect().then(res => {
+          this.currentUser = res;
+        });
+      },
+
+      _username: function(user) {
+        if (user) {
+          return user.username;
+        }
+      }
+    });
+  </script>
+
+</dom-module>

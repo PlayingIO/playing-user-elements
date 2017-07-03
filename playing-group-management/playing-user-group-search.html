@@ -1,0 +1,257 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../nuxeo-ui-elements/nuxeo-pagination-controls.html">
+<link rel="import" href="../../nuxeo-ui-elements/widgets/nuxeo-tag.html">
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../iron-icons/editor-icons.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../paper-item/paper-icon-item.html">
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../paper-menu/paper-menu.html">
+<link rel="import" href="../../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+
+<!--
+Used by `playing-user-management`
+@group Playing Elements
+@element playing-user-group-search
+-->
+<dom-module id="playing-user-group-search">
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--playing-user-group-search-layout);
+      }
+
+      .search {
+        width: calc( 100% - 10rem);
+        margin-bottom: 32px;
+      }
+
+      .title {
+        margin: 0 0 .8em;
+        padding: 0;
+      }
+
+      .table-header {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        background-color: var(--nuxeo-table-header-background, #fafafa);
+        color: var(--nuxeo-text-default, rgba(0, 0, 0, 0.54));
+        font-weight: 400;
+        min-height: 48px;
+        padding: 0 0 0 12px;
+        border-bottom: 2px solid var(--nuxeo-border, #eee);
+        box-shadow: 0 -1px 0 rgba(0,0,0,0.2) inset;
+      }
+
+      .table-row {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        padding: 12px 0 12px 12px;
+        border-bottom: 1px solid var(--nuxeo-border, #eee);
+        cursor: pointer;
+      }
+
+      .table-row:hover {
+        background: var(--nuxeo-container-hover, #fafafa);
+      }
+
+      .table {
+        border: 1px solid var(--nuxeo-border, #eee);
+      }
+
+      .counter {
+        margin-right: 2em;
+      }
+
+      h3 iron-icon {
+        width: 1.3em;
+        margin-right: .2rem;
+      }
+
+      .emptyResult {
+        opacity: .5;
+        display: block;
+        font-weight: 300;
+        padding: 1.5em .7em;
+        text-align: center;
+      }
+
+    </style>
+
+    <mostly-resource id="userSearch" auto path="/user/search" response="{{users}}"></mostly-resource>
+    <mostly-resource id="groupSearch" auto
+                    path="/group/search"
+                    response="{{groups}}"
+                    headers='{"fetch.group": "memberUsers,memberGroups"}'>
+    </mostly-resource>
+
+    <paper-card class="search">
+      <paper-input noink autofocus="true" value="{{searchTerm}}" type="search"
+                   placeholder="[[i18n('userGroupSearch.search.placeholder')]]">
+        <iron-icon icon="nuxeo:search" prefix></iron-icon>
+      </paper-input>
+    </paper-card>
+
+    <template is="dom-if" if="[[!_showResults(searchTerm)]]">
+
+      <!-- groups -->
+      <paper-card>
+      <h3 class="title">
+        <iron-icon icon="nuxeo:group"></iron-icon> [[i18n('userGroupSearch.groups')]]
+      </h3>
+      <div class="table">
+        <div class="table-header">
+          <div class="flex-4">[[i18n('userGroupSearch.name')]]</div>
+          <div class="flex-2">[[i18n('userGroupSearch.identifier')]]</div>
+          <div class="flex-4">[[i18n('userGroupSearch.contains')]]</div>
+        </div>
+        <div class="table-rows">
+          <template is="dom-repeat" items="[[groups.entries]]" as="item">
+            <div class="table-row" on-tap="_manageGroup">
+              <div class="flex-4">
+                <nuxeo-tag icon="nuxeo:group">[[item.grouplabel]]</nuxeo-tag>
+              </div>
+              <div class="flex-2">[[item.groupname]]</div>
+              <div class="flex-4">
+                <span class="counter">[[_countUsers(item.memberUsers)]]</span>
+                <span class="counter">[[_countGroups(item.memberGroups)]]</span>
+              </div>
+            </div>
+          </template>
+          <template is="dom-if" if=[[_empty(groups.entries)]]>
+            <div class="table-row">
+              <div class="emptyResult">[[i18n('userGroupSearch.empty.groups')]]</div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <nuxeo-pagination-controls page="{{groupsCurrentPage}}" number-of-pages="[[groups.numberOfPages]]"></nuxeo-pagination-controls>
+      </paper-card>
+
+      <!-- users -->
+      <paper-card>
+      <h3 class="title">
+        <iron-icon icon="nuxeo:user"></iron-icon> [[i18n('userGroupSearch.users.heading')]]
+      </h3>
+      <div class="table">
+        <div class="table-header">
+          <div class="flex-4">[[i18n('userGroupSearch.name')]]</div>
+          <div class="flex-2">[[i18n('userGroupSearch.identifier')]]</div>
+          <div class="flex-4">[[i18n('userGroupSearch.email')]]</div>
+        </div>
+        <div class="table-rows">
+          <template is="dom-repeat" items="[[users.entries]]" as="item">
+            <div class="table-row" on-tap="_manageUser">
+              <div class="flex-4">
+                <template is="dom-if" if="[[_userHasName(item)]]">
+                  <nuxeo-tag icon="nuxeo:user"> [[item.properties.firstName]] [[item.properties.lastName]]</nuxeo-tag>
+                </template>
+              </div>
+              <div class="flex-2">[[item.id]]</div>
+              <div class="flex-4">[[item.properties.email]]</div>
+            </div>
+          </template>
+          <template is="dom-if" if=[[_empty(users.entries)]]>
+            <div class="table-row">
+              <div class="emptyResult">[[i18n('userGroupSearch.empty.users')]]</div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <nuxeo-pagination-controls page="{{usersCurrentPage}}" number-of-pages="[[users.numberOfPages]]"></nuxeo-pagination-controls>
+      </paper-card>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-user-group-search',
+      behaviors: [Mostly.I18nBehavior],
+      properties: {
+
+        searchTerm: {
+          type: String,
+          value: '',
+          observer: '_searchTermChanged',
+          notify: true
+        },
+
+        users: Object,
+        groups: Object,
+
+        groupsCurrentPage: Number,
+
+        usersCurrentPage: Number
+      },
+
+      observers: [
+        '_searchGroups(groupsCurrentPage)',
+        '_searchUsers(usersCurrentPage)'
+      ],
+
+      _searchTermChanged: function() {
+        if (this.searchTerm !== '') {
+          this.groupsCurrentPage = this.usersCurrentPage = 1;
+          this._searchGroups();
+          this._searchUsers();
+        } else {
+          this.users = this.groups = {};
+        }
+      },
+
+      _searchGroups: function() {
+        var params = {
+          q: this.searchTerm,
+          currentPageIndex: this.groupsCurrentPage - 1
+        };
+        this.$.groupSearch.params = params;
+      },
+
+      _searchUsers: function() {
+        var params = {
+          q: this.searchTerm,
+          currentPageIndex: this.usersCurrentPage - 1
+        };
+        this.$.userSearch.params = params;
+      },
+
+      _manageUser: function(e) {
+        this.fire('manageUser', {user: e.model.item.id});
+      },
+
+      _manageGroup: function(e) {
+        this.fire('manageGroup', {group: e.model.item.groupname});
+      },
+
+      _empty: function(entries) {
+        return entries && entries.length === 0;
+      },
+
+      _countUsers: function(users) {
+        var label = ' ' + (users.length === 1 ? this.i18n('userGroupSearch.member') :
+            this.i18n('userGroupSearch.members'));
+        return users.length + label;
+      },
+
+      _countGroups: function(groups) {
+        if (groups.length > 0) {
+          var label = ' ' + (groups.length === 1 ? this.i18n('userGroupSearch.nestedGroup') :
+              this.i18n('userGroupSearch.nestedGroups'));
+          return groups.length + label;
+        }
+      },
+
+      _userHasName: function(user) {
+        return user.properties.firstName || user.properties.lastName;
+      },
+
+      _showResults: function() {
+        return this.searchTerm.length === 0;
+      }
+
+    });
+  </script>
+</dom-module>

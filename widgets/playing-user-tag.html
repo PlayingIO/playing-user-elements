@@ -1,0 +1,95 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../nuxeo-ui-elements/nuxeo-routing-behavior.html">
+<link rel="import" href="../../nuxeo-ui-elements/widgets/nuxeo-tag.html">
+
+<!--
+An element for showing a user entity with a tooltip.
+
+Example:
+
+    <playing-user-tag user="[[user]]"></playing-user-tag>
+
+@group Playing Widgets
+@element playing-user-tag
+-->
+<dom-module id="playing-user-tag">
+  <template>
+
+    <nuxeo-tag>
+      <template is="dom-if" if="[[_hasLink(user)]]">
+        <a href$="[[_href(user)]]">[[_name(user)]]</a>
+      </template>
+      <template is="dom-if" if="[[!_hasLink(user)]]">
+        [[_name(user)]]
+      </template>
+      <template is="dom-if" if="[[_isEntity(user)]]">
+        <paper-tooltip id="tooltip" position="top" offset="0" animation-delay="0">
+          [[_id(user)]]<br>[[_email(user)]]
+        </paper-tooltip>
+      </template>
+    </nuxeo-tag>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-user-tag',
+      behaviors: [Nuxeo.RoutingBehavior],
+      properties: {
+
+        /**
+         * User entity or a string
+         */
+        user: Object,
+
+        /**
+         * Disable link
+         */
+        disabled: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      ready: function() {
+        if (this.$.tooltip) {
+          document.body.appendChild(this.$.tooltip);
+        }
+      },
+
+      _isEntity: function(user) {
+        return user && user['entity-type'] && user['entity-type'] === 'user' && user.properties;
+      },
+
+      _id: function(user) {
+        if (user) {
+          return user.id ? user.id : user.replace('user:', '');
+        }
+      },
+
+      _name: function(user) {
+        if (this._isEntity(user)) {
+          var firstName = user.properties.firstName;
+          var lastName = user.properties.lastName;
+          return (firstName || lastName) ? firstName + ' ' + lastName : user.properties.email;
+        } else {
+          return this._id(user);
+        }
+      },
+
+      _email: function(user) {
+        return this._isEntity(user) && user.properties.email !== this._id(user) ? user.properties.email : '';
+      },
+
+      _href: function(user) {
+        return this.urlFor('user', this._id(user));
+      },
+
+      _hasLink: function(user) {
+        return !(this.disabled || (this._name(user) === 'system'));
+      }
+
+    });
+  </script>
+</dom-module>
