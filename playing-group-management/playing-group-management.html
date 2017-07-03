@@ -1,7 +1,7 @@
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../nuxeo-ui-elements/nuxeo-pagination-controls.html">
 <link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
-<link rel="import" href="../../nuxeo-ui-elements/widgets/nuxeo-tag.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-dialog/paper-dialog.html">
@@ -294,7 +294,7 @@ Used by `playing-user-group-management`
       </playing-user-suggestion>
       <template is="dom-repeat" items="[[activity]]">
         <div class="activity-entry">
-          <nuxeo-tag icon="[[_icon(item)]]">[[item.displayLabel]]</nuxeo-tag>
+          <mostly-tag icon="[[_icon(item)]]">[[item.displayLabel]]</mostly-tag>
           <span>[[i18n('groupManagement.addedToGroup')]]</span>
           <span class="remove" on-tap="_toggleDeleteDialog">[[i18n('groupManagement.remove')]]</span>
         </div>
@@ -324,7 +324,7 @@ Used by `playing-user-group-management`
               <div class="table-row">
                 <div class="flex-4">
                   <template is="dom-if" if="[[_userHasName(item)]]">
-                    <nuxeo-tag icon="nuxeo:user">[[item.properties.firstName]] [[item.properties.lastName]]</nuxeo-tag>
+                    <mostly-tag icon="nuxeo:user">[[item.properties.firstName]] [[item.properties.lastName]]</mostly-tag>
                   </template>
                 </div>
                 <div class="flex-4">[[item.id]]</div>
@@ -371,7 +371,7 @@ Used by `playing-user-group-management`
             <template is="dom-repeat" items="[[memberGroups.entries]]">
               <div class="table-row">
                 <div class="flex-4">
-                  <nuxeo-tag icon="nuxeo:group">[[item.groupname]]</nuxeo-tag>
+                  <mostly-tag icon="nuxeo:group">[[item.groupname]]</mostly-tag>
                 </div>
                 <div class="flex-4">[[item.grouplabel]]</div>
                 <div class="table-actions">

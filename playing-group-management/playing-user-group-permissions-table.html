@@ -3,8 +3,8 @@
 <link rel="import" href="../../paper-dialog/paper-dialog.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-operation.html">
-<link rel="import" href="../../nuxeo-ui-elements/widgets/nuxeo-tag.html">
-<link rel="import" href="../../nuxeo-ui-elements/moment-import.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
+<link rel="import" href="../../mostly-elements/moment-import.html">
 
 <!--
 An element to list the permissions of an entity.
@@ -99,7 +99,7 @@ Used by `playing-user-group-management`
         padding: .06em .3em;
         text-transform: uppercase;
         white-space: nowrap;
-        @apply(--nuxeo-tag);
+        @apply(--mostly-tag);
       }
 
       .ace-permission-path {
@@ -160,7 +160,7 @@ Used by `playing-user-group-management`
                   </div>
                   <div class="flex-2">
                     <template is="dom-if" if=[[ace.creator]]>
-                      <nuxeo-tag icon="nuxeo:group">[[ace.creator]]</nuxeo-tag>
+                      <mostly-tag icon="nuxeo:group">[[ace.creator]]</mostly-tag>
                     </template>
                   </div>
                   <div class="table-actions">
@@ -268,7 +268,7 @@ Used by `playing-user-group-management`
       _computePermissions: function(entries) {
         entries.map(function(entry) {
           entry.aces = [];
-          entry.contextParameters.acls.map(function(acl) {
+          entry.metadata.acls.map(function(acl) {
             // in 6.0 the ace object is called 'ace' while in > 7.10 its called 'aces'
             var entryAces = acl.aces || acl.ace;
             return entryAces.map(function(ace) {

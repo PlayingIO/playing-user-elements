@@ -2,8 +2,8 @@
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../iron-icons/social-icons.html">
 <link rel="import" href="../../paper-tooltip/paper-tooltip.html">
-<link rel="import" href="../../nuxeo-ui-elements/nuxeo-routing-behavior.html">
-<link rel="import" href="../../nuxeo-ui-elements/widgets/nuxeo-tag.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-routing-behavior.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
 
 <!--
 An element for showing a group entity with a tooltip.
@@ -18,7 +18,7 @@ Example:
 <dom-module id="playing-group-tag">
   <template>
 
-    <nuxeo-tag icon="nuxeo:group">
+    <mostly-tag icon="nuxeo:group">
       <template is="dom-if" if="[[!disabled]]">
         <a href$="[[_href(group)]]">[[_label(group)]]</a>
       </template>
@@ -28,14 +28,14 @@ Example:
       <template is="dom-if" if="[[_isEntity(group)]]">
         <paper-tooltip id="tooltip" position="top" offset="0" animation-delay="0">[[_name(group)]]</paper-tooltip>
       </template>
-    </nuxeo-tag>
+    </mostly-tag>
 
   </template>
 
   <script>
     Polymer({
       is: 'playing-group-tag',
-      behaviors: [Nuxeo.RoutingBehavior],
+      behaviors: [Mostly.RoutingBehavior],
       properties: {
 
         /**

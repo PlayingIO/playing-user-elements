@@ -1,6 +1,6 @@
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../nuxeo-ui-elements/nuxeo-pagination-controls.html">
-<link rel="import" href="../../nuxeo-ui-elements/widgets/nuxeo-tag.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../iron-icons/editor-icons.html">
 <link rel="import" href="../../paper-button/paper-button.html">
@@ -111,11 +111,11 @@ Example:
             <div class="flex">
               <template is="dom-if" if="[[_isUser(item)]]">
                 <template is="dom-if" if="[[_userHasName(item)]]">
-                  <nuxeo-tag icon="nuxeo:user">[[_displayLCUserGroup(item)]]</nuxeo-tag>
+                  <mostly-tag icon="nuxeo:user">[[_displayLCUserGroup(item)]]</mostly-tag>
                 </template>
               </template>
               <template is="dom-if" if="[[_isGroup(item)]]">
-                <nuxeo-tag icon="nuxeo:group">[[_displayLCUserGroup(item)]]</nuxeo-tag>
+                <mostly-tag icon="nuxeo:group">[[_displayLCUserGroup(item)]]</mostly-tag>
               </template>
             </div>
             <div class="flex-2">[[item.uid]]</div>

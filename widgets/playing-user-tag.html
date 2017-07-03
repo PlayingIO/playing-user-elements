@@ -1,7 +1,7 @@
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../paper-tooltip/paper-tooltip.html">
-<link rel="import" href="../../nuxeo-ui-elements/nuxeo-routing-behavior.html">
-<link rel="import" href="../../nuxeo-ui-elements/widgets/nuxeo-tag.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-routing-behavior.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
 
 <!--
 An element for showing a user entity with a tooltip.
@@ -16,7 +16,7 @@ Example:
 <dom-module id="playing-user-tag">
   <template>
 
-    <nuxeo-tag>
+    <mostly-tag>
       <template is="dom-if" if="[[_hasLink(user)]]">
         <a href$="[[_href(user)]]">[[_name(user)]]</a>
       </template>
@@ -28,14 +28,14 @@ Example:
           [[_id(user)]]<br>[[_email(user)]]
         </paper-tooltip>
       </template>
-    </nuxeo-tag>
+    </mostly-tag>
 
   </template>
 
   <script>
     Polymer({
       is: 'playing-user-tag',
-      behaviors: [Nuxeo.RoutingBehavior],
+      behaviors: [Mostly.RoutingBehavior],
       properties: {
 
         /**
