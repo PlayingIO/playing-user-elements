@@ -118,7 +118,7 @@ Example:
                 <mostly-tag icon="nuxeo:group">[[_displayLCUserGroup(item)]]</mostly-tag>
               </template>
             </div>
-            <div class="flex-2">[[item.uid]]</div>
+            <div class="flex-2">[[item.id]]</div>
             <div class="table-actions"></div>
           </div>
         </template>
@@ -177,9 +177,9 @@ Example:
 
       _manageUserOrGroup: function(e) {
         if (this._isUser(e.model.item)) {
-          this.fire('manageUser', {user: e.model.item.uid});
+          this.fire('manageUser', {user: e.model.item.id});
         } else if (this._isGroup(e.model.item)) {
-          this.fire('manageGroup', {group: e.model.item.uid});
+          this.fire('manageGroup', {group: e.model.item.id});
         }
       },
 

@@ -125,8 +125,8 @@ Used by `playing-user-group-management`
       }
     </style>
 
-    <mostly-operation id="permissions" op="Document.PageProvider" enrichers="acls"></mostly-operation>
-    <mostly-operation id="rmPermission" op="Document.RemovePermission"></mostly-operation>
+    <mostly-operation id="permissions" path="documents" op="pageProvider" enrichers="acls"></mostly-operation>
+    <mostly-operation id="rmPermission" path="documents" op="removePermission"></mostly-operation>
 
     <div class="layout horizontal center">
       <h3>[[label]]</h3>
@@ -276,7 +276,7 @@ Used by `playing-user-group-management`
                 return;
               }
               if (this._aceBelongsToEntity(ace)) {
-                ace.docId = entry.uid;
+                ace.docId = entry.id;
                 ace.docTitle = entry.title;
                 ace.docPath = entry.path;
                 ace.timeFrame = this._formatTimeFrame(ace);

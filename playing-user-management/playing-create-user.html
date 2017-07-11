@@ -75,9 +75,9 @@ Used by `playing-user-group-management`
       }
     </style>
 
-    <mostly-resource id="request" path="/user" headers='{"Content-Type":"application/json"}'></mostly-resource>
+    <mostly-resource id="request" path="user" headers='{"Content-Type":"application/json"}'></mostly-resource>
 
-    <mostly-operation id="invite" op="User.Invite"></mostly-operation>
+    <mostly-operation id="invite" path="users" op="invite"></mostly-operation>
 
     <div class="header horizontal layout center">
       <paper-icon-button class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
