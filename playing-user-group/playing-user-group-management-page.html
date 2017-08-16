@@ -1,0 +1,124 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../mostly-elements/mostly-app/mostly-page.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-routing-behavior.html">
+<link rel="import" href="playing-user-group-management.html">
+<link rel="import" href="playing-user-group-latest.html">
+
+<!--
+`playing-user-group-management-page`
+@group Playing UI
+@element playing-user-group-management-page
+-->
+<dom-module id="playing-user-group-management-page">
+  <template>
+
+    <mostly-page>
+      <div class="header">
+        <span class="flex">[[i18n('admin.usersAndGroups.heading')]]</span>
+      </div>
+      <div class="content">
+        <template is="dom-if" if="visible">
+          <playing-user-group-management id="management" page="{{page}}" is-administrator$="[[isAdministrator]]"></playing-user-group-management>
+          <template is="dom-if" if="[[_displayLatest(page)]]">
+            <playing-user-group-latest></playing-user-group-latest>
+          </template>
+        </template>
+      </div>
+    </mostly-page>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'playing-user-group-management-page',
+      behaviors: [Mostly.I18nBehavior, Mostly.RoutingBehavior],
+      properties: {
+        visible: {
+          type: Boolean,
+          observer: '_visibleChanged'
+        },
+        page: {
+          type: String,
+          value: 'search'
+        },
+        entity: {
+          type: Object,
+          value: {},
+          observer: '_entityChanged'
+        },
+        isAdministrator: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        }
+      },
+
+      listeners: {
+        'goHome': '_handleUGMgoHome',
+        'manageUser': '_handleUGMmanageUser',
+        'manageGroup': '_handleUGMmanageGroup',
+      },
+
+      _entityChanged: function() {
+        if (!this.visible) {
+          return;
+        }
+        var management = this.querySelector('playing-user-group-management');
+        if (this.entity && this.entity.id && this.entity.type) {
+          if (this.entity.type === 'group') {
+            management.selectedGroup = this.entity.id;
+            management.page = 'manage-group';
+          } else if (this.entity.type === 'user') {
+            management.selectedUser = this.entity.id;
+            management.page = 'manage-user';
+          }
+        } else {
+          management.$$('playing-user-group-search')._searchTermChanged();
+        }
+      },
+
+      _visibleChanged: function() {
+        if (this.visible) {
+          this.async(() => {
+            this._entityChanged();
+          });
+        }
+      },
+
+      _displayLatest: function() {
+        return this.page === 'search';
+      },
+
+      _handleUGMgoHome: function() {
+        this.entity = {};
+        this.navigateTo('administration', 'user-group-management');
+      },
+
+      _handleUGMmanageUser: function(e) {
+        this.entity = {type: 'user', id: e.detail.user};
+        var url = '';
+        if (this.selectedAdminTab) {
+          url += this.selectedAdminTab;
+          if (this.selectedAdminTab === 'user-group-management' &&
+            this.entity && this.entity.id && this.entity.type) {
+            url += '/' + this.entity.type + '/' + this.entity.id;
+          }
+        }
+        this.navigateTo('administration', url);
+      },
+
+      _handleUGMmanageGroup: function(e) {
+        this.entity = {type: 'group', id: e.detail.group};
+        var url = '';
+        if (this.selectedAdminTab) {
+          url += this.selectedAdminTab;
+          if (this.selectedAdminTab === 'user-group-management' &&
+            this.entity && this.entity.id && this.entity.type) {
+            url += '/' + this.entity.type + '/' + this.entity.id;
+          }
+        }
+        this.navigateTo('administration', url);
+      }
+    });
+  </script>
+</dom-module>

@@ -1,6 +1,5 @@
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../nuxeo-ui-elements/nuxeo-pagination-controls.html">
-<link rel="import" href="../../nuxeo-ui-elements/widgets/nuxeo-tag.html">
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../iron-icons/editor-icons.html">
 <link rel="import" href="../../paper-button/paper-button.html">
@@ -9,6 +8,7 @@
 <link rel="import" href="../../paper-input/paper-input.html">
 <link rel="import" href="../../paper-menu/paper-menu.html">
 <link rel="import" href="../../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
 
 <!--
@@ -112,7 +112,7 @@ Used by `playing-user-management`
           <template is="dom-repeat" items="[[groups.entries]]" as="item">
             <div class="table-row" on-tap="_manageGroup">
               <div class="flex-4">
-                <nuxeo-tag icon="nuxeo:group">[[item.grouplabel]]</nuxeo-tag>
+                <mostly-tag icon="nuxeo:group">[[item.grouplabel]]</mostly-tag>
               </div>
               <div class="flex-2">[[item.groupname]]</div>
               <div class="flex-4">
@@ -147,11 +147,11 @@ Used by `playing-user-management`
             <div class="table-row" on-tap="_manageUser">
               <div class="flex-4">
                 <template is="dom-if" if="[[_userHasName(item)]]">
-                  <nuxeo-tag icon="nuxeo:user"> [[item.properties.firstName]] [[item.properties.lastName]]</nuxeo-tag>
+                  <mostly-tag icon="nuxeo:user"> [[item.firstName]] [[item.lastName]]</mostly-tag>
                 </template>
               </div>
               <div class="flex-2">[[item.id]]</div>
-              <div class="flex-4">[[item.properties.email]]</div>
+              <div class="flex-4">[[item.email]]</div>
             </div>
           </template>
           <template is="dom-if" if=[[_empty(users.entries)]]>
@@ -245,7 +245,7 @@ Used by `playing-user-management`
       },
 
       _userHasName: function(user) {
-        return user.properties.firstName || user.properties.lastName;
+        return user.firstName || user.lastName;
       },
 
       _showResults: function() {

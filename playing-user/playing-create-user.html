@@ -1,0 +1,212 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../widgets/playing-user-suggestion.html">
+<link rel="import" href="playing-edit-password.html">
+
+<!--
+Used by `playing-user-group-management`
+@group Playing Elements
+@element playing-create-user
+-->
+<dom-module id="playing-create-user">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      form {
+        margin: 24px 0 0;
+      }
+
+      playing-user-suggestion {
+        @apply(--layout-flex);
+      }
+
+      .backButton {
+        color: var(--nuxeo-button-primary, #00adff);
+      }
+
+      .header > iron-icon {
+        padding: 8px;
+      }
+
+      #another {
+        margin: 2em 0;
+      }
+
+      paper-radio-group {
+        outline: none;
+      }
+
+      paper-radio-button {
+        margin-right: 10px;
+        padding: 0;
+      }
+
+      .label-password {
+        margin-top: 16px;
+      }
+
+      #errors {
+        color: red;
+        margin: 1em 0;
+      }
+
+      .header h3  {
+        margin-bottom: 0;
+      }
+
+      h3 iron-icon {
+        width: 1.3em;
+        margin-right: .2rem;
+      }
+
+       .form-buttons {
+        background-color:var(--nuxeo-dialog-buttons-bar, #eee);
+        padding: 1em;
+        margin: 0 -1.2rem;
+      }
+    </style>
+
+    <mostly-resource id="request" path="user" headers='{"Content-Type":"application/json"}'></mostly-resource>
+
+    <mostly-operation id="invite" path="users" op="invite"></mostly-operation>
+
+    <div class="header horizontal layout center">
+      <paper-icon-button class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
+      <h3><iron-icon icon="nuxeo:user"></iron-icon>[[i18n('createUser.heading')]]</h3>
+    </div>
+
+    <form is="iron-form" id="form" class="vertical layout">
+      <paper-input label="[[i18n('createUser.username')]]" value="{{user.username}}"
+                   name="username" required always-float-label>
+      </paper-input>
+
+      <playing-edit-user id="propertyEditor" user="{{user}}" new></playing-edit-user>
+
+      <label class="label-password">[[i18n('createUser.setPassword')]]</label>
+      <paper-toggle-button checked="{{usePassword}}" name="password-toggle"></paper-toggle-button>
+      <playing-edit-password id="passwordEditor" password="{{user.password}}"
+                           required$="[[usePassword]]" hidden$="[[!usePassword]]">
+      </playing-edit-password>
+
+      <paper-checkbox noink id="another">[[i18n('createUser.createAnother.checkbox')]]</paper-checkbox>
+
+      <div class="form-buttons">
+        <paper-button noink id="cancelButton" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
+        <paper-button noink id="createButton" class="primary" on-tap="_submit">[[i18n('command.create')]]</paper-button>
+      </div>
+
+      <span id="errors" hidden$="[[!_hasErrors(errors)]]">[[errors]]</span>
+
+    </form>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-create-user',
+      behaviors: [Mostly.I18nBehavior],
+      properties: {
+        user: {
+          type: Object,
+          value: {}
+        },
+
+        usePassword: {
+          type: Boolean,
+          value: false
+        },
+
+        errors: {
+          type: String,
+          value: ''
+        },
+
+        isAdministrator: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      ready: function() {
+        this.$.form.addEventListener('iron-form-presubmit', function(event) {
+          event.preventDefault();
+          this._create();
+        }.bind(this));
+      },
+
+      _goHome: function() {
+        this.fire('goHome');
+      },
+
+      /**
+       * Submits the form.
+       */
+      _submit: function() {
+        this.$.form.submit();
+      },
+
+      /**
+       * Creates a new user if the form was successfully submitted.
+       */
+      _create: function() {
+        if (!this.isAdministrator && this.user.groups && this.user.groups.indexOf('administrators') !== -1) {
+          this.errors = this.i18n('createUser.errorAdministratorsGroup');
+          return;
+        }
+        this._doCreate(this.user).then(function(user) {
+          this._resetFields();
+          if (!this.$.another.checked) {
+            this._goHome();
+          }
+        }.bind(this))
+          .catch(function(error) {
+            this.errors = error.message;
+          }.bind(this));
+      },
+
+      _doCreate: function(user) {
+        var entity = {
+          'entity-type': 'user',
+          'id': '', // empty id for compat with NuxeoPrincipalReader deprecated on 7.10
+          'properties': user
+        };
+        if (this.usePassword) {
+          this.$.request.data = entity;
+          return this.$.request.post().then(function(user) {
+            this.fire('playing-user-created', user);
+          }.bind(this))
+        } else {
+          this.$.invite.input = entity;
+          return this.$.invite.execute().then(function(id) {
+            entity.id = user.username;
+            this.fire('playing-user-invited', entity);
+          }.bind(this));
+        }
+      },
+
+      _cancel: function() {
+        this._resetFields();
+        this._goHome();
+      },
+
+      _resetFields: function() {
+        this.user = {};
+        this.$.passwordEditor.resetFields();
+        this.errors = '';
+        this.usePassword = false;
+      },
+
+      _hasErrors: function() {
+        return this.errors !== '';
+      }
+    });
+  </script>
+</dom-module>

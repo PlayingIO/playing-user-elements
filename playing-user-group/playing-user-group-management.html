@@ -1,33 +1,33 @@
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../iron-pages/iron-pages.html">
-<link rel="import" href="../iron-form/iron-form.html">
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../iron-pages/iron-pages.html">
+<link rel="import" href="../../iron-form/iron-form.html">
 
-<link rel="import" href="../paper-card/paper-card.html">
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../paper-menu/paper-menu.html">
-<link rel="import" href="../paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../paper-item/paper-icon-item.html">
-<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../../paper-card/paper-card.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../paper-menu/paper-menu.html">
+<link rel="import" href="../../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../paper-item/paper-icon-item.html">
+<link rel="import" href="../../paper-toast/paper-toast.html">
 
-<link rel="import" href="../iron-input/iron-input.html">
-<link rel="import" href="../iron-icon/iron-icon.html">
-<link rel="import" href="../iron-icons/iron-icons.html">
-<link rel="import" href="../iron-icons/social-icons.html">
+<link rel="import" href="../../iron-input/iron-input.html">
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../iron-icons/social-icons.html">
 
-<link rel="import" href="../mostly-elements/behaviors/mostly-i18n-behavior.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
 
-<link rel="import" href="../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
 
-<link rel="import" href="widgets/playing-user-suggestion.html">
-<link rel="import" href="playing-user-management/playing-create-user.html">
-<link rel="import" href="playing-user-management/playing-user-management.html">
-<link rel="import" href="playing-user-management/playing-user-profile.html">
-<link rel="import" href="playing-group-management/playing-create-group.html">
-<link rel="import" href="playing-group-management/playing-group-management.html">
-<link rel="import" href="playing-group-management/playing-user-group-search.html">
+<link rel="import" href="../widgets/playing-user-suggestion.html">
+<link rel="import" href="../playing-group/playing-create-group.html">
+<link rel="import" href="../playing-group/playing-group-management.html">
+<link rel="import" href="../playing-user/playing-create-user.html">
+<link rel="import" href="../playing-user/playing-user-management.html">
+<link rel="import" href="../playing-user/playing-user-profile.html">
+<link rel="import" href="../playing-user-group/playing-user-group-search.html">
 
 <!--
 An element for managing users and groups in Nuxeo.
@@ -48,7 +48,7 @@ Custom property | Description | Default
 @group Playing UI Elements
 @element playing-user-group-management
 -->
-<dom-module id="nuxeo-user-group-management">
+<dom-module id="playing-user-group-management">
   <template>
     <style>
       :host {
@@ -106,19 +106,28 @@ Custom property | Description | Default
       </section>
 
       <section name="create-user">
-        <paper-card><playing-create-user is-administrator="[[isAdministrator]]"></playing-create-user></paper-card>
+        <paper-card>
+          <playing-create-user is-administrator="[[isAdministrator]]"></playing-create-user>
+        </paper-card>
       </section>
 
       <section name="manage-user">
-        <playing-user-management username="[[selectedUser]]" readonly$="[[readonly]]" is-administrator="[[isAdministrator]]"></playing-user-management>
+        <playing-user-management
+                username="[[selectedUser]]"
+                readonly$="[[readonly]]"
+                is-administrator="[[isAdministrator]]"></playing-user-management>
       </section>
 
       <section name="create-group">
-        <paper-card><playing-create-group></playing-create-group></paper-card>
+        <paper-card>
+          <playing-create-group></playing-create-group>
+        </paper-card>
       </section>
 
       <section name="manage-group">
-        <playing-group-management groupname="[[selectedGroup]]" readonly$="[[readonly]]"></playing-group-management>
+        <playing-group-management
+                groupname="[[selectedGroup]]"
+                readonly$="[[readonly]]"></playing-group-management>
       </section>
     </iron-pages>
   </template>
@@ -237,18 +246,18 @@ Custom property | Description | Default
       ready: function() {
         // dynamic loading of user layouts
         if (!this._isRegistered('playing-view-user')) {
-          Polymer.Base.importHref(this.resolveUrl('playing-user-group-management/playing-view-user.html'));
+          Polymer.Base.importHref(this.resolveUrl('playing-user/playing-view-user.html'));
         }
         if (!this._isRegistered('playing-edit-user')) {
-          Polymer.Base.importHref(this.resolveUrl('playing-user-group-management/playing-edit-user.html'));
+          Polymer.Base.importHref(this.resolveUrl('playing-user/playing-edit-user.html'));
         }
 
-        window.addEventListener('manageUser', function(e) {
+        window.addEventListener('manageUser', (e) => {
           this._manageUser(e);
-        }.bind(this));
-        window.addEventListener('manageGroup', function(e) {
+        });
+        window.addEventListener('manageGroup', (e) => {
           this._manageGroup(e);
-        }.bind(this));
+        });
       },
 
       /**

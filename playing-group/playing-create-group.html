@@ -215,7 +215,7 @@ Used by `playing-user-group-management`
       ],
 
       ready: function() {
-        this.$.picker.$$('nuxeo-select2').queryResultsFilter = this.resultsFilter;
+        this.$.picker.$$('mostly-select2').queryResultsFilter = this.resultsFilter;
         this.$.form.addEventListener('iron-form-presubmit', function(event) {
           event.preventDefault();
           this._create();

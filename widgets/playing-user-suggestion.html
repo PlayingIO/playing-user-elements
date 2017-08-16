@@ -1,7 +1,7 @@
-<link rel="import" href="../../nuxeo-ui-elements/widgets/nuxeo-select2.html">
 <link rel="import" href="../../iron-form-element-behavior/iron-form-element-behavior.html">
 <link rel="import" href="../../iron-validatable-behavior/iron-validatable-behavior.html">
 <link rel="import" href="../../paper-card/paper-card.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-select2.html">
 
 <!--
 `playing-user-suggestion` allows selecting one or more users.
@@ -23,21 +23,23 @@
       }
     </style>
 
-    <nuxeo-select2 id="s2" operation="UserGroup.Suggestion"
-                   label="[[label]]"
-                   min-chars="[[minChars]]"
-                   multiple="[[multiple]]"
-                   params="[[params]]"
-                   placeholder="[[placeholder]]"
-                   readonly="[[readonly]]"
-                   value="{{value}}"
-                   selected-items="{{selectedItems}}"
-                   required="[[required]]"
-                   invalid="[[invalid]]"
-                   result-formatter="[[resultFormatter]]"
-                   resolve-entry="[[resolveEntry]]"
-                   id-function="[[idFunction]]">
-    </nuxeo-select2>
+    <mostly-select2 id="s2"
+            operation="suggestion"
+            path="users"
+            label="[[label]]"
+            min-chars="[[minChars]]"
+            multiple="[[multiple]]"
+            params="[[params]]"
+            placeholder="[[placeholder]]"
+            readonly="[[readonly]]"
+            value="{{value}}"
+            selected-items="{{selectedItems}}"
+            required="[[required]]"
+            invalid="[[invalid]]"
+            result-formatter="[[resultFormatter]]"
+            resolve-entry="[[resolveEntry]]"
+            id-function="[[idFunction]]">
+    </mostly-select2>
 
   </template>
 
