@@ -204,12 +204,12 @@ Used by `playing-user-group-management`
     </style>
 
     <mostly-resource id="request"
-                    path="group/[[groupname]]" response="{{group}}"
+                    path="groups/[[groupname]]" response="{{group}}"
                     headers='{"fetch.group": "memberUsers,memberGroups"}'>
     </mostly-resource>
     <mostly-resource id="users" path="[[_usersPath(groupname)]]" response="{{memberUsers}}" auto></mostly-resource>
     <mostly-resource id="groups" path="[[_groupsPath(groupname)]]" response="{{memberGroups}}" auto></mostly-resource>
-    <mostly-resource id="editRequest" path="group/[[groupname]]" response="{{group}}"
+    <mostly-resource id="editRequest" path="groups/[[groupname]]" response="{{group}}"
       headers='{"fetch.group": "memberUsers,memberGroups"}'></mostly-resource>
 
     <paper-toast id="toast"></paper-toast>

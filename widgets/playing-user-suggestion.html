@@ -6,7 +6,7 @@
 <!--
 `playing-user-suggestion` allows selecting one or more users.
 
-    <playing-user-suggestion search-type="GROUP_TYPE"
+    <playing-user-suggestion search-type="group"
                            placeholder="Search for Groups"
                            value="{{groups}}"
                            multiple></playing-user-suggestion>
@@ -24,8 +24,9 @@
     </style>
 
     <mostly-select2 id="s2"
-            operation="suggestion"
-            path="users"
+            operation="find"
+            path="user-groups"
+            search-field="name"
             label="[[label]]"
             min-chars="[[minChars]]"
             multiple="[[multiple]]"
@@ -49,10 +50,10 @@
       behaviors: [Polymer.IronFormElementBehavior, Polymer.IronValidatableBehavior],
       properties: {
 
-        // USER_TYPE or GROUP_TYPE or USER_GROUP_TYPE
+        // user or group or user-group
         searchType: {
           type: String,
-          value: 'USER_GROUP_TYPE'
+          value: 'user-group'
         },
 
         /**
@@ -61,7 +62,7 @@
         label: String,
 
         /**
-         * Computed parameters for the `UserGroup.Suggestion` operation.
+         * Computed parameters for the `user-groups.suggestion` operation.
          */
         params: {
           type: Object,
@@ -159,17 +160,20 @@
 
       _computeParams: function() {
         return this.params = {
-          searchType: this.searchType
+          type: this.searchType,
+          $limit: 100
         };
       },
 
       _resultFormatter: function(item) {
-        return (item.displayLabel || item.title) + ((item.type && item.type === 'USER_TYPE') ? '<br>' + item.email : '');
+        return (item.label || item.title)
+          + ((item.type && item.type === 'user') ? '<br>' + item.email : '');
       },
 
       _resolveEntry: function(term) {
-        return this.prefixed ? {id: term, displayLabel: term, prefixed_id: term }
-                             : {id: term, displayLabel: term};
+        return this.prefixed
+          ? {id: term, displayLabel: term, prefixed_id: term }
+          : {id: term, displayLabel: term};
       },
 
       _idFunction: function(item) {

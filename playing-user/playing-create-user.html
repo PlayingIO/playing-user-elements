@@ -75,9 +75,9 @@ Used by `playing-user-group-management`
       }
     </style>
 
-    <mostly-resource id="request" path="user" headers='{"Content-Type":"application/json"}'></mostly-resource>
+    <mostly-resource id="request" path="users"></mostly-resource>
 
-    <mostly-operation id="invite" path="users" op="invite"></mostly-operation>
+    <mostly-operation id="invite" path="users" op="invite" method="post"></mostly-operation>
 
     <div class="header horizontal layout center">
       <paper-icon-button class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
@@ -86,7 +86,7 @@ Used by `playing-user-group-management`
 
     <form is="iron-form" id="form" class="vertical layout">
       <paper-input label="[[i18n('createUser.username')]]" value="{{user.username}}"
-                   name="username" required always-float-label>
+              name="username" required always-float-label>
       </paper-input>
 
       <playing-edit-user id="propertyEditor" user="{{user}}" new></playing-edit-user>
@@ -94,7 +94,7 @@ Used by `playing-user-group-management`
       <label class="label-password">[[i18n('createUser.setPassword')]]</label>
       <paper-toggle-button checked="{{usePassword}}" name="password-toggle"></paper-toggle-button>
       <playing-edit-password id="passwordEditor" password="{{user.password}}"
-                           required$="[[usePassword]]" hidden$="[[!usePassword]]">
+              required$="[[usePassword]]" hidden$="[[!usePassword]]">
       </playing-edit-password>
 
       <paper-checkbox noink id="another">[[i18n('createUser.createAnother.checkbox')]]</paper-checkbox>
@@ -136,10 +136,10 @@ Used by `playing-user-group-management`
       },
 
       ready: function() {
-        this.$.form.addEventListener('iron-form-presubmit', function(event) {
+        this.$.form.addEventListener('iron-form-presubmit', (event) => {
           event.preventDefault();
           this._create();
-        }.bind(this));
+        });
       },
 
       _goHome: function() {
@@ -161,34 +161,28 @@ Used by `playing-user-group-management`
           this.errors = this.i18n('createUser.errorAdministratorsGroup');
           return;
         }
-        this._doCreate(this.user).then(function(user) {
+        this._doCreate(this.user).then((user) => {
           this._resetFields();
           if (!this.$.another.checked) {
             this._goHome();
           }
-        }.bind(this))
-          .catch(function(error) {
-            this.errors = error.message;
-          }.bind(this));
+        }).catch((error) => {
+          this.errors = error.message;
+        });
       },
 
       _doCreate: function(user) {
-        var entity = {
-          'entity-type': 'user',
-          'id': '', // empty id for compat with NuxeoPrincipalReader deprecated on 7.10
-          'properties': user
-        };
         if (this.usePassword) {
-          this.$.request.data = entity;
-          return this.$.request.post().then(function(user) {
+          this.$.request.data = user;
+          return this.$.request.post().then((user) => {
             this.fire('playing-user-created', user);
-          }.bind(this))
+          })
         } else {
-          this.$.invite.input = entity;
-          return this.$.invite.execute().then(function(id) {
+          this.$.invite.input = user;
+          return this.$.invite.execute().then((id) => {
             entity.id = user.username;
             this.fire('playing-user-invited', entity);
-          }.bind(this));
+          });
         }
       },
 
