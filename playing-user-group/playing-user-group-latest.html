@@ -87,9 +87,9 @@ Example:
     </style>
 
     <mostly-resource id="latestCreatedUsersGroups" auto
-                    path="/query/LATEST_CREATED_USERS_OR_GROUPS_PROVIDER"
-                    response="{{latestCreatedUsersGroups}}"
-                    headers='{"properties": "*"}'>
+            path="/user-groups"
+            response="{{latestCreatedUsersGroups}}"
+            headers='{"properties": "*"}'>
     </mostly-resource>
 
     <paper-card>
@@ -106,7 +106,7 @@ Example:
         </div>
       </div>
       <div class="table-rows">
-        <template is="dom-repeat" items="[[latestCreatedUsersGroups.entries]]" as="item">
+        <template is="dom-repeat" items="[[latestCreatedUsersGroups.data]]" as="item">
           <div class="table-row" on-tap="_manageUserOrGroup">
             <div class="flex">
               <template is="dom-if" if="[[_isUser(item)]]">
@@ -122,7 +122,7 @@ Example:
             <div class="table-actions"></div>
           </div>
         </template>
-        <template is="dom-if" if=[[_empty(latestCreatedUsersGroups.entries)]]>
+        <template is="dom-if" if=[[_empty(latestCreatedUsersGroups.data)]]>
           <div class="table-row">
             <div class="emptyResult">[[i18n('userGroupLatest.emptyRecentUserOrGroup')]]</div>
           </div>
@@ -146,7 +146,7 @@ Example:
       },
 
       _userHasName: function(user) {
-        return user['user:firstName'] || user['user:lastName'] ;
+        return user['firstName'] || user['lastName'] || user['username'];
       },
 
       _isUser: function(docModel) {
@@ -160,18 +160,18 @@ Example:
       _displayLCUserGroup: function(docModel) {
         if (this._isUser(docModel)) {
           var result = '';
-          if (docModel['user:firstName']) {
-            result += docModel['user:firstName'];
+          if (docModel['firstName']) {
+            result += docModel['firstName'];
           }
-          if (docModel['user:lastName']) {
+          if (docModel['lastName']) {
             if (result.length > 0) {
               result += ' ';
             }
-            result += docModel['user:lastName'];
+            result += docModel['lastName'];
           }
-          return result;
+          return result || docModel['username'];
         } else if (this._isGroup(docModel)) {
-          return docModel['group:grouplabel'];
+          return docModel['label'];
         }
       },
 

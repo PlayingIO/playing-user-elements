@@ -81,11 +81,13 @@ Used by `playing-user-management`
 
     </style>
 
-    <mostly-resource id="userSearch" auto path="/user/search" response="{{users}}"></mostly-resource>
+    <mostly-resource id="userSearch" auto
+            path="/users/search"
+            response="{{users}}"></mostly-resource>
     <mostly-resource id="groupSearch" auto
-                    path="/group/search"
-                    response="{{groups}}"
-                    headers='{"fetch.group": "memberUsers,memberGroups"}'>
+            path="/groups/search"
+            response="{{groups}}"
+            headers='{"fetch.group": "memberUsers,memberGroups"}'>
     </mostly-resource>
 
     <paper-card class="search">
