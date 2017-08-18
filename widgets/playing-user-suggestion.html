@@ -26,8 +26,9 @@
     <mostly-select2 id="s2"
             operation="find"
             path="user-groups"
-            search-field="name"
             label="[[label]]"
+            search-field="username"
+            display-field="username"
             min-chars="[[minChars]]"
             multiple="[[multiple]]"
             params="[[params]]"
@@ -98,7 +99,7 @@
          */
         minChars: {
           type: Number,
-          value: 3
+          value: 2
         },
 
         /**

@@ -404,25 +404,26 @@ Used by `playing-user-group-management`
 
       ready: function() {
         this.$.picker.$$('mostly-select2').queryResultsFilter = this.resultsFilter;
-        this.$.editUserForm.addEventListener('iron-form-presubmit', function(event) {
+        this.$.editUserForm.addEventListener('iron-form-presubmit', (event) => {
           event.preventDefault();
           this._saveUser();
-        }.bind(this));
-        this.$.changePasswordForm.addEventListener('iron-form-presubmit', function(event) {
+        });
+        this.$.changePasswordForm.addEventListener('iron-form-presubmit', (event) => {
           event.preventDefault();
           this._savePassword();
-        }.bind(this));
+        });
       },
 
       _fetch: function() {
         if (this.username) {
-          this.$.request.get().then(function(response) {
-            delete response.password;
-            this.user = response;
+          this.$.request.get().then((response) => {
+            if (!response || !response.data) return;
+            delete response.data.password;
+            this.user = response.data;
             this.activity = [];
             this.showEditGroups = false;
             this.selectedGroup = null;
-          }.bind(this));
+          });
         }
       },
 
@@ -435,11 +436,11 @@ Used by `playing-user-group-management`
       },
 
       _computeGroups: function() {
-        return this.user.extendedGroups.filter(function(group) {
+        return this.user.groups.filter((group) => {
           if (this.user.groups.indexOf(group.name) > -1) {
             return group;
           }
-        }.bind(this));
+        });
       },
 
       _groupSelected: function() {
@@ -454,23 +455,24 @@ Used by `playing-user-group-management`
             'label': this.selectedGroup.grouplabel
           };
           this.push('activity', group);
-          this.$.request.path = 'user/' + this.user.id + '/group/' + group.name;
-          this.$.request.post().then(function(response) {
-            this.user = response;
+          this.$.request.path = 'users/' + this.user.id + '/group/' + group.name;
+          this.$.request.post().then((response) => {
+            if (!response || !response.data) return;
+            this.user = response.data;
             this._toast(this.i18n('userManagement.addedUserToGroup', this.user.id, group.name));
-          }.bind(this));
+          });
         }
         this.selectedGroup = null;
       },
 
       _remove: function() {
         var group = this._removedGroup;
-        this.$.request.path = 'user/' + this.user.id + '/group/' + group.name;
-        return this.$.request.remove().then(function() {
+        this.$.request.path = 'users/' + this.user.id + '/group/' + group.name;
+        return this.$.request.remove().then(() => {
           this._removeRecent(group.name);
           this._removeFromGroup(group.name);
           this._toast(this.i18n('userManagement.removedUserFromGroup', this.user.id, group.name));
-        }.bind(this))
+        })
       },
 
       _removeRecent: function(group) {
@@ -522,7 +524,8 @@ Used by `playing-user-group-management`
         this.$.editRequest.data = JSON.parse(JSON.stringify(this.user));
         this.$.editRequest.data.password = this.$.passwordEditor.password;
         this.$.editRequest.put().then((response) => {
-          this.user = response;
+          if (!response || !response.data) return;
+          this.user = response.data;
           this._toast(this.i18n('userManagement.password.changed'));
           if (!!this.$.passwordEditor.resetFields) {
             this.$.passwordEditor.resetFields();
@@ -545,7 +548,8 @@ Used by `playing-user-group-management`
         editedUser = this.$.userEditor.user;
         this.$.editRequest.data = editedUser;
         this.$.editRequest.put().then((response) => {
-          this.user = response;
+          if (!response || !response.data) return;
+          this.user = response.data;
           this._toast(this.i18n('userManagement.user.updated'));
         });
       },

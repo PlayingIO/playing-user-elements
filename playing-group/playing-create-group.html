@@ -251,16 +251,15 @@ Used by `playing-user-group-management`
        */
       _create: function() {
         this.$.request.data = this._computeData();
-        this.$.request.post().then(function(response) {
-          this.fire('playing-group-created', response);
+        this.$.request.post().then((response) => {
+          this.fire('playing-group-created', response.data);
           this._resetFields();
           if (!this.$.another.checked) {
             this._goHome();
           }
-        }.bind(this))
-          .catch(function(error) {
-            this.errors = error.message;
-          }.bind(this));;
+        }).catch((error) => {
+          this.errors = error.message;
+        });;
       },
 
       _cancel: function() {

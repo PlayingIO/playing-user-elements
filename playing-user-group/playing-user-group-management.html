@@ -231,10 +231,10 @@ Custom property | Description | Default
         switch (event.type) {
           case 'playing-user-created':
           case 'playing-user-invited':
-            msg = 'User ' + event.detail.id + ' created';
+            msg = 'User ' + event.detail.username + ' created';
             break;
           case 'playing-group-created':
-            msg = 'Group ' + event.detail.groupname + ' created';
+            msg = 'Group ' + event.detail.name + ' created';
             break;
         }
         if (msg) {
@@ -246,10 +246,10 @@ Custom property | Description | Default
       ready: function() {
         // dynamic loading of user layouts
         if (!this._isRegistered('playing-view-user')) {
-          Polymer.Base.importHref(this.resolveUrl('playing-user/playing-view-user.html'));
+          Polymer.Base.importHref(this.resolveUrl('../playing-user/playing-view-user.html'));
         }
         if (!this._isRegistered('playing-edit-user')) {
-          Polymer.Base.importHref(this.resolveUrl('playing-user/playing-edit-user.html'));
+          Polymer.Base.importHref(this.resolveUrl('../playing-user/playing-edit-user.html'));
         }
 
         window.addEventListener('manageUser', (e) => {

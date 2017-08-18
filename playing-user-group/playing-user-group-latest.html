@@ -1,5 +1,4 @@
 <link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../nuxeo-ui-elements/nuxeo-pagination-controls.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../iron-icons/editor-icons.html">
@@ -159,17 +158,11 @@ Example:
 
       _displayLCUserGroup: function(docModel) {
         if (this._isUser(docModel)) {
-          var result = '';
-          if (docModel['firstName']) {
-            result += docModel['firstName'];
+          if (docModel.firstName || docModel.lastName) {
+            return [docModel.firstName, docModel.lastName].join(' ');
+          } else {
+            return docModel.username;
           }
-          if (docModel['lastName']) {
-            if (result.length > 0) {
-              result += ' ';
-            }
-            result += docModel['lastName'];
-          }
-          return result || docModel['username'];
         } else if (this._isGroup(docModel)) {
           return docModel['label'];
         }
@@ -177,9 +170,9 @@ Example:
 
       _manageUserOrGroup: function(e) {
         if (this._isUser(e.model.item)) {
-          this.fire('manageUser', {user: e.model.item.id});
+          this.fire('manageUser', { user: e.model.item.id });
         } else if (this._isGroup(e.model.item)) {
-          this.fire('manageGroup', {group: e.model.item.id});
+          this.fire('manageGroup', { group: e.model.item.id });
         }
       },
 

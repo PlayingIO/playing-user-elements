@@ -258,17 +258,11 @@ Used by `playing-user-management`
       },
 
       _displayUserName: function(user) {
-        var result = '';
-        if (user.firstName) {
-          result += user.firstName;
+        if (user.firstName || user.lastName) {
+          return [user.firstName, user.lastName].join(' ');
+        } else {
+          return user.username;
         }
-        if (user.lastName) {
-          if (result.length > 0) {
-            result += ' ';
-          }
-          result += user.lastName;
-        }
-        return result || user.username;
       },
 
       _showResults: function() {

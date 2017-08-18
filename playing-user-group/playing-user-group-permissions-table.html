@@ -2,9 +2,10 @@
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-dialog/paper-dialog.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../mostly-elements/moment-import.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-operation.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
-<link rel="import" href="../../mostly-elements/moment-import.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-pagination-controls.html">
 
 <!--
 An element to list the permissions of an entity.
@@ -184,7 +185,7 @@ Used by `playing-user-group-management`
         </div>
       </template>
     </div>
-    <nuxeo-pagination-controls page="{{_currentPage}}" number-of-pages="[[_numberOfPages]]"></nuxeo-pagination-controls>
+    <mostly-pagination-controls page="{{_currentPage}}" number-of-pages="[[_numberOfPages]]"></mostly-pagination-controls>
 
     <paper-dialog id="dialog" modal class="vertical layout">
       <div class="horizontal layout confirm">
