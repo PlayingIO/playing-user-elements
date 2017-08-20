@@ -255,11 +255,11 @@ Used by `playing-user-group-management`
     </div>
     <div class="layout vertical" hidden$="[[!showEditGroups]]">
       <playing-user-suggestion id="picker" class="flex"
-                             search-type="GROUP_TYPE"
-                             placeholder="[[i18n('userManagement.search.groups')]]"
-                             value="{{selectedGroup}}"
-                             selected-items="{{selectedGroup}}"
-                             result-formatter="[[resultFormatter]]">
+              search-type="group"
+              placeholder="[[i18n('userManagement.search.groups')]]"
+              value="{{selectedGroup}}"
+              selected-items="{{selectedGroup}}"
+              result-formatter="[[resultFormatter]]">
       </playing-user-suggestion>
       <div id="errors" hidden$="[[!errors]]">[[errors]]</div>
       <template is="dom-repeat" items="[[activity]]">
@@ -286,8 +286,8 @@ Used by `playing-user-group-management`
             <div class="table-actions">
               <template is="dom-if" if="[[_canRemoveAdministratorsGroup(item)]]">
                 <paper-icon-button icon="nuxeo:remove"
-                                   title="[[i18n('userManagement.removeFrom.group', item.label)]]"
-                                   on-tap="_toggleDialog">
+                        title="[[i18n('userManagement.removeFrom.group', item.label)]]"
+                        on-tap="_toggleDialog">
                 </paper-icon-button>
               </template>
             </div>
@@ -304,16 +304,18 @@ Used by `playing-user-group-management`
 
     <!-- local permissions -->
     <paper-card>
-    <playing-user-group-permissions-table label="[[i18n('userManagement.localPermissions.heading')]]"
-                                        entity="[[username]]" readonly="[[readonly]]">
+    <playing-user-group-permissions-table
+            label="[[i18n('userManagement.localPermissions.heading')]]"
+            entity="[[username]]" readonly="[[readonly]]">
     </playing-user-group-permissions-table>
     </paper-card>
 
     <!-- group permissions -->
     <template is="dom-repeat" items="[[groups]]">
       <paper-card>
-      <playing-user-group-permissions-table label="[[i18n('userManagement.entityPermissions', item.name)]]"
-                                          entity="[[item.name]]" readonly="[[readonly]]">
+      <playing-user-group-permissions-table
+              label="[[i18n('userManagement.entityPermissions', item.name)]]"
+              entity="[[item.name]]" readonly="[[readonly]]">
       </playing-user-group-permissions-table>
       </paper-card>
     </template>
@@ -451,12 +453,12 @@ Used by `playing-user-group-management`
             return;
           }
           var group = {
-            'name': this.selectedGroup.groupname,
+            'groupname': this.selectedGroup.groupname,
             'label': this.selectedGroup.grouplabel
           };
           this.push('activity', group);
           this.$.request.path = 'users/' + this.user.id + '/group/' + group.name;
-          this.$.request.post().then((response) => {
+          this.$.request.patch().then((response) => {
             if (!response || !response.data) return;
             this.user = response.data;
             this._toast(this.i18n('userManagement.addedUserToGroup', this.user.id, group.name));

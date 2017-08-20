@@ -116,7 +116,7 @@ Used by `playing-user-management`
               <div class="flex-4">
                 <mostly-tag icon="nuxeo:group">[[item.label]]</mostly-tag>
               </div>
-              <div class="flex-2">[[item.name]]</div>
+              <div class="flex-2">[[item.groupname]]</div>
               <div class="flex-4">
                 <span class="counter">[[_countUsers(item.users)]]</span>
                 <span class="counter">[[_countGroups(item.children)]]</span>
@@ -211,7 +211,7 @@ Used by `playing-user-management`
 
       _searchGroups: function() {
         var params = {
-          'name[$like]': this.searchTerm,
+          'groupname[$like]': this.searchTerm,
           '$skip': (this.groupsCurrentPage - 1) * this.currentPageSize
         };
         this.$.groupSearch.params = params;
@@ -230,7 +230,7 @@ Used by `playing-user-management`
       },
 
       _manageGroup: function(e) {
-        this.fire('manageGroup', { group: e.model.item.groupname });
+        this.fire('manageGroup', { group: e.model.item.id });
       },
 
       _empty: function(entries) {

@@ -269,7 +269,7 @@ Used by `playing-user-group-management`
         <paper-icon-button noink class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
         <iron-icon icon="nuxeo:user" class="avatar"></iron-icon>
         <div class="layout vertical flex">
-          <h3 class="groupname">[[group.name]]</h3>
+          <h3 class="groupname">[[group.groupname]]</h3>
           <h4 class="grouplabel">[[group.label]]</h4>
           <h5 class="counter">[[_countUsers(group.users)]] + [[_countGroups(group.memberGroups)]]</h5>
           <h4 class="grouplabel">[[group.description]]</h4>
@@ -378,7 +378,7 @@ Used by `playing-user-group-management`
             <template is="dom-repeat" items="[[memberGroups]]">
               <div class="table-row">
                 <div class="flex-4">
-                  <mostly-tag icon="nuxeo:group">[[item.name]]</mostly-tag>
+                  <mostly-tag icon="nuxeo:group">[[item.groupname]]</mostly-tag>
                 </div>
                 <div class="flex-4">[[item.label]]</div>
                 <div class="table-actions">
@@ -537,7 +537,7 @@ Used by `playing-user-group-management`
             return;
           }
           var params = {
-            'name[$like]': this.groupsFilter,
+            'groupname[$like]': this.groupsFilter,
             '$skip': (this.groupsCurrentPage - 1) * this.currentPageSize
           };
           this.$.groups.params = params;
@@ -592,7 +592,7 @@ Used by `playing-user-group-management`
             } else {
               this._fetchGroups();
             }
-            this._toast(this.i18n('groupManagement.addedUserToGroup', member.username, this.group.name));
+            this._toast(this.i18n('groupManagement.addedUserToGroup', member.username, this.group.groupname));
           });
         }
         this.selectedMember = null;
@@ -624,7 +624,7 @@ Used by `playing-user-group-management`
             this._fetchGroups();
           }
           this._removeRecent(this._removedMember.id);
-          this._toast(this.i18n('groupManagement.removedUserFromGroup', this._removedMember.name));
+          this._toast(this.i18n('groupManagement.removedUserFromGroup', this._removedMember.groupname));
         });
       },
 
@@ -658,9 +658,10 @@ Used by `playing-user-group-management`
 
       _deleteGroup: function() {
         this.$.deleteGroupDialog.toggle();
-        this.$.editRequest.data = this.group;
-        this.$.editRequest.remove();
-        this._goHome();
+        this.$.editRequest.remove().then((response) => {
+          this.fire('playing-group-removed', response.data);
+          this._goHome();
+        });
       },
 
       _toggleEditMembers: function() {
@@ -671,7 +672,7 @@ Used by `playing-user-group-management`
         var type = e.model.item.type;
         this._removedMember = e.model.item;
         this._removedMember.id = e.model.item.id;
-        this._removedMember.name = type === 'user' ? e.model.item.username : e.model.item.name;
+        this._removedMember.name = type === 'user' ? e.model.item.username : e.model.item.groupname;
         this.$.rmFromGroupDialog.toggle();
       },
 
@@ -699,11 +700,11 @@ Used by `playing-user-group-management`
         if (this.group.memberGroups) {
           var groupInGroup = this.group.memberGroups.indexOf(entry.id) >= 0;
         }
-        return !userInGroup && !groupInGroup && entry.id !== this.group.name;
+        return !userInGroup && !groupInGroup && entry.id !== this.group.groupname;
       },
 
       _resultFormatter: function(item) {
-        return item.label + ' (' + (item.name || item.username) + ')';
+        return item.label + ' (' + (item.groupname || item.username) + ')';
       },
 
       _icon: function(entry) {

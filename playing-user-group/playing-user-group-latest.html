@@ -92,42 +92,42 @@ Example:
     </mostly-resource>
 
     <paper-card>
-    <h3 class="title">
-      <iron-icon icon="nuxeo:recent" prefix></iron-icon>
-      [[i18n('userGroupLatest.recentlyCreated')]]
-    </h3>
-    <div class="table">
-      <div class="table-header">
-        <div class="flex">[[i18n('userGroupLatest.name')]]</div>
-        <div class="flex-2">[[i18n('userGroupLatest.identifier')]]</div>
-        <div class="table-actions">
-          <paper-icon-button noink icon="nuxeo:refresh" on-tap="_refreshLatest"></paper-icon-button>
+      <h3 class="title">
+        <iron-icon icon="nuxeo:recent" prefix></iron-icon>
+        [[i18n('userGroupLatest.recentlyCreated')]]
+      </h3>
+      <div class="table">
+        <div class="table-header">
+          <div class="flex">[[i18n('userGroupLatest.name')]]</div>
+          <div class="flex-2">[[i18n('userGroupLatest.identifier')]]</div>
+          <div class="table-actions">
+            <paper-icon-button noink icon="nuxeo:refresh" on-tap="_refreshLatest"></paper-icon-button>
+          </div>
+        </div>
+        <div class="table-rows">
+          <template is="dom-repeat" items="[[latestCreatedUsersGroups.data]]" as="item">
+            <div class="table-row" on-tap="_manageUserOrGroup">
+              <div class="flex">
+                <template is="dom-if" if="[[_isUser(item)]]">
+                  <template is="dom-if" if="[[_userHasName(item)]]">
+                    <mostly-tag icon="nuxeo:user">[[_displayLCUserGroup(item)]]</mostly-tag>
+                  </template>
+                </template>
+                <template is="dom-if" if="[[_isGroup(item)]]">
+                  <mostly-tag icon="nuxeo:group">[[_displayLCUserGroup(item)]]</mostly-tag>
+                </template>
+              </div>
+              <div class="flex-2">[[item.id]]</div>
+              <div class="table-actions"></div>
+            </div>
+          </template>
+          <template is="dom-if" if=[[_empty(latestCreatedUsersGroups.data)]]>
+            <div class="table-row">
+              <div class="emptyResult">[[i18n('userGroupLatest.emptyRecentUserOrGroup')]]</div>
+            </div>
+          </template>
         </div>
       </div>
-      <div class="table-rows">
-        <template is="dom-repeat" items="[[latestCreatedUsersGroups.data]]" as="item">
-          <div class="table-row" on-tap="_manageUserOrGroup">
-            <div class="flex">
-              <template is="dom-if" if="[[_isUser(item)]]">
-                <template is="dom-if" if="[[_userHasName(item)]]">
-                  <mostly-tag icon="nuxeo:user">[[_displayLCUserGroup(item)]]</mostly-tag>
-                </template>
-              </template>
-              <template is="dom-if" if="[[_isGroup(item)]]">
-                <mostly-tag icon="nuxeo:group">[[_displayLCUserGroup(item)]]</mostly-tag>
-              </template>
-            </div>
-            <div class="flex-2">[[item.id]]</div>
-            <div class="table-actions"></div>
-          </div>
-        </template>
-        <template is="dom-if" if=[[_empty(latestCreatedUsersGroups.data)]]>
-          <div class="table-row">
-            <div class="emptyResult">[[i18n('userGroupLatest.emptyRecentUserOrGroup')]]</div>
-          </div>
-        </template>
-      </div>
-    </div>
     </paper-card>
  </template>
 
@@ -180,21 +180,18 @@ Example:
         this.$.latestCreatedUsersGroups.execute();
       },
 
-      _refreshLatestWithDelay: function() {
-        setTimeout(() => {
-          // audit is on es backend -> async
-          // Let's give it 1 sec to index
-          // (dirty, I know ..)
-          this._refreshLatest();
-        }, 1000);
-      },
-
       ready: function() {
         window.addEventListener('playing-user-created', () => {
-          this._refreshLatestWithDelay();
+          this._refreshLatest();
         });
         window.addEventListener('playing-group-created', () => {
-          this._refreshLatestWithDelay();
+          this._refreshLatest();
+        });
+        window.addEventListener('playing-user-removed', () => {
+          this._refreshLatest();
+        });
+        window.addEventListener('playing-group-removed', () => {
+          this._refreshLatest();
         });
       }
 

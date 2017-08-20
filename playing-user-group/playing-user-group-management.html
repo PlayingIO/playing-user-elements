@@ -191,7 +191,6 @@ Custom property | Description | Default
        * Go to the 'search' page.
        */
       _goSearch: function() {
-        this.page = 'search';
         this.$$('playing-user-group-search')._searchTermChanged();
       },
 
@@ -234,7 +233,7 @@ Custom property | Description | Default
             msg = 'User ' + event.detail.username + ' created';
             break;
           case 'playing-group-created':
-            msg = 'Group ' + event.detail.name + ' created';
+            msg = 'Group ' + event.detail.groupname + ' created';
             break;
         }
         if (msg) {
