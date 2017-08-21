@@ -305,10 +305,6 @@ Used by `playing-user-group-management`
         return true;
       },
 
-      _displayLabel: function(item) {
-        return item.label || (item.firstName + ' ' + item.lastName)
-      },
-
       _resultFormatter: function(item) {
         return item.displayLabel + ' (' + (item.groupname || item.username) + ')';
       },

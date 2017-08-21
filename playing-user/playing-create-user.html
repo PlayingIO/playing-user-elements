@@ -93,9 +93,10 @@ Used by `playing-user-group-management`
 
       <label class="label-password">[[i18n('createUser.setPassword')]]</label>
       <paper-toggle-button checked="{{usePassword}}" name="password-toggle"></paper-toggle-button>
-      <playing-edit-password id="passwordEditor" password="{{user.password}}"
-              required$="[[usePassword]]" hidden$="[[!usePassword]]">
-      </playing-edit-password>
+      <playing-edit-password id="passwordEditor"
+              password="{{user.password}}"
+              required$="[[usePassword]]"
+              hidden$="[[!usePassword]]"></playing-edit-password>
 
       <paper-checkbox noink id="another">[[i18n('createUser.createAnother.checkbox')]]</paper-checkbox>
 
@@ -174,14 +175,13 @@ Used by `playing-user-group-management`
       _doCreate: function(user) {
         if (this.usePassword) {
           this.$.request.data = user;
-          return this.$.request.post().then((user) => {
-            this.fire('playing-user-created', user);
+          return this.$.request.post().then((response) => {
+            this.fire('playing-user-created', response.data);
           })
         } else {
-          this.$.invite.input = user;
-          return this.$.invite.execute().then((id) => {
-            entity.id = user.username;
-            this.fire('playing-user-invited', entity);
+          this.$.invite.data = user;
+          return this.$.invite.execute().then((response) => {
+            this.fire('playing-user-invited', response.data);
           });
         }
       },

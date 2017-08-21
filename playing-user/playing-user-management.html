@@ -167,8 +167,8 @@ Used by `playing-user-group-management`
       <paper-icon-button class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
       <iron-icon icon="nuxeo:user" class="avatar"></iron-icon>
       <div class="layout vertical">
-        <h3 class="username">[[user.id]]</h3>
-        <h4 class="name">[[user.firstName]] [[user.lastName]]</h4>
+        <h3 class="username">[[user.username]]</h3>
+        <h4 class="name">[[user.displayLabel]]</h4>
       </div>
 
       <div class="actions">
@@ -264,7 +264,7 @@ Used by `playing-user-group-management`
       <div id="errors" hidden$="[[!errors]]">[[errors]]</div>
       <template is="dom-repeat" items="[[activity]]">
         <div class="activity-entry">
-          [[i18n('userManagement.memberOf.group', user.id)]]
+          [[i18n('userManagement.memberOf.group', user.username)]]
           <mostly-tag icon="nuxeo:group">[[item.label]]</mostly-tag>
           <span class="remove" on-tap="_toggleDialog">[[i18n('userManagement.group.remove')]]</span>
         </div>
@@ -282,7 +282,7 @@ Used by `playing-user-group-management`
             <div class="flex">
               <mostly-tag icon="nuxeo:group">[[item.label]]</mostly-tag>
             </div>
-            <div class="flex-4">[[item.name]]</div>
+            <div class="flex-4">[[item.groupname]]</div>
             <div class="table-actions">
               <template is="dom-if" if="[[_canRemoveAdministratorsGroup(item)]]">
                 <paper-icon-button icon="nuxeo:remove"
@@ -314,15 +314,15 @@ Used by `playing-user-group-management`
     <template is="dom-repeat" items="[[groups]]">
       <paper-card>
       <playing-user-group-permissions-table
-              label="[[i18n('userManagement.entityPermissions', item.name)]]"
-              entity="[[item.name]]" readonly="[[readonly]]">
+              label="[[i18n('userManagement.entityPermissions', item.groupname)]]"
+              entity="[[item.groupname]]" readonly="[[readonly]]">
       </playing-user-group-permissions-table>
       </paper-card>
     </template>
 
     <paper-dialog id="dialog" modal class="vertical layout">
       <div class="horizontal layout confirm">
-        [[i18n('userManagement.removeUserFromGroup.confirm', user.id, _removedGroup.name)]]
+        [[i18n('userManagement.removeUserFromGroup.confirm', user.id, _removedGroup.groupname)]]
       </div>
       <div class="buttons horizontal end-justified layout">
         <div class="flex start-justified">
@@ -419,7 +419,6 @@ Used by `playing-user-group-management`
       _fetch: function() {
         if (this.username) {
           this.$.request.get().then((response) => {
-            if (!response || !response.data) return;
             delete response.data.password;
             this.user = response.data;
             this.activity = [];
@@ -430,7 +429,7 @@ Used by `playing-user-group-management`
       },
 
       _canRemoveAdministratorsGroup: function(group) {
-        if (group.name === 'administrators') {
+        if (group.groupname === 'administrators') {
           return !this.readonly && this.isAdministrator;
         } else {
           return !this.readonly;
@@ -439,7 +438,7 @@ Used by `playing-user-group-management`
 
       _computeGroups: function() {
         return this.user.groups.filter((group) => {
-          if (this.user.groups.indexOf(group.name) > -1) {
+          if (this.user.groups.indexOf(group.groupname) > -1) {
             return group;
           }
         });
@@ -453,15 +452,16 @@ Used by `playing-user-group-management`
             return;
           }
           var group = {
+            'id': this.selectedGroup.id,
             'groupname': this.selectedGroup.groupname,
-            'label': this.selectedGroup.grouplabel
+            'label': this.selectedGroup.label
           };
           this.push('activity', group);
-          this.$.request.path = 'users/' + this.user.id + '/group/' + group.name;
+          this.$.request.path = 'users/' + this.user.id + '/addGroup';
+          this.$.request.data = { group: this.selectedGroup.id };
           this.$.request.patch().then((response) => {
-            if (!response || !response.data) return;
             this.user = response.data;
-            this._toast(this.i18n('userManagement.addedUserToGroup', this.user.id, group.name));
+            this._toast(this.i18n('userManagement.addedUserToGroup', this.user.id, group.groupname));
           });
         }
         this.selectedGroup = null;
@@ -469,11 +469,12 @@ Used by `playing-user-group-management`
 
       _remove: function() {
         var group = this._removedGroup;
-        this.$.request.path = 'users/' + this.user.id + '/group/' + group.name;
-        return this.$.request.remove().then(() => {
-          this._removeRecent(group.name);
-          this._removeFromGroup(group.name);
-          this._toast(this.i18n('userManagement.removedUserFromGroup', this.user.id, group.name));
+        this.$.request.path = 'users/' + this.user.id + '/removeGroup';
+        this.$.request.data = { group: group.id };
+        return this.$.request.patch().then(() => {
+          this._removeRecent(group.groupname);
+          this._removeFromGroup(group.groupname);
+          this._toast(this.i18n('userManagement.removedUserFromGroup', this.user.id, group.groupname));
         })
       },
 
@@ -526,7 +527,6 @@ Used by `playing-user-group-management`
         this.$.editRequest.data = JSON.parse(JSON.stringify(this.user));
         this.$.editRequest.data.password = this.$.passwordEditor.password;
         this.$.editRequest.put().then((response) => {
-          if (!response || !response.data) return;
           this.user = response.data;
           this._toast(this.i18n('userManagement.password.changed'));
           if (!!this.$.passwordEditor.resetFields) {
@@ -550,7 +550,6 @@ Used by `playing-user-group-management`
         editedUser = this.$.userEditor.user;
         this.$.editRequest.data = editedUser;
         this.$.editRequest.put().then((response) => {
-          if (!response || !response.data) return;
           this.user = response.data;
           this._toast(this.i18n('userManagement.user.updated'));
         });
@@ -562,8 +561,10 @@ Used by `playing-user-group-management`
 
       _deleteUser: function() {
         this.$.deleteUserDialog.toggle();
-        this.$.editRequest.remove();
-        this._goHome();
+        this.$.editRequest.remove().then((response) => {
+          this.fire('playing-user-removed', response.data);
+          this._goHome();
+        });
       },
 
       _goHome: function() {
@@ -572,7 +573,7 @@ Used by `playing-user-group-management`
 
       _resultsFilter: function(entry) {
         for (var i = 0; i < this.groups.length; i++) {
-          if (entry.id === this.groups[i].name) {
+          if (entry.id === this.groups[i].id) {
             return false;
           }
         }
@@ -580,7 +581,7 @@ Used by `playing-user-group-management`
       },
 
       _resultFormatter: function(item) {
-        return item.displayLabel + ' (' + (item.groupname || item.username) + ')';
+        return item.displayLabel + ' (' + item.groupname + ')';
       },
 
       _toast: function(msg) {
