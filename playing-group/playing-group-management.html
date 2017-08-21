@@ -234,7 +234,7 @@ Used by `playing-user-group-management`
 
     <paper-dialog id="rmFromGroupDialog" modal class="vertical layout">
       <div class="horizontal layout confirm">
-        [[i18n('groupManagement.removeUserFromGroup.confirm', _removedMember.name)]]
+        [[i18n('groupManagement.removeUserFromGroup.confirm', _removedMember.displayLabel)]]
       </div>
       <div class="buttons horizontal end-justified layout">
         <div class="flex start-justified">
@@ -271,7 +271,7 @@ Used by `playing-user-group-management`
         <div class="layout vertical flex">
           <h3 class="groupname">[[group.groupname]]</h3>
           <h4 class="grouplabel">[[group.label]]</h4>
-          <h5 class="counter">[[_countUsers(group.users)]] + [[_countGroups(group.memberGroups)]]</h5>
+          <h5 class="counter">[[_countUsers(group.users)]] + [[_countGroups(group.groups)]]</h5>
           <h4 class="grouplabel">[[group.description]]</h4>
         </div>
 
@@ -301,7 +301,7 @@ Used by `playing-user-group-management`
       </playing-user-suggestion>
       <template is="dom-repeat" items="[[activity]]">
         <div class="activity-entry">
-          <mostly-tag icon="[[_icon(item)]]">[[item.label]]</mostly-tag>
+          <mostly-tag icon="[[_icon(item)]]">[[item.displayLabel]]</mostly-tag>
           <span>[[i18n('groupManagement.addedToGroup')]]</span>
           <span class="remove" on-tap="_toggleDeleteDialog">[[i18n('groupManagement.remove')]]</span>
         </div>
@@ -547,9 +547,9 @@ Used by `playing-user-group-management`
       _fetchUsers: function() {
         if (this.group) {
           // if there's only one entry left in the current page and we delete it, we should go to prev page
-          if (this._fromDelete && this.users.length === 1) {
+          if (this._fromDelete && this.memberUsers.length === 1) {
             this._fromDelete = false;
-            this.usersCurrentPage--;
+            this.usersCurrentPage = Math.max(1, this.usersCurrentPage - 1);
             return;
           }
           var params = {
@@ -563,7 +563,7 @@ Used by `playing-user-group-management`
       _cloneGroup(group) {
         var data = Object.assign({}, this.group);
         if (data.users) data.users = data.users.map(it => it.id);
-        if (data.memberGroups) data.memberGroups = data.memberGroups.map(it => it.id);
+        if (data.groups) data.groups = data.groups.map(it => it.id);
         return data;
       },
 
@@ -578,10 +578,10 @@ Used by `playing-user-group-management`
               this.group.users = users;
               break;
             case 'group':
-              var groups = this.group.memberGroups || [];
+              var groups = this.group.groups || [];
               groups.push(member);
               member.type = 'group';
-              this.group.memberGroups = groups;
+              this.group.groups = groups;
               break;
           }
           this.push('activity', member);
@@ -604,14 +604,14 @@ Used by `playing-user-group-management`
         switch (member.type) {
           case 'user':
             if (this.group.users) {
-              idx = this.group.users.indexOf(this._removedMember.id);
+              idx = this.group.users.indexOf(member.id);
               this.group.users.splice(idx, 1);
             }
             break;
           case 'group':
-            if (this.group.memberGroups) {
-              idx = this.group.memberGroups.indexOf(this._removedMember.id);
-              this.group.memberGroups.splice(idx, 1);
+            if (this.group.groups) {
+              idx = this.group.groups.indexOf(member.id);
+              this.group.groups.splice(idx, 1);
               break;
             }
         }
@@ -623,8 +623,8 @@ Used by `playing-user-group-management`
           } else {
             this._fetchGroups();
           }
-          this._removeRecent(this._removedMember.id);
-          this._toast(this.i18n('groupManagement.removedUserFromGroup', this._removedMember.groupname));
+          this._removeRecent(member.id);
+          this._toast(this.i18n('groupManagement.removedUserFromGroup', member.displayLabel));
         });
       },
 
@@ -671,8 +671,6 @@ Used by `playing-user-group-management`
       _toggleDeleteDialog: function(e) {
         var type = e.model.item.type;
         this._removedMember = e.model.item;
-        this._removedMember.id = e.model.item.id;
-        this._removedMember.name = type === 'user' ? e.model.item.username : e.model.item.groupname;
         this.$.rmFromGroupDialog.toggle();
       },
 
@@ -697,14 +695,17 @@ Used by `playing-user-group-management`
         if (this.group.users) {
           var userInGroup = this.group.users.indexOf(entry.id) >= 0;
         }
-        if (this.group.memberGroups) {
-          var groupInGroup = this.group.memberGroups.indexOf(entry.id) >= 0;
+        if (this.group.groups) {
+          var groupInGroup = this.group.groups.indexOf(entry.id) >= 0;
         }
         return !userInGroup && !groupInGroup && entry.id !== this.group.groupname;
       },
 
+      // result display
       _resultFormatter: function(item) {
-        return item.label + ' (' + (item.groupname || item.username) + ')';
+        return item.type === 'group'
+          ? item.displayLabel + ' (' + (item.groupname) + ')'
+          : item.displayLabel + ' (' + (item.username) + ')';
       },
 
       _icon: function(entry) {
