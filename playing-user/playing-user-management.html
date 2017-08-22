@@ -155,10 +155,11 @@ Used by `playing-user-group-management`
       }
     </style>
 
-    <mostly-resource id="request" path="users/[[username]]" enrichers="userprofile" enrichers-entity="user">
-    </mostly-resource>
-
-    <mostly-resource id="editRequest" path="users/[[username]]"></mostly-resource>
+    <mostly-resource id="request"
+            path="users/[[username]]"
+            select='groups, *'></mostly-resource>
+    <mostly-resource id="editRequest"
+            path="users/[[username]]"></mostly-resource>
 
     <paper-toast id="toast"></paper-toast>
 
@@ -322,7 +323,7 @@ Used by `playing-user-group-management`
 
     <paper-dialog id="dialog" modal class="vertical layout">
       <div class="horizontal layout confirm">
-        [[i18n('userManagement.removeUserFromGroup.confirm', user.id, _removedGroup.groupname)]]
+        [[i18n('userManagement.removeUserFromGroup.confirm', user.username, _removedGroup.groupname)]]
       </div>
       <div class="buttons horizontal end-justified layout">
         <div class="flex start-justified">

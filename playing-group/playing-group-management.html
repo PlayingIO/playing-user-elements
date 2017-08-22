@@ -205,8 +205,8 @@ Used by `playing-user-group-management`
 
     <mostly-resource id="request"
             path="groups/[[groupname]]"
-            response-data="{{group}}"
-            headers='{"fetch.group": "memberUsers,memberGroups"}'></mostly-resource>
+            select='users, groups, *'
+            response-data="{{group}}"></mostly-resource>
     <mostly-resource id="users" auto
             path="[[_usersPath(groupname)]]"
             response-data="{{memberUsers}}"></mostly-resource>
@@ -215,8 +215,8 @@ Used by `playing-user-group-management`
             response-data="{{memberGroups}}"></mostly-resource>
     <mostly-resource id="editRequest"
             path="groups/[[groupname]]"
-            response-data="{{group}}"
-            headers='{"fetch.group": "memberUsers,memberGroups"}'></mostly-resource>
+            select='users, groups, *'
+            response-data="{{group}}"></mostly-resource>
 
     <paper-toast id="toast"></paper-toast>
 

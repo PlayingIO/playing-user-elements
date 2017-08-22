@@ -86,9 +86,8 @@ Used by `playing-user-management`
             response="{{users}}"></mostly-resource>
     <mostly-resource id="groupSearch" auto
             path="groups"
-            response="{{groups}}"
-            headers='{"fetch.group": "memberUsers,memberGroups"}'>
-    </mostly-resource>
+            select='users, groups, *'
+            response="{{groups}}"></mostly-resource>
 
     <paper-card class="search">
       <paper-input noink autofocus="true" value="{{searchTerm}}" type="search"
