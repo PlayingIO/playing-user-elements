@@ -205,7 +205,7 @@ Used by `playing-user-group-management`
 
     <mostly-resource id="request"
             path="groups/[[groupname]]"
-            select='users, groups, *'
+            schemas='users,groups,*'
             response-data="{{group}}"></mostly-resource>
     <mostly-resource id="users" auto
             path="[[_usersPath(groupname)]]"
@@ -215,7 +215,7 @@ Used by `playing-user-group-management`
             response-data="{{memberGroups}}"></mostly-resource>
     <mostly-resource id="editRequest"
             path="groups/[[groupname]]"
-            select='users, groups, *'
+            schemas='users,groups,*'
             response-data="{{group}}"></mostly-resource>
 
     <paper-toast id="toast"></paper-toast>
