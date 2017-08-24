@@ -159,7 +159,8 @@ Used by `playing-user-group-management`
             path="users/[[username]]"
             schemas='groups,*'></mostly-resource>
     <mostly-resource id="editRequest"
-            path="users/[[username]]"></mostly-resource>
+            path="users/[[username]]"
+            schemas='groups,*'></mostly-resource>
 
     <paper-toast id="toast"></paper-toast>
 
@@ -527,7 +528,7 @@ Used by `playing-user-group-management`
         this.$.changePasswordDialog.toggle();
         this.$.editRequest.data = JSON.parse(JSON.stringify(this.user));
         this.$.editRequest.data.password = this.$.passwordEditor.password;
-        this.$.editRequest.put().then((response) => {
+        this.$.editRequest.patch().then((response) => {
           this.user = response.data;
           this._toast(this.i18n('userManagement.password.changed'));
           if (!!this.$.passwordEditor.resetFields) {
@@ -550,7 +551,7 @@ Used by `playing-user-group-management`
         var editedUser = JSON.parse(JSON.stringify(this.user));
         editedUser = this.$.userEditor.user;
         this.$.editRequest.data = editedUser;
-        this.$.editRequest.put().then((response) => {
+        this.$.editRequest.patch().then((response) => {
           this.user = response.data;
           this._toast(this.i18n('userManagement.user.updated'));
         });
