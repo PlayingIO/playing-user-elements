@@ -77,7 +77,7 @@ Used by `playing-user-group-management`
 
     <mostly-resource id="request" path="users"></mostly-resource>
 
-    <mostly-operation id="invite" path="users" op="invite" method="post"></mostly-operation>
+    <mostly-operation id="invite" path="users" op="invite" input="me" method="put"></mostly-operation>
 
     <div class="header horizontal layout center">
       <paper-icon-button class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
@@ -179,7 +179,7 @@ Used by `playing-user-group-management`
             this.fire('playing-user-created', response.data);
           })
         } else {
-          this.$.invite.data = user;
+          this.$.invite.params = { user: user };
           return this.$.invite.execute().then((response) => {
             this.fire('playing-user-invited', response.data);
           });
