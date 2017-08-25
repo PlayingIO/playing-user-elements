@@ -94,8 +94,12 @@ Example:
     </style>
 
     <mostly-connection id="nxcon"></mostly-connection>
-    <mostly-resource id="request" path="users/me"></mostly-resource>
-    <mostly-resource id="changePassword" path="users/me/changePassword"></mostly-resource>
+    <mostly-resource id="request"
+            path="users/me"
+            schemas='groups,*'></mostly-resource>
+    <mostly-resource id="changePassword"
+            path="users/me/changePassword"
+            schemas='groups,*'></mostly-resource>
 
     <paper-toast id="toast"></paper-toast>
 
@@ -161,7 +165,7 @@ Example:
         <div class="flex">[[i18n('userManagement.name')]]</div>
         <div class="flex-4">[[i18n('userManagement.identifier')]]</div>
       </div>
-      <template is="dom-repeat" items="[[groups]]">
+      <template is="dom-repeat" items="[[user.groups]]">
         <div class="row">
           <div class="flex"><mostly-tag icon="nuxeo:group">[[item.label]]</mostly-tag></div>
           <div class="flex-4">[[item.name]]</div>
@@ -172,16 +176,18 @@ Example:
 
     <!-- local permissions -->
     <paper-card>
-    <playing-user-group-permissions-table label="[[i18n('userManagement.localPermissions.heading')]]"
-                                        entity="[[username]]" readonly>
+    <playing-user-group-permissions-table
+            label="[[i18n('userManagement.localPermissions.heading')]]"
+            entity="[[username]]" readonly>
     </playing-user-group-permissions-table>
     </paper-card>
 
     <!-- group permissions -->
     <paper-card>
-    <template is="dom-repeat" items="[[groups]]">
-      <playing-user-group-permissions-table label="[[i18n('userManagement.entityPermissions', item.name)]]"
-                                          entity="[[item.name]]" readonly>
+    <template is="dom-repeat" items="[[user.groups]]">
+      <playing-user-group-permissions-table
+              label="[[i18n('userManagement.entityPermissions', item.name)]]"
+              entity="[[item.name]]" readonly>
       </playing-user-group-permissions-table>
     </template>
     </paper-card>
@@ -199,11 +205,6 @@ Example:
         },
 
         user: Object,
-
-        groups: {
-          type: Object,
-          computed: '_computeGroups(user)'
-        },
 
         readonly: {
           type: Boolean,
@@ -238,10 +239,6 @@ Example:
             }
           });
         }
-      },
-
-      _computeGroups: function() {
-        return this.user.groups;
       },
 
       _openChangePasswordDialog: function() {

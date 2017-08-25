@@ -279,7 +279,7 @@ Used by `playing-user-group-management`
         <div class="table-actions">&nbsp;</div>
       </div>
       <template is="dom-if" if=[[!empty]]>
-        <template is="dom-repeat" items="[[groups]]">
+        <template is="dom-repeat" items="[[user.groups]]">
           <div class="table-row">
             <div class="flex">
               <mostly-tag icon="nuxeo:group">[[item.label]]</mostly-tag>
@@ -313,7 +313,7 @@ Used by `playing-user-group-management`
     </paper-card>
 
     <!-- group permissions -->
-    <template is="dom-repeat" items="[[groups]]">
+    <template is="dom-repeat" items="[[user.groups]]">
       <paper-card>
       <playing-user-group-permissions-table
               label="[[i18n('userManagement.entityPermissions', item.groupname)]]"
@@ -346,11 +346,6 @@ Used by `playing-user-group-management`
         },
 
         user: Object,
-
-        groups: {
-          type: Object,
-          computed: '_computeGroups(user)'
-        },
 
         selectedGroup: {
           type: Object,
@@ -403,7 +398,7 @@ Used by `playing-user-group-management`
       },
 
       observers: [
-        '_userRemovedFromGroup(groups.splices)'
+        '_userRemovedFromGroup(user.groups)'
       ],
 
       ready: function() {
@@ -438,14 +433,6 @@ Used by `playing-user-group-management`
         }
       },
 
-      _computeGroups: function() {
-        return this.user.groups.filter((group) => {
-          if (this.user.groups.indexOf(group.groupname) > -1) {
-            return group;
-          }
-        });
-      },
-
       _groupSelected: function() {
         if (this.selectedGroup) {
           if (!this.isAdministrator && this.selectedGroup.groupname === 'administrators') {
@@ -463,7 +450,7 @@ Used by `playing-user-group-management`
           this.$.request.data = { group: this.selectedGroup.id };
           this.$.request.patch().then((response) => {
             this.user = response.data;
-            this._toast(this.i18n('userManagement.addedUserToGroup', this.user.id, group.groupname));
+            this._toast(this.i18n('userManagement.addedUserToGroup', this.user.username, group.groupname));
           });
         }
         this.selectedGroup = null;
@@ -474,37 +461,22 @@ Used by `playing-user-group-management`
         this.$.request.path = 'users/' + this.user.id + '/removeGroup';
         this.$.request.data = { group: group.id };
         return this.$.request.patch().then(() => {
-          this._removeRecent(group.groupname);
-          this._removeFromGroup(group.groupname);
-          this._toast(this.i18n('userManagement.removedUserFromGroup', this.user.id, group.groupname));
+          this._removeRecent(group.id);
+          this._removeFromGroup(group.id);
+          this._toast(this.i18n('userManagement.removedUserFromGroup', this.user.username, group.groupname));
         })
       },
 
       _removeRecent: function(group) {
-        // remove from 'recent', if it exists
-        for (var i = 0; i < this.activity.length; i++) {
-          if (this.activity[i].name === group) {
-            this.splice('activity', i, 1);
-            return;
-          }
-        }
+        this.activity = this.activity.filter(it => it.id !== group);
       },
 
       _removeFromGroup: function(group) {
-        // DELETE request does not return the user object, so when we remove
-        // we need to manually update the user model and the list of groups
-        var idx = this.user.groups.indexOf(group);
-        this.user.groups.splice(idx, 1);
-        for (var i = 0; i < this.groups.length; i++) {
-          if (this.groups[i].name === group) {
-            this.splice('groups', i, 1);
-            return;
-          }
-        }
+        this.set('user.groups', this.user.groups.filter(it => it.id !== group));
       },
 
       _userRemovedFromGroup: function() {
-        this.empty = this.groups.length === 0;
+        this.empty = this.user.groups.length === 0;
       },
 
       _toggleEditGroups: function() {
@@ -574,8 +546,8 @@ Used by `playing-user-group-management`
       },
 
       _resultsFilter: function(entry) {
-        for (var i = 0; i < this.groups.length; i++) {
-          if (entry.id === this.groups[i].id) {
+        for (var i = 0; i < this.user.groups.length; i++) {
+          if (entry.id === this.user.groups[i].id) {
             return false;
           }
         }
