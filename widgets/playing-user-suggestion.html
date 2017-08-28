@@ -167,8 +167,9 @@
       },
 
       _resultFormatter: function(item) {
-        return (item.label || item.title)
-          + ((item.type && item.type === 'user') ? '<br>' + item.email : '');
+        return item.type === 'group'
+          ? item.displayLabel + ' (' + (item.groupname) + ')'
+          : item.displayLabel + ' (' + (item.username) + ')';
       },
 
       _resolveEntry: function(term) {
