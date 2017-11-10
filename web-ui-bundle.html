@@ -1,24 +1,24 @@
 <!-- USER MENU -->
 
-<nuxeo-slot-content name="adminUserManagementMenuItem" slot="ADMINISTRATION_MENU" order="20">
+<mostly-slot-content name="adminUserManagementMenuItem" slot="ADMINISTRATION_MENU" order="20">
   <template>
     <mostly-menu-item name="user-group-management" label="admin.usersAndGroups.heading" route="administration:user-group-management"></mostly-menu-item>
   </template>
-</nuxeo-slot-content>
-<nuxeo-slot-content name="adminUserManagementPage" slot="ADMINISTRATION_PAGES">
+</mostly-slot-content>
+<mostly-slot-content name="adminUserManagementPage" slot="ADMINISTRATION_PAGES">
   <template>
     <playing-user-group-management-page name="user-group-management" is-administrator$="[[user.isAdministrator]]" entity="[[entity]]"></playing-user-group-management-page>
   </template>
-</nuxeo-slot-content>
+</mostly-slot-content>
 
-<nuxeo-slot-content name="profileUserMenuItem" slot="USER_MENU" order="10">
+<mostly-slot-content name="profileUserMenuItem" slot="USER_MENU" order="10">
   <template>
     <mostly-menu-item name="profile" label="app.user.profile" route="page:profile"></mostly-menu-item>
   </template>
-</nuxeo-slot-content>
+</mostly-slot-content>
 
-<nuxeo-slot-content name="profilePage" slot="PAGES" order="0">
+<mostly-slot-content name="profilePage" slot="PAGES" order="0">
   <template>
     <playing-profile name="profile" selected="[[selectedProfileTab]]" user="[[currentUser]]"></playing-profile>
   </template>
-</nuxeo-slot-content>
+</mostly-slot-content>
