@@ -107,7 +107,7 @@ Example:
 
     <div class="horizontal layout center">
 
-      <iron-icon class="user-icon" icon="nuxeo:user"></iron-icon>
+      <iron-icon class="user-icon" icon="mostly:user"></iron-icon>
       <div class="layout vertical">
         <div class="user">[[user.username]]</div>
         <div>[[user.nickname]]</div>
@@ -118,7 +118,7 @@ Example:
         <!-- change password -->
         <template is="dom-if" if=[[!readonly]]>
           <paper-button noink id="changePasswordButton" class="horizontal layout center primary" on-tap="_openChangePasswordDialog">
-            <iron-icon icon="nuxeo:lock"></iron-icon> [[i18n('userProfile.password.change')]]
+            <iron-icon icon="mostly:lock"></iron-icon> [[i18n('userProfile.password.change')]]
           </paper-button>
         </template>
         <paper-dialog id="changePasswordDialog" with-backdrop>
@@ -167,7 +167,7 @@ Example:
       </div>
       <template is="dom-repeat" items="[[user.groups]]">
         <div class="row">
-          <div class="flex"><mostly-tag icon="nuxeo:group">[[item.label]]</mostly-tag></div>
+          <div class="flex"><mostly-tag icon="mostly:group">[[item.label]]</mostly-tag></div>
           <div class="flex-4">[[item.name]]</div>
         </div>
       </template>

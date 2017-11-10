@@ -91,7 +91,7 @@ Example:
 
     <paper-card>
       <h3 class="title">
-        <iron-icon icon="nuxeo:recent" prefix></iron-icon>
+        <iron-icon icon="mostly:recent" prefix></iron-icon>
         [[i18n('userGroupLatest.recentlyCreated')]]
       </h3>
       <div class="table">
@@ -99,7 +99,7 @@ Example:
           <div class="flex">[[i18n('userGroupLatest.name')]]</div>
           <div class="flex-2">[[i18n('userGroupLatest.identifier')]]</div>
           <div class="table-actions">
-            <paper-icon-button noink icon="nuxeo:refresh" on-tap="_refreshLatest"></paper-icon-button>
+            <paper-icon-button noink icon="mostly:refresh" on-tap="_refreshLatest"></paper-icon-button>
           </div>
         </div>
         <div class="table-rows">
@@ -108,11 +108,11 @@ Example:
               <div class="flex">
                 <template is="dom-if" if="[[_isUser(item)]]">
                   <template is="dom-if" if="[[_userHasName(item)]]">
-                    <mostly-tag icon="nuxeo:user">[[_displayLCUserGroup(item)]]</mostly-tag>
+                    <mostly-tag icon="mostly:user">[[_displayLCUserGroup(item)]]</mostly-tag>
                   </template>
                 </template>
                 <template is="dom-if" if="[[_isGroup(item)]]">
-                  <mostly-tag icon="nuxeo:group">[[_displayLCUserGroup(item)]]</mostly-tag>
+                  <mostly-tag icon="mostly:group">[[_displayLCUserGroup(item)]]</mostly-tag>
                 </template>
               </div>
               <div class="flex-2">[[item.id]]</div>

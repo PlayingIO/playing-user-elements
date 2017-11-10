@@ -92,7 +92,7 @@ Used by `playing-user-management`
     <paper-card class="search">
       <paper-input noink autofocus="true" value="{{searchTerm}}" type="search"
               placeholder="[[i18n('userGroupSearch.search.placeholder')]]">
-        <iron-icon icon="nuxeo:search" prefix></iron-icon>
+        <iron-icon icon="mostly:search" prefix></iron-icon>
       </paper-input>
     </paper-card>
 
@@ -101,7 +101,7 @@ Used by `playing-user-management`
       <!-- groups -->
       <paper-card>
       <h3 class="title">
-        <iron-icon icon="nuxeo:group"></iron-icon> [[i18n('userGroupSearch.groups')]]
+        <iron-icon icon="mostly:group"></iron-icon> [[i18n('userGroupSearch.groups')]]
       </h3>
       <div class="table">
         <div class="table-header">
@@ -113,7 +113,7 @@ Used by `playing-user-management`
           <template is="dom-repeat" items="[[groups.data]]" as="item">
             <div class="table-row" on-tap="_manageGroup">
               <div class="flex-4">
-                <mostly-tag icon="nuxeo:group">[[item.label]]</mostly-tag>
+                <mostly-tag icon="mostly:group">[[item.label]]</mostly-tag>
               </div>
               <div class="flex-2">[[item.groupname]]</div>
               <div class="flex-4">
@@ -135,7 +135,7 @@ Used by `playing-user-management`
       <!-- users -->
       <paper-card>
       <h3 class="title">
-        <iron-icon icon="nuxeo:user"></iron-icon> [[i18n('userGroupSearch.users.heading')]]
+        <iron-icon icon="mostly:user"></iron-icon> [[i18n('userGroupSearch.users.heading')]]
       </h3>
       <div class="table">
         <div class="table-header">
@@ -148,7 +148,7 @@ Used by `playing-user-management`
             <div class="table-row" on-tap="_manageUser">
               <div class="flex-4">
                 <template is="dom-if" if="[[_userHasName(item)]]">
-                  <mostly-tag icon="nuxeo:user"> [[_displayUserName(item)]]</mostly-tag>
+                  <mostly-tag icon="mostly:user"> [[_displayUserName(item)]]</mostly-tag>
                 </template>
               </div>
               <div class="flex-2">[[item.id]]</div>

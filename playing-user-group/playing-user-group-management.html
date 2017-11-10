@@ -86,16 +86,16 @@ Custom property | Description | Default
           <template is="dom-if" if=[[!readonly]]>
             <paper-menu-button noanimations id="createDropdown" horizontal-align="right">
               <paper-button noink class="dropdown-trigger primary" id="createButton">
-                <iron-icon icon="nuxeo:add"></iron-icon>
+                <iron-icon icon="mostly:add"></iron-icon>
                 <span>[[i18n('userGroupManagement.new.usergroup')]]</span>
               </paper-button>
               <paper-menu noAnimation id="menu" class="dropdown-content" selectable="item">
                 <paper-icon-item name="user" on-tap="_createUser">
-                  <iron-icon icon="nuxeo:user" item-icon></iron-icon>
+                  <iron-icon icon="mostly:user" item-icon></iron-icon>
                   <span>[[i18n('userGroupManagement.new.user')]]</span>
                 </paper-icon-item>
                 <paper-icon-item name="group" on-tap="_createGroup">
-                  <iron-icon icon="nuxeo:group" item-icon></iron-icon>
+                  <iron-icon icon="mostly:group" item-icon></iron-icon>
                   <span>[[i18n('userGroupManagement.new.group')]]</span>
                 </paper-icon-item>
               </paper-menu>
