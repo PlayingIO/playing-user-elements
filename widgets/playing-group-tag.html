@@ -17,7 +17,15 @@ Example:
 -->
 <dom-module id="playing-group-tag">
   <template>
+    <style>
+      a {
+        @apply --mostly-link;
+      }
 
+      a:hover {
+        @apply --mostly-link-hover;
+      }
+    </style>
     <mostly-tag icon="mostly:group">
       <template is="dom-if" if="[[!disabled]]">
         <a href$="[[_href(group)]]">[[_label(group)]]</a>
@@ -58,20 +66,12 @@ Example:
         }
       },
 
-      _isEntity: function(group) {
-        return group && group['entity-type'] && group['entity-type'] === 'group';
-      },
-
       _name: function(group) {
-        return this._isEntity(group) ? group.groupname : group.replace('group:', '');
+        return group.groupname || group.name;
       },
 
       _label: function(group) {
-        if (this._isEntity(group)) {
-          return group.grouplabel;
-        } else {
-          return group.replace('group:', '');
-        }
+        return group.grouplabel || group.groupname;
       },
 
       _href: function(group) {
