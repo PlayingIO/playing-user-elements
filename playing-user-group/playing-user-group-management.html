@@ -7,7 +7,7 @@
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../paper-menu/paper-menu.html">
+<link rel="import" href="../../paper-listbox/paper-listbox.html">
 <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../paper-item/paper-icon-item.html">
 <link rel="import" href="../../paper-toast/paper-toast.html">
@@ -17,9 +17,10 @@
 <link rel="import" href="../../iron-icons/iron-icons.html">
 <link rel="import" href="../../iron-icons/social-icons.html">
 
-<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
-
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-filters-behavior.html">
 
 <link rel="import" href="../widgets/playing-user-suggestion.html">
 <link rel="import" href="../playing-group/playing-create-group.html">
@@ -50,7 +51,7 @@ Custom property | Description | Default
 -->
 <dom-module id="playing-user-group-management">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment mostly-styles">
       :host {
         display: block;
         position: relative;
@@ -64,41 +65,63 @@ Custom property | Description | Default
         top: 15px;
       }
 
-      paper-menu {
-        padding: 0;
+      paper-menu-button {
+        width: 130px;
+        height: 48px;
+        margin-bottom: 16px;
       }
 
-      paper-menu paper-icon-item:hover {
+      paper-button {
+        width: 100%;
+      }
+
+      paper-button iron-icon {
+        padding-right: 8px;
+      }
+
+      paper-listbox {
+        width: 130px;
+        outline: none;
+      }
+
+      paper-listbox paper-icon-item iron-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+
+      paper-listbox paper-icon-item:hover {
         background: var(--nuxeo-container-hover, #fafafa);
         cursor: pointer;
       }
 
-      paper-button iron-icon {
-        margin-right: .5em;
+      paper-card {
+        @apply --nuxeo-card;
       }
-
     </style>
+
+    <mostly-connection user="{{_currentUser}}"></nuxeo-mostly>
 
     <paper-toast id="toast"></paper-toast>
     <iron-pages selected="[[page]]" attr-for-selected="name">
       <section name="search">
         <div class="horizontal layout center">
-          <template is="dom-if" if=[[!readonly]]>
-            <paper-menu-button noanimations id="createDropdown" horizontal-align="right">
-              <paper-button noink class="dropdown-trigger primary" id="createButton">
+          <template is="dom-if" if="[[_canCreateUserGroup(readonly, _currentUser)]]">
+            <paper-menu-button no-animations id="createDropdown" no-overlap
+                    horizontal-align="right" vertical-align="top" vertical-offset="-4">
+              <paper-button noink class="primary" id="createButton" slot="dropdown-trigger">
                 <iron-icon icon="mostly:add"></iron-icon>
-                <span>[[i18n('userGroupManagement.new.usergroup')]]</span>
+                <div>[[i18n('userGroupManagement.new.usergroup')]]</div>
               </paper-button>
-              <paper-menu noAnimation id="menu" class="dropdown-content" selectable="item">
+              <paper-listbox no-animation id="menu" selectable="item" slot="dropdown-content">
                 <paper-icon-item name="user" on-tap="_createUser">
-                  <iron-icon icon="mostly:user" item-icon></iron-icon>
+                  <iron-icon icon="mostly:user" slot="item-icon"></iron-icon>
                   <span>[[i18n('userGroupManagement.new.user')]]</span>
                 </paper-icon-item>
                 <paper-icon-item name="group" on-tap="_createGroup">
-                  <iron-icon icon="mostly:group" item-icon></iron-icon>
+                  <iron-icon icon="mostly:group" slot="item-icon"></iron-icon>
                   <span>[[i18n('userGroupManagement.new.group')]]</span>
                 </paper-icon-item>
-              </paper-menu>
+              </paper-listbox>
             </paper-menu-button>
           </template>
         </div>
@@ -107,15 +130,14 @@ Custom property | Description | Default
 
       <section name="create-user">
         <paper-card>
-          <playing-create-user is-administrator="[[isAdministrator]]"></playing-create-user>
+          <playing-create-user readonly$="[[readonly]]"></playing-create-user>
         </paper-card>
       </section>
 
       <section name="manage-user">
         <playing-user-management
                 username="[[selectedUser]]"
-                readonly$="[[readonly]]"
-                is-administrator="[[isAdministrator]]"></playing-user-management>
+                readonly$="[[readonly]]"></playing-user-management>
       </section>
 
       <section name="create-group">
@@ -136,7 +158,7 @@ Custom property | Description | Default
     Polymer({
       is: 'playing-user-group-management',
 
-      behaviors: [Mostly.I18nBehavior],
+      behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior],
 
       properties: {
         /**
@@ -158,8 +180,7 @@ Custom property | Description | Default
          * Selected group id.
          */
         selectedGroup: {
-          type: String,
-          observer: '_selectedGroupChanged'
+          type: String
         },
 
         /**
@@ -171,12 +192,8 @@ Custom property | Description | Default
           reflectToAttribute: true
         },
 
-        /**
-         * Set to true for administrators to remove restrictions.
-         */
-        isAdministrator: {
-          type: Boolean,
-          value: false
+        _currentUser: {
+          type: Object
         }
       },
 
@@ -191,6 +208,8 @@ Custom property | Description | Default
        * Go to the 'search' page.
        */
       _goSearch: function() {
+        this.selectedGroup = null;
+        this.selectedUser = null;
         this.$$('playing-user-group-search')._searchTermChanged();
       },
 
@@ -209,17 +228,23 @@ Custom property | Description | Default
       },
 
       _manageUser: function(e) {
+        this.selectedUser = null;
         this.selectedUser = e.detail.user;
         this.page = 'manage-user';
       },
 
       _manageGroup: function(e) {
+        this.selectedGroup = null;
         this.selectedGroup = e.detail.group;
         this.page = 'manage-group';
       },
 
-      _selectedGroupChanged: function() {
-        this.readonly = !!(this.selectedGroup === 'administrators' && !this.isAdministrator);
+      _hasAdministrationPermissions: function(user) {
+        return user && (user.isAdministrator || this.isMember(user, 'powerusers'));
+      },
+
+      _canCreateUserGroup: function(readonly, currentUser) {
+        return !readonly && this._hasAdministrationPermissions(currentUser);
       },
 
       /**
@@ -265,7 +290,7 @@ Custom property | Description | Default
        * Determines whether a custom element is registered
        */
       _isRegistered: function(tag) {
-        return Polymer.isInstance(document.createElement(tag));
+        return document.createElement(tag) instanceof Polymer.Element;
       }
 
     });
