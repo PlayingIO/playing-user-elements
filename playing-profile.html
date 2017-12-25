@@ -8,8 +8,8 @@
     <mostly-connection id="nxcon" user="{{currentUser}}"></mostly-connection>
 
     <mostly-page>
-      <div class="header">[[i18n('profile.heading')]]</div>
-      <div class="content">
+      <div slot="header">[[i18n('profile.heading')]]</div>
+      <div>
         <paper-card>
           <playing-user-profile username="[[_username(currentUser)]]"></playing-user-profile>
         </paper-card>
