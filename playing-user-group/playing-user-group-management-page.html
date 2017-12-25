@@ -1,7 +1,8 @@
 <link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../mostly-elements/mostly-app/mostly-page.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-filters-behavior.html">
 <link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
 <link rel="import" href="../../mostly-elements/behaviors/mostly-routing-behavior.html">
+<link rel="import" href="../../mostly-elements/mostly-app/mostly-page.html">
 <link rel="import" href="playing-user-group-management.html">
 <link rel="import" href="playing-user-group-latest.html">
 
@@ -14,13 +15,13 @@
   <template>
 
     <mostly-page>
-      <div class="header">
+      <div slot="header">
         <span class="flex">[[i18n('admin.usersAndGroups.heading')]]</span>
       </div>
-      <div class="content">
-        <template is="dom-if" if="visible">
-          <playing-user-group-management id="management" page="{{page}}" is-administrator$="[[isAdministrator]]"></playing-user-group-management>
-          <template is="dom-if" if="[[_displayLatest(page)]]">
+      <div>
+        <template is="dom-if" if="[[visible]]">
+          <playing-user-group-management id="management" page="{{page}}"></playing-user-group-management>
+          <template is="dom-if" if="[[_displayLatest]]">
             <playing-user-group-latest></playing-user-group-latest>
           </template>
         </template>
@@ -39,17 +40,13 @@
         },
         page: {
           type: String,
-          value: 'search'
+          value: 'search',
+          observer: '_observePage'
         },
         entity: {
           type: Object,
           value: {},
           observer: '_entityChanged'
-        },
-        isAdministrator: {
-          type: Boolean,
-          value: false,
-          reflectToAttribute: true
         }
       },
 
@@ -63,7 +60,7 @@
         if (!this.visible) {
           return;
         }
-        var management = this.querySelector('playing-user-group-management');
+        var management = this.root.querySelector('playing-user-group-management');
         if (this.entity && this.entity.id && this.entity.type) {
           if (this.entity.type === 'group') {
             management.selectedGroup = this.entity.id;
@@ -97,30 +94,18 @@
 
       _handleUGMmanageUser: function(e) {
         this.entity = {type: 'user', id: e.detail.user};
-        var url = '';
-        if (this.selectedAdminTab) {
-          url += this.selectedAdminTab;
-          if (this.selectedAdminTab === 'user-group-management' &&
-            this.entity && this.entity.id && this.entity.type)
-          {
-            url += '/' + this.entity.type + '/' + this.entity.id;
-          }
-        }
+        var url = 'user-group-management' + '/' + this.entity.type + '/' + this.entity.id;
         this.navigateTo('administration', url);
       },
 
       _handleUGMmanageGroup: function(e) {
         this.entity = {type: 'group', id: e.detail.group};
-        var url = '';
-        if (this.selectedAdminTab) {
-          url += this.selectedAdminTab;
-          if (this.selectedAdminTab === 'user-group-management' &&
-            this.entity && this.entity.id && this.entity.type)
-          {
-            url += '/' + this.entity.type + '/' + this.entity.id;
-          }
-        }
+        var url = 'user-group-management' + '/' + this.entity.type + '/' + this.entity.id;
         this.navigateTo('administration', url);
+      },
+
+      _observePage: function() {
+        this._displayLatest = this.page === "search";
       }
     });
   </script>
