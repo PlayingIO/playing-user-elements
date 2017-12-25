@@ -1,10 +1,13 @@
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-form/iron-form.html">
 <link rel="import" href="../../paper-input/paper-input.html">
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
+
 <link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
 <link rel="import" href="../widgets/playing-user-suggestion.html">
 <link rel="import" href="playing-edit-password.html">
@@ -16,7 +19,7 @@ Used by `playing-user-group-management`
 -->
 <dom-module id="playing-create-user">
   <template>
-    <style>
+    <style include="mostly-styles">
       :host {
         display: block;
       }
@@ -26,7 +29,7 @@ Used by `playing-user-group-management`
       }
 
       playing-user-suggestion {
-        @apply(--layout-flex);
+        @apply --layout-flex;
       }
 
       .backButton {
@@ -68,13 +71,13 @@ Used by `playing-user-group-management`
         margin-right: .2rem;
       }
 
-       .form-buttons {
-        background-color:var(--nuxeo-dialog-buttons-bar, #eee);
+      .form-buttons {
         padding: 1em;
-        margin: 0 -1.2rem;
+        margin: 16px -1.2rem 0;
       }
     </style>
 
+    <mostly-connection user="{{_currentUser}}"></mostly-connection>
     <mostly-resource id="request" path="users"></mostly-resource>
 
     <mostly-operation id="invite" path="users" op="invite" input="me" method="put"></mostly-operation>
@@ -84,30 +87,38 @@ Used by `playing-user-group-management`
       <h3><iron-icon icon="mostly:user"></iron-icon>[[i18n('createUser.heading')]]</h3>
     </div>
 
-    <form is="iron-form" id="form" class="vertical layout">
-      <paper-input label="[[i18n('createUser.username')]]" value="{{user.username}}"
-              name="username" required always-float-label>
-      </paper-input>
+    <iron-form id="form">
+      <form class="vertical layout">
+        <paper-input label="[[i18n('createUser.username')]]" value="{{user.username}}"
+                name="username" required always-float-label>
+        </paper-input>
 
-      <playing-edit-user id="propertyEditor" user="{{user}}" new></playing-edit-user>
+        <playing-edit-user id="propertyEditor" user="{{user}}" new></playing-edit-user>
 
-      <label class="label-password">[[i18n('createUser.setPassword')]]</label>
-      <paper-toggle-button checked="{{usePassword}}" name="password-toggle"></paper-toggle-button>
-      <playing-edit-password id="passwordEditor"
-              password="{{user.password}}"
-              required$="[[usePassword]]"
-              hidden$="[[!usePassword]]"></playing-edit-password>
+        <label class="label-password">[[i18n('createUser.setPassword')]]</label>
+        <paper-toggle-button checked="{{usePassword}}" name="password-toggle"></paper-toggle-button>
+        
+        <template is="dom-if" if="[[usePassword]]" restamp>
+          <playing-edit-password id="passwordEditor"
+                  password="{{user.password}}"
+                  required></playing-edit-password>
+        </template>
 
-      <paper-checkbox noink id="another">[[i18n('createUser.createAnother.checkbox')]]</paper-checkbox>
+        <paper-checkbox noink id="another">[[i18n('createUser.createAnother.checkbox')]]</paper-checkbox>
 
-      <div class="form-buttons">
-        <paper-button noink id="cancelButton" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
-        <paper-button noink id="createButton" class="primary" on-tap="_submit">[[i18n('command.create')]]</paper-button>
-      </div>
+        <div class="form-buttons">
+          <paper-button noink id="cancelButton" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
+          <paper-button noink id="createButton" class="primary" on-tap="_submit">[[i18n('command.create')]]</paper-button>
+          <paper-button noink id="createAnotherButton" class="primary" on-tap="_submitAnother">
+            [[i18n('createUser.createAnother')]]
+          </paper-button>
+        </div>
 
-      <span id="errors" hidden$="[[!_hasErrors(errors)]]">[[errors]]</span>
+        <span id="errors" hidden$="[[!_hasErrors(errors)]]">[[errors]]</span>
 
-    </form>
+      </form>
+    </iron-form>
+
   </template>
 
   <script>
@@ -130,9 +141,16 @@ Used by `playing-user-group-management`
           value: ''
         },
 
-        isAdministrator: {
+        /**
+         * If true, allows to create a new user immediately after the current one is created
+         */
+        _createAnother: {
           type: Boolean,
           value: false
+        },
+
+        _currentUser: {
+          type: Object
         }
       },
 
@@ -148,9 +166,18 @@ Used by `playing-user-group-management`
       },
 
       /**
+       * Submits the form with `_createAnother` option set to true.
+       */
+      _submitAnother: function() {
+        this._createAnother = true;
+        this.$.form.submit();
+      },
+
+      /**
        * Submits the form.
        */
       _submit: function() {
+        this._createAnother = false;
         this.$.form.submit();
       },
 
@@ -158,13 +185,16 @@ Used by `playing-user-group-management`
        * Creates a new user if the form was successfully submitted.
        */
       _create: function() {
-        if (!this.isAdministrator && this.user.groups && this.user.groups.indexOf('administrators') !== -1) {
+        if (!this._isAdministrator(this._currentUser)
+            && this.user.groups
+            && this.user.groups.indexOf('administrators') !== -1)
+        {
           this.errors = this.i18n('createUser.errorAdministratorsGroup');
           return;
         }
         this._doCreate(this.user).then((user) => {
           this._resetFields();
-          if (!this.$.another.checked) {
+          if (!this._createAnother) {
             this._goHome();
           }
         }).catch((error) => {
@@ -192,14 +222,20 @@ Used by `playing-user-group-management`
       },
 
       _resetFields: function() {
-        this.user = {};
-        this.$.passwordEditor.resetFields();
+        this.user = { groups: [] };
+        if (this.$.passwordEditor) {
+          this.$.passwordEditor.resetFields();
+        }
         this.errors = '';
         this.usePassword = false;
       },
 
       _hasErrors: function() {
         return this.errors !== '';
+      },
+
+      _isAdministrator: function(user) {
+        return user && user.isAdministrator;
       }
     });
   </script>

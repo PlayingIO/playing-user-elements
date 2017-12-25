@@ -1,4 +1,5 @@
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../paper-input/paper-input.html">
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
@@ -15,7 +16,7 @@ Used by `playing-user-group-management`
 -->
 <dom-module id="playing-create-group">
   <template>
-    <style>
+    <style include="mostly-styles iron-flex-alignment">
       :host {
         display: block;
       }
@@ -102,9 +103,8 @@ Used by `playing-user-group-management`
       }
 
       .form-buttons {
-        background-color: var(--nuxeo-dialog-buttons-bar, #eee);
         padding: 1em;
-        margin: 0 -1.2rem;
+        margin: 16px -1.2rem 0;
       }
     </style>
 
@@ -115,57 +115,63 @@ Used by `playing-user-group-management`
       <h3><iron-icon icon="mostly:group"></iron-icon>[[i18n('createGroup.heading')]]</h3>
     </div>
 
-    <form is="iron-form" id="form" class="vertical layout">
+    <iron-form id="form">
+      <form class="vertical layout">
 
-      <paper-input id="groupName"
-              label="[[i18n('createGroup.group.name')]]"
-              value="{{groupName}}" required always-float-label></paper-input>
-      <paper-input id="groupLabel"
-              label="[[i18n('createGroup.group.label')]]"
-              value="{{groupLabel}}" always-float-label></paper-input>
+        <paper-input id="groupName"
+                label="[[i18n('createGroup.group.name')]]"
+                value="{{groupName}}" required always-float-label></paper-input>
+        <paper-input id="groupLabel"
+                label="[[i18n('createGroup.group.label')]]"
+                value="{{groupLabel}}" always-float-label></paper-input>
 
-      <playing-user-suggestion id="picker"
-              label="[[i18n('createGroup.members')]]"
-              search-type="user-group"
-              placeholder="[[i18n('createGroup.search.placeholder')]]"
-              value="[[selectedUser]]"
-              selected-items="{{selectedUser}}"
-              result-formatter="[[resultFormatter]]">
-      </playing-user-suggestion>
+        <playing-user-suggestion id="picker"
+                label="[[i18n('createGroup.members')]]"
+                search-type="user-group"
+                placeholder="[[i18n('createGroup.search.placeholder')]]"
+                value="[[selectedUser]]"
+                selected-items="{{selectedUser}}"
+                result-formatter="[[resultFormatter]]"
+                query-results-filter="[[resultsFilter]]">
+        </playing-user-suggestion>
 
-      <!-- selected members -->
-      <div class="vertical layout flex">
-        <template is="dom-repeat" items="[[selectedUsers]]">
-          <div class="search-entry">
-            <div class="user-info">
-              <div class="label">
-                <iron-icon icon="mostly:user" hidden="[[item.groupname]]"></iron-icon>
-                <iron-icon icon="mostly:group" hidden="[[item.username]]"></iron-icon>
-                <span>[[item.displayLabel]]</span>
+        <!-- selected members -->
+        <div class="vertical layout flex">
+          <template is="dom-repeat" items="[[selectedUsers]]">
+            <div class="search-entry">
+              <div class="user-info">
+                <div class="label">
+                  <iron-icon icon="mostly:user" hidden="[[item.groupname]]"></iron-icon>
+                  <iron-icon icon="mostly:group" hidden="[[item.username]]"></iron-icon>
+                  <span>[[item.displayLabel]]</span>
+                </div>
               </div>
+              <div class="user-info">
+                <span class="username" hidden="[[item.groupname]]">[[item.username]]</span>
+                <span class="username" hidden="[[item.username]]">[[item.groupname]]</span>
+              </div>
+              <div class="user-info">
+                <span class="email">[[item.email]]</span>
+              </div>
+              <paper-icon-button icon="mostly:remove" title="remove" on-tap="_remove"></paper-icon-button>
             </div>
-            <div class="user-info">
-              <span class="username" hidden="[[item.groupname]]">[[item.username]]</span>
-              <span class="username" hidden="[[item.username]]">[[item.groupname]]</span>
-            </div>
-            <div class="user-info">
-              <span class="email">[[item.email]]</span>
-            </div>
-            <paper-icon-button icon="mostly:remove" title="remove" on-tap="_remove"></paper-icon-button>
-          </div>
-        </template>
-      </div>
+          </template>
+        </div>
 
-      <paper-checkbox noink id="another">[[i18n('createGroup.createAnother.checkbox')]]</paper-checkbox>
+        <paper-checkbox noink id="another">[[i18n('createGroup.createAnother.checkbox')]]</paper-checkbox>
 
-      <div class="form-buttons">
-        <paper-button noink id="cancelButton" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
-        <paper-button noink id="createButton" class="primary" on-tap="_submit">[[i18n('command.create')]]</paper-button>
-      </div>
+        <div class="form-buttons">
+          <paper-button noink id="cancelButton" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
+          <paper-button noink id="createButton" class="primary" on-tap="_submit">[[i18n('command.create')]]</paper-button>
+          <paper-button noink id="createAnotherButton" class="primary" on-tap="_submitAnother">
+            [[i18n('createGroup.createAnother')]]
+          </paper-button>
+        </div>
 
-      <span id="errors" hidden$="[[!_hasErrors(errors)]]">[[errors]]</span>
+        <span id="errors" hidden$="[[!_hasErrors(errors)]]">[[errors]]</span>
 
-    </form>
+      </form>
+    </iron-form>
   </template>
 
   <script>
@@ -211,6 +217,14 @@ Used by `playing-user-group-management`
         errors: {
           type: String,
           value: ''
+        },
+
+        /**
+         * If true, allows to create a new group immediately after the current one is created
+         */
+        _createAnother: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -219,7 +233,6 @@ Used by `playing-user-group-management`
       ],
 
       ready: function() {
-        this.$.picker.$$('mostly-select2').queryResultsFilter = this.resultsFilter;
         this.$.form.addEventListener('iron-form-presubmit', (event) => {
           event.preventDefault();
           this._create();
@@ -244,9 +257,18 @@ Used by `playing-user-group-management`
       },
 
       /**
+       * Submits the form with `_createAnother` option set to true.
+       */
+      _submitAnother: function() {
+        this._createAnother = true;
+        this.$.form.submit();
+      },
+
+      /**
        * Submits the form.
        */
       _submit: function() {
+        this._createAnother = false;
         this.$.form.submit();
       },
 
@@ -263,7 +285,7 @@ Used by `playing-user-group-management`
           }
         }).catch((error) => {
           this.errors = error.message;
-        });;
+        });
       },
 
       _cancel: function() {

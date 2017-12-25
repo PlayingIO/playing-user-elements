@@ -1,13 +1,18 @@
 <link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
-<link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-dialog/paper-dialog.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../paper-toast/paper-toast.html">
+
+<link rel="import" href="../../mostly-elements/behaviors/mostly-filters-behavior.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-pagination-controls.html">
+<link rel="import" href="../widgets/playing-group-tag.html">
+<link rel="import" href="../widgets/playing-user-tag.html">
 <link rel="import" href="../widgets/playing-user-suggestion.html">
 <link rel="import" href="../playing-user-group/playing-user-group-permissions-table.html">
 
@@ -24,7 +29,7 @@ Used by `playing-user-group-management`
 -->
 <dom-module id="playing-group-management">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment iron-flex-factors mostly-styles">
       :host {
         display: block;
       }
@@ -59,6 +64,7 @@ Used by `playing-user-group-management`
 
       .header {
         margin-bottom: 2rem;
+        @apply --layout-start;
       }
 
       h3 iron-icon {
@@ -91,14 +97,14 @@ Used by `playing-user-group-management`
       }
 
       .remove {
-        @apply(--nuxeo-link);
+        @apply --nuxeo-link;
         text-decoration: underline;
         padding-left: .5em;
         font-size: .8rem;
       }
 
       .remove:hover {
-        @apply(--nuxeo-link-hover);
+        @apply --nuxeo-link-hover;
       }
 
       /* Table */
@@ -112,8 +118,8 @@ Used by `playing-user-group-management`
       }
 
       .table-header {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         background-color: var(--nuxeo-table-header-background, #fafafa);
         color: var(--nuxeo-table-header-titles, rgba(0, 0, 0, 0.54));
         font-weight: 400;
@@ -124,8 +130,8 @@ Used by `playing-user-group-management`
       }
 
       .table-row {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         padding: 12px 0 12px 12px;
         border-bottom: 1px solid var(--nuxeo-border, #eee);
         cursor: pointer;
@@ -161,28 +167,12 @@ Used by `playing-user-group-management`
         width: 150px;
       }
 
-      paper-dialog[id="editGroupDialog"] {
+      mostly-dialog[id="editGroupDialog"] {
         width: 40%;
       }
 
-      paper-dialog paper-button {
-        padding: .7em .57em;
-      }
-
-      paper-dialog paper-button.primary {
-        background-color: var(--nuxeo-button-primary, #00adff);
-        color: #fff;
-      }
-
-      paper-dialog paper-button.primary:hover,
-      paper-dialog paper-button.primary:focus {
-        background-color: var(--nuxeo-button-primary-focus, #0079b3);
-        font-weight: inherit;
-        color: #fff !important;
-      }
-
       .buttons {
-        @apply(--buttons-bar);
+        @apply --buttons-bar;
       }
 
       #editForm {
@@ -201,7 +191,13 @@ Used by `playing-user-group-management`
         text-align: center;
       }
 
+      paper-card {
+        @apply --nuxeo-card;
+      }
+
     </style>
+
+    <mostly-connection user="{{_currentUser}}"></mostly-connection>
 
     <mostly-resource id="request"
             path="groups/[[groupname]]"
@@ -220,49 +216,47 @@ Used by `playing-user-group-management`
 
     <paper-toast id="toast"></paper-toast>
 
-    <paper-dialog id="deleteGroupDialog" modal>
-      <div class="horizontal layout confirm">
-        [[i18n('groupManagement.delete.confirm')]]
-      </div>
+    <mostly-dialog id="deleteGroupDialog" with-backdrop>
+      <h2>[[i18n('groupManagement.delete.confirm')]]</h2>
       <div class="buttons horizontal end-justified layout">
         <div class="flex start-justified">
           <paper-button noink dialog-dismiss>[[i18n('label.no')]]</paper-button>
         </div>
         <paper-button noink class="primary" on-tap="_deleteGroup">[[i18n('label.yes')]]</paper-button>
       </div>
-    </paper-dialog>
+    </mostly-dialog>
 
-    <paper-dialog id="rmFromGroupDialog" modal class="vertical layout">
-      <div class="horizontal layout confirm">
-        [[i18n('groupManagement.removeUserFromGroup.confirm', _removedMember.displayLabel)]]
-      </div>
+    <mostly-dialog id="rmFromGroupDialog" with-backdrop class="vertical layout">
+      <h2>[[i18n('groupManagement.removeUserFromGroup.confirm', _removedMember.displayLabel)]]</h2>
       <div class="buttons horizontal end-justified layout">
         <div class="flex start-justified">
           <paper-button noink dialog-dismiss>[[i18n('label.no')]]</paper-button>
         </div>
         <paper-button noink class="primary" dialog-confirm on-tap="_removeMember">[[i18n('label.yes')]]</paper-button>
       </div>
-    </paper-dialog>
+    </mostly-dialog>
 
-    <paper-dialog id="editGroupDialog" modal>
+    <mostly-dialog id="editGroupDialog" with-backdrop>
       <h2>[[i18n('groupManagement.editGroup.heading')]]</h2>
-      <form is="iron-form" id="editForm" class="vertical layout">
-        <div class="layout horizontal">
-          <div class="label-container">
-            <label>[[i18n('groupManagement.group.label')]]</label>
+      <iron-form id="editForm">
+        <form class="vertical layout">
+          <div class="layout horizontal">
+            <div class="label-container">
+              <label>[[i18n('groupManagement.group.label')]]</label>
+            </div>
+            <div class="horizontal layout flex">
+              <input value="{{_editableGroup.label::input}}" class="flex">
+            </div>
           </div>
-          <div class="horizontal layout flex">
-            <input value="{{_editableGroup.label::input}}" class="flex">
-          </div>
-        </div>
-      </form>
+        </form>
+      </iron-form>
       <div class="buttons horizontal end-justified layout">
         <div class="flex start-justified">
           <paper-button dialog-dismiss on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
         </div>
         <paper-button noink class="primary" on-tap="_submitEditForm">[[i18n('command.save.changes')]]</paper-button>
       </div>
-    </paper-dialog>
+    </mostly-dialog>
 
     <paper-card>
       <div class="header horizontal layout">
@@ -275,7 +269,7 @@ Used by `playing-user-group-management`
           <h4 class="grouplabel">[[group.description]]</h4>
         </div>
 
-        <template is="dom-if" if=[[!readonly]]>
+        <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
           <div class="layout horizontal header-actions">
             <paper-button id="deleteGroupButton" noink class="flex-end" on-tap="_toggleDeleteGroup">
               <iron-icon icon="mostly:delete"></iron-icon> [[i18n('command.delete')]]
@@ -297,7 +291,8 @@ Used by `playing-user-group-management`
               placeholder="[[i18n('groupManagement.addEntity')]]"
               value="[[selectedMember]]"
               selected-items="{{selectedMember}}"
-              result-formatter="[[resultFormatter]]">
+              result-formatter="[[resultFormatter]]"
+              query-results-filter="[[resultsFilter]]">
       </playing-user-suggestion>
       <template is="dom-repeat" items="[[activity]]">
         <div class="activity-entry">
@@ -331,12 +326,12 @@ Used by `playing-user-group-management`
               <div class="table-row">
                 <div class="flex-4">
                   <template is="dom-if" if="[[_userHasName(item)]]">
-                    <mostly-tag icon="mostly:user">[[_displayUserName(item)]]</mostly-tag>
+                    <playing-user-tag user="[[item]]"></playing-user-tag>
                   </template>
                 </div>
                 <div class="flex-4">[[item.id]]</div>
                 <div class="table-actions">
-                  <template is="dom-if" if=[[!readonly]]>
+                  <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
                     <paper-icon-button icon="mostly:clear" noink
                             title="[[i18n('groupManagement.removeFrom', item.label)]]"
                             on-tap="_toggleDeleteDialog">
@@ -378,11 +373,11 @@ Used by `playing-user-group-management`
             <template is="dom-repeat" items="[[memberGroups]]">
               <div class="table-row">
                 <div class="flex-4">
-                  <mostly-tag icon="mostly:group">[[item.groupname]]</mostly-tag>
+                  <playing-group-tag group="[[item]]"></playing-group-tag>
                 </div>
                 <div class="flex-4">[[item.label]]</div>
                 <div class="table-actions">
-                  <template is="dom-if" if=[[!readonly]]>
+                  <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
                     <paper-icon-button icon="mostly:clear" noink
                             title="[[i18n('groupManagement.removeFrom', item.label)]]"
                             on-tap="_toggleDeleteDialog">
@@ -412,7 +407,7 @@ Used by `playing-user-group-management`
   <script>
     Polymer({
       is: 'playing-group-management',
-      behaviors: [Mostly.I18nBehavior],
+      behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior],
       properties: {
         groupname: {
           type: String,
@@ -480,6 +475,10 @@ Used by `playing-user-group-management`
           type: Boolean,
           value: false,
           reflectToAttribute: true
+        },
+
+        _currentUser: {
+          type: Object
         }
       },
 
@@ -490,12 +489,25 @@ Used by `playing-user-group-management`
         '_filterGroups(groupsFilter)'
       ],
 
+      /**
+       * Fired when a group is deleted.
+       *
+       * @event nuxeo-group-deleted
+       */
       ready: function() {
-        this.$.picker.$$('mostly-select2').queryResultsFilter = this.resultsFilter;
         this.$.editForm.addEventListener('iron-form-presubmit', (event) => {
           event.preventDefault();
           this._saveGroup();
         });
+      },
+
+      _hasAdministrationPermissions: function(user) {
+        return user && (user.isAdministrator || (this.isMember(user, 'powerusers')
+          && this.groupname !== 'administrators'));
+      },
+
+      _canEditGroup: function(readonly, currentUser, groupname) {
+        return !readonly && this._hasAdministrationPermissions(currentUser, groupname);
       },
 
       _userHasName: function(user) {
@@ -511,13 +523,15 @@ Used by `playing-user-group-management`
       },
 
       _fetch: function() {
-        this.$.request.get().then((response) => {
-          this.activity = [];
-          this.showEditMembers = false;
-          this.selectedMember = null;
-          this._fetchGroups();
-          this._fetchUsers();
-        });
+        if (this.groupname) {
+          this.$.request.get().then((response) => {
+            this.activity = [];
+            this.showEditMembers = false;
+            this.selectedMember = null;
+            this._fetchGroups();
+            this._fetchUsers();
+          });
+        }
       },
 
       _saveGroup: function() {
@@ -658,6 +672,7 @@ Used by `playing-user-group-management`
 
       _deleteGroup: function() {
         this.$.deleteGroupDialog.toggle();
+        this.$.editRequest.data = this.group;
         this.$.editRequest.remove().then((response) => {
           this.fire('playing-group-removed', response.data);
           this._goHome();

@@ -1,15 +1,18 @@
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../iron-icons/editor-icons.html">
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../paper-item/paper-icon-item.html">
 <link rel="import" href="../../paper-input/paper-input.html">
-<link rel="import" href="../../paper-menu/paper-menu.html">
+<link rel="import" href="../../paper-listbox/paper-listbox.html">
 <link rel="import" href="../../paper-menu-button/paper-menu-button.html">
+
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
-<link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-pagination-controls.html">
+<link rel="import" href="../widgets/playing-user-tag.html">
+<link rel="import" href="../widgets/playing-group-tag.html">
 
 <!--
 Used by `playing-user-management`
@@ -18,15 +21,14 @@ Used by `playing-user-management`
 -->
 <dom-module id="playing-user-group-search">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment iron-flex-factors mostly-styles">
       :host {
         display: block;
-        @apply(--playing-user-group-search-layout);
+        @apply --playing-user-group-search-layout;
       }
 
       .search {
-        width: calc( 100% - 10rem);
-        margin-bottom: 32px;
+        width: calc(100% - 11rem);
       }
 
       .title {
@@ -35,8 +37,8 @@ Used by `playing-user-management`
       }
 
       .table-header {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         background-color: var(--nuxeo-table-header-background, #fafafa);
         color: var(--nuxeo-text-default, rgba(0, 0, 0, 0.54));
         font-weight: 400;
@@ -47,8 +49,8 @@ Used by `playing-user-management`
       }
 
       .table-row {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         padding: 12px 0 12px 12px;
         border-bottom: 1px solid var(--nuxeo-border, #eee);
         cursor: pointer;
@@ -79,6 +81,10 @@ Used by `playing-user-management`
         text-align: center;
       }
 
+      paper-card {
+        @apply --mostly-card;
+      }
+
     </style>
 
     <mostly-resource id="userSearch" auto
@@ -99,70 +105,70 @@ Used by `playing-user-management`
     <template is="dom-if" if="[[!_showResults(searchTerm)]]">
 
       <!-- groups -->
-      <paper-card>
-      <h3 class="title">
-        <iron-icon icon="mostly:group"></iron-icon> [[i18n('userGroupSearch.groups')]]
-      </h3>
-      <div class="table">
-        <div class="table-header">
-          <div class="flex-4">[[i18n('userGroupSearch.name')]]</div>
-          <div class="flex-2">[[i18n('userGroupSearch.identifier')]]</div>
-          <div class="flex-4">[[i18n('userGroupSearch.contains')]]</div>
-        </div>
-        <div class="table-rows">
-          <template is="dom-repeat" items="[[groups.data]]" as="item">
-            <div class="table-row" on-tap="_manageGroup">
-              <div class="flex-4">
-                <mostly-tag icon="mostly:group">[[item.label]]</mostly-tag>
+      <paper-card name="groups">
+        <h3 class="title">
+          <iron-icon icon="mostly:group"></iron-icon> [[i18n('userGroupSearch.groups')]]
+        </h3>
+        <div class="table">
+          <div class="table-header">
+            <div class="flex-4">[[i18n('userGroupSearch.name')]]</div>
+            <div class="flex-2">[[i18n('userGroupSearch.identifier')]]</div>
+            <div class="flex-4">[[i18n('userGroupSearch.contains')]]</div>
+          </div>
+          <div class="table-rows">
+            <template is="dom-repeat" items="[[groups.data]]" as="item">
+              <div class="table-row" on-tap="_manageGroup">
+                <div class="flex-4">
+                  <playing-group-tag group="[[item]]"></playing-group-tag>
+                </div>
+                <div name="id" class="flex-2">[[item.groupname]]</div>
+                <div class="flex-4">
+                  <span class="counter">[[_countUsers(item.users)]]</span>
+                  <span class="counter">[[_countGroups(item.children)]]</span>
+                </div>
               </div>
-              <div class="flex-2">[[item.groupname]]</div>
-              <div class="flex-4">
-                <span class="counter">[[_countUsers(item.users)]]</span>
-                <span class="counter">[[_countGroups(item.children)]]</span>
+            </template>
+            <template is="dom-if" if=[[_empty(groups.data)]]>
+              <div class="table-row">
+                <div class="emptyResult">[[i18n('userGroupSearch.empty.groups')]]</div>
               </div>
-            </div>
-          </template>
-          <template is="dom-if" if=[[_empty(groups.data)]]>
-            <div class="table-row">
-              <div class="emptyResult">[[i18n('userGroupSearch.empty.groups')]]</div>
-            </div>
-          </template>
+            </template>
+          </div>
         </div>
-      </div>
-      <mostly-pagination-controls page="{{groupsCurrentPage}}" number-of-pages="[[groups.numberOfPages]]"></mostly-pagination-controls>
+        <mostly-pagination-controls page="{{groupsCurrentPage}}" number-of-pages="[[groups.numberOfPages]]"></mostly-pagination-controls>
       </paper-card>
 
       <!-- users -->
-      <paper-card>
-      <h3 class="title">
-        <iron-icon icon="mostly:user"></iron-icon> [[i18n('userGroupSearch.users.heading')]]
-      </h3>
-      <div class="table">
-        <div class="table-header">
-          <div class="flex-4">[[i18n('userGroupSearch.name')]]</div>
-          <div class="flex-2">[[i18n('userGroupSearch.identifier')]]</div>
-          <div class="flex-4">[[i18n('userGroupSearch.email')]]</div>
-        </div>
-        <div class="table-rows">
-          <template is="dom-repeat" items="[[users.data]]" as="item">
-            <div class="table-row" on-tap="_manageUser">
-              <div class="flex-4">
-                <template is="dom-if" if="[[_userHasName(item)]]">
-                  <mostly-tag icon="mostly:user"> [[_displayUserName(item)]]</mostly-tag>
-                </template>
+      <paper-card name="users">
+        <h3 class="title">
+          <iron-icon icon="mostly:user"></iron-icon> [[i18n('userGroupSearch.users.heading')]]
+        </h3>
+        <div class="table">
+          <div class="table-header">
+            <div class="flex-4">[[i18n('userGroupSearch.name')]]</div>
+            <div class="flex-2">[[i18n('userGroupSearch.identifier')]]</div>
+            <div class="flex-4">[[i18n('userGroupSearch.email')]]</div>
+          </div>
+          <div class="table-rows">
+            <template is="dom-repeat" items="[[users.data]]" as="item">
+              <div class="table-row" on-tap="_manageUser">
+                <div class="flex-4">
+                  <template is="dom-if" if="[[_userHasName(item)]]">
+                    <playing-user-tag user="[[item]]"></playing-user-tag>
+                  </template>
+                </div>
+                <div class="flex-2">[[item.id]]</div>
+                <div class="flex-4">[[item.email]]</div>
               </div>
-              <div class="flex-2">[[item.id]]</div>
-              <div class="flex-4">[[item.email]]</div>
-            </div>
-          </template>
-          <template is="dom-if" if=[[_empty(users.data)]]>
-            <div class="table-row">
-              <div class="emptyResult">[[i18n('userGroupSearch.empty.users')]]</div>
-            </div>
-          </template>
+            </template>
+            <template is="dom-if" if=[[_empty(users.data)]]>
+              <div class="table-row">
+                <div class="emptyResult">[[i18n('userGroupSearch.empty.users')]]</div>
+              </div>
+            </template>
+          </div>
         </div>
-      </div>
-      <mostly-pagination-controls page="{{usersCurrentPage}}" number-of-pages="[[users.numberOfPages]]"></mostly-pagination-controls>
+        <mostly-pagination-controls page="{{usersCurrentPage}}" number-of-pages="[[users.numberOfPages]]"></mostly-pagination-controls>
       </paper-card>
     </template>
   </template>

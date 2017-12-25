@@ -2,13 +2,17 @@
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../paper-input/paper-input.html">
 <link rel="import" href="../../paper-button/paper-button.html">
-<link rel="import" href="../../paper-dialog/paper-dialog.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../paper-toast/paper-toast.html">
+
+<link rel="import" href="../../mostly-elements/behaviors/mostly-filters-behavior.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
-<link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
-<link rel="import" href="../widgets/playing-user-suggestion.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
 <link rel="import" href="../playing-user-group/playing-user-group-permissions-table.html">
+<link rel="import" href="../widgets/playing-user-suggestion.html">
+<link rel="import" href="../widgets/playing-group-tag.html">
 <link rel="import" href="playing-edit-password.html">
 
 <!--
@@ -25,7 +29,7 @@ Used by `playing-user-group-management`
 
 <dom-module id="playing-user-management">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment iron-flex-factors mostly-styles">
       :host {
         display: block;
       }
@@ -33,6 +37,10 @@ Used by `playing-user-group-management`
       label {
         font-weight: bold;
         margin-bottom: 5px;
+      }
+
+      .header {
+        @apply --layout-start;
       }
 
       .backButton {
@@ -82,6 +90,10 @@ Used by `playing-user-group-management`
         font-size: .8rem;
         margin-left: 10px;
         text-decoration: underline;
+      }
+
+      .table {
+        margin-top: 12px;
       }
 
       .table-headers {
@@ -153,7 +165,13 @@ Used by `playing-user-group-management`
         padding: 2em;
         font-size: 1.1rem;
       }
+
+      paper-card {
+        @apply --nuxeo-card;
+      }
     </style>
+
+    <mostly-connection user="{{_currentUser}}"></mostly-connection>
 
     <mostly-resource id="request"
             path="users/[[username]]"
@@ -165,143 +183,146 @@ Used by `playing-user-group-management`
     <paper-toast id="toast"></paper-toast>
 
     <paper-card>
-    <div class="header horizontal layout">
-      <paper-icon-button class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
-      <iron-icon icon="mostly:user" class="avatar"></iron-icon>
-      <div class="layout vertical">
-        <h3 class="username">[[user.username]]</h3>
-        <h4 class="name">[[user.displayLabel]]</h4>
+      <div class="header horizontal layout">
+        <paper-icon-button class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
+        <iron-icon icon="mostly:user" class="avatar"></iron-icon>
+        <div class="layout vertical">
+          <h3 class="username">[[user.username]]</h3>
+          <h4 class="name">[[user.displayLabel]]</h4>
+        </div>
+
+        <div class="actions">
+
+          <!-- delete -->
+          <template is="dom-if" if="[[_canEdit(readonly, _currentUser, user)]]">
+            <paper-button noink id="deleteUserButton" class="horizontal layout center" on-tap="_toggleDeleteUser">
+              <iron-icon noink icon="mostly:delete"></iron-icon> [[i18n('command.delete')]]
+            </paper-button>
+          </template>
+          <mostly-dialog id="deleteUserDialog" with-backdrop>
+            <div class="horizontal layout center confirm">
+              [[i18n('userManagement.delete.user.confirm')]]
+            </div>
+            <div class="buttons horizontal end-justified layout">
+              <div class="flex start-justified">
+                <paper-button noink dialog-dismiss>[[i18n('label.no')]]</paper-button>
+              </div>
+              <paper-button noink class="primary" on-tap="_deleteUser">[[i18n('label.yes')]]</paper-button>
+            </div>
+          </mostly-dialog>
+
+          <!-- change password -->
+          <template is="dom-if" if="[[_canEdit(readonly, _currentUser, user)]]">
+            <paper-button noink id="changePasswordButton" class="primary horizontal layout center" on-tap="_toggleChangePassword">
+              <iron-icon icon="mostly:lock"></iron-icon> [[i18n('command.change.password')]]
+            </paper-button>
+          </template>
+          <mostly-dialog id="changePasswordDialog" with-backdrop>
+            <h2>[[i18n('command.change.password')]]</h2>
+            <iron-form id="changePasswordForm">
+              <form class="vertical layout">
+                <playing-edit-password required id="passwordEditor"></playing-edit-password>
+              </form>
+            </iron-form>
+            <div class="buttons horizontal end-justified layout">
+              <div class="flex start-justified">
+                <paper-button noink dialog-dismiss>[[i18n('command.cancel')]]</paper-button>
+              </div>
+              <paper-button noink class="primary" on-tap="_submitChangePassword">
+                [[i18n('command.save.changes')]]
+              </paper-button>
+            </div>
+          </mostly-dialog>
+
+          <!-- edit -->
+          <template is="dom-if" if="[[_canEdit(readonly, _currentUser, user)]]">
+            <paper-button noink id="editUserButton" class="primary horizontal layout center" on-tap="_toggleEditUser">
+              <iron-icon icon="mostly:edit"></iron-icon> [[i18n('userManagement.editUser.button')]]
+            </paper-button>
+          </template>
+          <mostly-dialog id="editUserDialog" with-backdrop>
+            <h3>[[i18n('userManagement.editUser.heading')]]</h3>
+            <form is="iron-form" id="editUserForm" class="vertical layout">
+              <paper-input label="[[i18n('userManagement.username')]]" value="[[user.username]]"
+                           always-float-label readonly required></paper-input>
+              <playing-edit-user id="userEditor"></playing-edit-user>
+            </form>
+            <div class="buttons horizontal end-justified layout">
+              <div class="flex start-justified">
+                <paper-button noink dialog-dismiss>[[i18n('command.cancel')]]</paper-button>
+              </div>
+              <paper-button noink class="primary" on-tap="_submitEditUser">
+                [[i18n('command.save.changes')]]
+              </paper-button>
+            </div>
+          </mostly-dialog>
+
+        </div>
       </div>
 
-      <div class="actions">
-
-        <!-- delete -->
-        <template is="dom-if" if=[[!readonly]]>
-          <paper-button noink id="deleteUserButton" class="horizontal layout center" on-tap="_toggleDeleteUser">
-            <iron-icon noink icon="mostly:delete"></iron-icon> [[i18n('command.delete')]]
-          </paper-button>
-        </template>
-        <paper-dialog id="deleteUserDialog" modal>
-          <div class="horizontal layout center confirm">
-            [[i18n('userManagement.delete.user.confirm')]]
-          </div>
-          <div class="buttons horizontal end-justified layout">
-            <div class="flex start-justified">
-              <paper-button noink dialog-dismiss>[[i18n('label.no')]]</paper-button>
-            </div>
-            <paper-button noink class="primary" on-tap="_deleteUser">[[i18n('label.yes')]]</paper-button>
-          </div>
-        </paper-dialog>
-
-        <!-- change password -->
-        <template is="dom-if" if=[[!readonly]]>
-          <paper-button noink id="changePasswordButton" class="primary horizontal layout center" on-tap="_toggleChangePassword">
-            <iron-icon icon="mostly:lock"></iron-icon> [[i18n('command.change.password')]]
-          </paper-button>
-        </template>
-        <paper-dialog id="changePasswordDialog" modal>
-          <h3>[[i18n('command.change.password')]]</h3>
-          <form is="iron-form" id="changePasswordForm" class="vertical layout">
-            <playing-edit-password required id="passwordEditor"></playing-edit-password>
-          </form>
-          <div class="buttons horizontal end-justified layout">
-            <div class="flex start-justified">
-              <paper-button noink dialog-dismiss>[[i18n('command.cancel')]]</paper-button>
-            </div>
-            <paper-button noink class="primary" on-tap="_submitChangePassword">
-              [[i18n('command.save.changes')]]
-            </paper-button>
-          </div>
-        </paper-dialog>
-
-        <!-- edit -->
-        <template is="dom-if" if=[[!readonly]]>
-          <paper-button noink id="editUserButton" class="primary horizontal layout center" on-tap="_toggleEditUser">
-            <iron-icon icon="mostly:edit"></iron-icon> [[i18n('userManagement.editUser.button')]]
-          </paper-button>
-        </template>
-        <paper-dialog id="editUserDialog" modal>
-          <h3>[[i18n('userManagement.editUser.heading')]]</h3>
-          <form is="iron-form" id="editUserForm" class="vertical layout">
-            <paper-input label="[[i18n('userManagement.username')]]" value="[[user.username]]"
-                         always-float-label readonly required></paper-input>
-            <playing-edit-user id="userEditor"></playing-edit-user>
-          </form>
-          <div class="buttons horizontal end-justified layout">
-            <div class="flex start-justified">
-              <paper-button noink dialog-dismiss>[[i18n('command.cancel')]]</paper-button>
-            </div>
-            <paper-button noink class="primary" on-tap="_submitEditUser">
-              [[i18n('command.save.changes')]]
-            </paper-button>
-          </div>
-        </paper-dialog>
-
-      </div>
-    </div>
-
-    <!-- user -->
-    <playing-view-user id="userViewer" user="[[user]]"></playing-view-user>
+      <!-- user -->
+      <playing-view-user id="userViewer" user="[[user]]"></playing-view-user>
 
     </paper-card>
 
     <!-- groups -->
     <paper-card>
-    <div class="layout horizontal center">
-      <h3 class="flex">[[i18n('userManagement.groups')]]</h3>
-      <template is="dom-if" if=[[!readonly]]>
-        <paper-button noink id="addGroup" class="flex-end" on-tap="_toggleEditGroups">
-          <iron-icon icon="mostly:add"></iron-icon> [[i18n('userManagement.addToGroup.button')]]
-        </paper-button>
-      </template>
-    </div>
-    <div class="layout vertical" hidden$="[[!showEditGroups]]">
-      <playing-user-suggestion id="picker" class="flex"
-              search-type="group"
-              placeholder="[[i18n('userManagement.search.groups')]]"
-              value="{{selectedGroup}}"
-              selected-items="{{selectedGroup}}"
-              result-formatter="[[resultFormatter]]">
-      </playing-user-suggestion>
-      <div id="errors" hidden$="[[!errors]]">[[errors]]</div>
-      <template is="dom-repeat" items="[[activity]]">
-        <div class="activity-entry">
-          [[i18n('userManagement.memberOf.group', user.username)]]
-          <mostly-tag icon="mostly:group">[[item.label]]</mostly-tag>
-          <span class="remove" on-tap="_toggleDialog">[[i18n('userManagement.group.remove')]]</span>
-        </div>
-      </template>
-    </div>
-    <div class="table">
-      <div class="table-headers">
-        <div class="flex">[[i18n('userManagement.name')]]</div>
-        <div class="flex-4">[[i18n('userManagement.identifier')]]</div>
-        <div class="table-actions">&nbsp;</div>
+      <div class="layout horizontal center">
+        <h3 class="flex">[[i18n('userManagement.groups')]]</h3>
+        <template is="dom-if" if="[[_canEdit(readonly, _currentUser, user)]]">
+          <paper-button noink id="addGroup" class="flex-end" on-tap="_toggleEditGroups">
+            <iron-icon icon="mostly:add"></iron-icon> [[i18n('userManagement.addToGroup.button')]]
+          </paper-button>
+        </template>
       </div>
-      <template is="dom-if" if=[[!empty]]>
-        <template is="dom-repeat" items="[[user.groups]]">
-          <div class="table-row">
-            <div class="flex">
-              <mostly-tag icon="mostly:group">[[item.label]]</mostly-tag>
-            </div>
-            <div class="flex-4">[[item.groupname]]</div>
-            <div class="table-actions">
-              <template is="dom-if" if="[[_canRemoveAdministratorsGroup(item)]]">
-                <paper-icon-button icon="mostly:remove"
-                        title="[[i18n('userManagement.removeFrom.group', item.label)]]"
-                        on-tap="_toggleDialog">
-                </paper-icon-button>
-              </template>
-            </div>
+      <div class="layout vertical" hidden$="[[!showEditGroups]]">
+        <playing-user-suggestion id="picker" class="flex"
+                search-type="group"
+                placeholder="[[i18n('userManagement.search.groups')]]"
+                value="{{selectedGroup}}"
+                selected-items="{{selectedGroup}}"
+                result-formatter="[[resultFormatter]]"
+                query-results-filter="[[resultsFilter]]>
+        </playing-user-suggestion>
+        <div id="errors" hidden$="[[!errors]]">[[errors]]</div>
+        <template is="dom-repeat" items="[[activity]]">
+          <div class="activity-entry">
+            [[i18n('userManagement.memberOf.group', user.username)]]
+            <playing-group-tag group="[[item]]"></playing-group-tag>
+            <span class="remove" on-tap="_toggleDialog">[[i18n('userManagement.group.remove')]]</span>
           </div>
         </template>
-      </template>
-      <template is="dom-if" if=[[empty]]>
-        <div class="table-row">
-          <div>[[i18n('userManagement.noSearchResults')]]</div>
+      </div>
+      <div class="table">
+        <div class="table-headers">
+          <div class="flex">[[i18n('userManagement.name')]]</div>
+          <div class="flex-4">[[i18n('userManagement.identifier')]]</div>
+          <div class="table-actions">&nbsp;</div>
         </div>
-      </template>
-    </div>
+        <template is="dom-if" if=[[!empty]]>
+          <template is="dom-repeat" items="[[user.groups]]">
+            <div class="table-row">
+              <div class="flex">
+                <playing-group-tag group="[[item]]"></playing-group-tag>
+              </div>
+              <div class="flex-4">[[item.groupname]]</div>
+              <div class="table-actions">
+                <template is="dom-if" if="[[_canEdit(readonly, _currentUser, user)]]">
+                  <paper-icon-button icon="mostly:remove"
+                          title="[[i18n('userManagement.removeFrom.group', item.label)]]"
+                          on-tap="_toggleDialog">
+                  </paper-icon-button>
+                </template>
+              </div>
+            </div>
+          </template>
+        </template>
+        <template is="dom-if" if=[[empty]]>
+          <div class="table-row">
+            <div>[[i18n('userManagement.noSearchResults')]]</div>
+          </div>
+        </template>
+      </div>
     </paper-card>
 
     <!-- local permissions -->
@@ -315,14 +336,14 @@ Used by `playing-user-group-management`
     <!-- group permissions -->
     <template is="dom-repeat" items="[[user.groups]]">
       <paper-card>
-      <playing-user-group-permissions-table
-              label="[[i18n('userManagement.entityPermissions', item.groupname)]]"
-              entity="[[item.groupname]]" readonly="[[readonly]]">
-      </playing-user-group-permissions-table>
+        <playing-user-group-permissions-table
+                label="[[i18n('userManagement.entityPermissions', item.groupname)]]"
+                entity="[[item.groupname]]" readonly="[[readonly]]">
+        </playing-user-group-permissions-table>
       </paper-card>
     </template>
 
-    <paper-dialog id="dialog" modal class="vertical layout">
+    <mostly-dialog id="dialog" with-backdrop>
       <div class="horizontal layout confirm">
         [[i18n('userManagement.removeUserFromGroup.confirm', user.username, _removedGroup.groupname)]]
       </div>
@@ -332,13 +353,13 @@ Used by `playing-user-group-management`
         </div>
         <paper-button noink dialog-confirm on-tap="_remove" class="primary">[[i18n('label.yes')]]</paper-button>
       </div>
-    </paper-dialog>
+    </mostly-dialog>
   </template>
 
   <script>
     Polymer({
       is: 'playing-user-management',
-      behaviors: [Mostly.I18nBehavior],
+      behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior],
       properties: {
         username: {
           type: String,
@@ -391,9 +412,8 @@ Used by `playing-user-group-management`
           reflectToAttribute: true
         },
 
-        isAdministrator: {
-          type: Boolean,
-          value: false
+        _currentUser: {
+          type: Object
         }
       },
 
@@ -401,6 +421,11 @@ Used by `playing-user-group-management`
         '_userRemovedFromGroup(user.groups)'
       ],
 
+      /**
+       * Fired when a user is deleted.
+       *
+       * @event nuxeo-user-deleted
+       */
       ready: function() {
         this.$.picker.$$('mostly-select2').queryResultsFilter = this.resultsFilter;
         this.$.editUserForm.addEventListener('iron-form-presubmit', (event) => {
@@ -425,12 +450,22 @@ Used by `playing-user-group-management`
         }
       },
 
-      _canRemoveAdministratorsGroup: function(group) {
-        if (group.groupname === 'administrators') {
-          return !this.readonly && this.isAdministrator;
-        } else {
-          return !this.readonly;
-        }
+      _isAdministrator: function(user) {
+        return user && user.isAdministrator;
+      },
+
+      _hasAdministrationPermissions: function(currentUser) {
+        return currentUser && (currentUser.isAdministrator ||
+          (this.isMember(currentUser, 'powerusers') && !this.user.isAdministrator));
+      },
+
+      _canEdit: function(readonly, currentUser, user) {
+        return !readonly && this.user && currentUser && (this._hasAdministrationPermissions(currentUser) ||
+          this._isSameUsername(currentUser.properties.username, user.properties.username));
+      },
+
+      _isSameUsername: function(username1, username2) {
+        return username1 && username2 && username1 === username2;
       },
 
       _groupSelected: function() {
@@ -476,7 +511,7 @@ Used by `playing-user-group-management`
       },
 
       _userRemovedFromGroup: function() {
-        this.empty = this.user.groups.length === 0;
+        this.empty = this.user.groups && this.user.groups.length === 0;
       },
 
       _toggleEditGroups: function() {
