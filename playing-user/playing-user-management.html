@@ -44,7 +44,7 @@ Used by `playing-user-group-management`
       }
 
       .backButton {
-        color: var(--nuxeo-button-primary, #00adff);
+        color: var(--mostly-button-primary, #00adff);
       }
 
       .username {
@@ -99,12 +99,12 @@ Used by `playing-user-group-management`
       .table-headers {
         @apply(--layout-horizontal);
         @apply(--layout-center);
-        background-color: var(--nuxeo-table-header-background, #fafafa);
-        color: var(--nuxeo-text-default, rgba(0, 0, 0, 0.54));
+        background-color: var(--mostly-table-header-background, #fafafa);
+        color: var(--mostly-text-default, rgba(0, 0, 0, 0.54));
         font-weight: 400;
         min-height: 48px;
         padding: 0 0 0 12px;
-        border-bottom: 2px solid var(--nuxeo-border, #eee);
+        border-bottom: 2px solid var(--mostly-border, #eee);
         box-shadow: 0 -1px 0 rgba(0,0,0,0.2) inset;
       }
 
@@ -113,16 +113,16 @@ Used by `playing-user-group-management`
         @apply(--layout-center);
         padding: 0 1em;
         min-height: 48px;
-        border-bottom: 1px solid var(--nuxeo-border, #eee);
-        background-color: var(--nuxeo-table-items-background, #fafafa);
+        border-bottom: 1px solid var(--mostly-border, #eee);
+        background-color: var(--mostly-table-items-background, #fafafa);
       }
 
       .table-row:hover {
-        background: var(--nuxeo-container-hover, #fafafa);
+        background: var(--mostly-container-hover, #fafafa);
       }
 
       .table {
-        border: 1px solid var(--nuxeo-border, #eee);
+        border: 1px solid var(--mostly-border, #eee);
       }
 
       .table-row:last-of-type {
@@ -130,7 +130,7 @@ Used by `playing-user-group-management`
       }
 
       .table-headers > div {
-        background-color: var(--nuxeo-table-header-background,#f8f9fb);
+        background-color: var(--mostly-table-header-background,#f8f9fb);
         font-weight: bold;
       }
 
@@ -167,7 +167,7 @@ Used by `playing-user-group-management`
       }
 
       paper-card {
-        @apply --nuxeo-card;
+        @apply --mostly-card;
       }
     </style>
 
@@ -424,7 +424,7 @@ Used by `playing-user-group-management`
       /**
        * Fired when a user is deleted.
        *
-       * @event nuxeo-user-deleted
+       * @event playing-user-deleted
        */
       ready: function() {
         this.$.picker.$$('mostly-select2').queryResultsFilter = this.resultsFilter;

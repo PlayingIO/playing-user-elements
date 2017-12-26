@@ -90,16 +90,16 @@ Custom property | Description | Default
       }
 
       paper-listbox paper-icon-item:hover {
-        background: var(--nuxeo-container-hover, #fafafa);
+        background: var(--mostly-container-hover, #fafafa);
         cursor: pointer;
       }
 
       paper-card {
-        @apply --nuxeo-card;
+        @apply --mostly-card;
       }
     </style>
 
-    <mostly-connection user="{{_currentUser}}"></nuxeo-mostly>
+    <mostly-connection user="{{_currentUser}}"></mostly-connection>
 
     <paper-toast id="toast"></paper-toast>
     <iron-pages selected="[[page]]" attr-for-selected="name">

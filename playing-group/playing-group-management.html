@@ -35,7 +35,7 @@ Used by `playing-user-group-management`
       }
 
       h2 {
-        color: var(--nuxeo-title-color, #213f7d);
+        color: var(--mostly-title-color, #213f7d);
       }
 
       playing-user-group-permissions-table {
@@ -52,11 +52,11 @@ Used by `playing-user-group-management`
       }
 
       .backButton {
-        color: var(--nuxeo-button-primary, #00adff);
+        color: var(--mostly-button-primary, #00adff);
       }
 
       .card {
-        background: none var(--nuxeo-box, #fff);
+        background: none var(--mostly-box, #fff);
         box-shadow: 0 3px 5px rgba(0,0,0,0.04);
         margin: 2em 0;
         padding: 2em 1.5em;
@@ -97,14 +97,14 @@ Used by `playing-user-group-management`
       }
 
       .remove {
-        @apply --nuxeo-link;
+        @apply --mostly-link;
         text-decoration: underline;
         padding-left: .5em;
         font-size: .8rem;
       }
 
       .remove:hover {
-        @apply --nuxeo-link-hover;
+        @apply --mostly-link-hover;
       }
 
       /* Table */
@@ -114,18 +114,18 @@ Used by `playing-user-group-management`
       }
 
       .table {
-        border: 1px solid var(--nuxeo-border, #e3e3e3);
+        border: 1px solid var(--mostly-border, #e3e3e3);
       }
 
       .table-header {
         @apply --layout-horizontal;
         @apply --layout-center;
-        background-color: var(--nuxeo-table-header-background, #fafafa);
-        color: var(--nuxeo-table-header-titles, rgba(0, 0, 0, 0.54));
+        background-color: var(--mostly-table-header-background, #fafafa);
+        color: var(--mostly-table-header-titles, rgba(0, 0, 0, 0.54));
         font-weight: 400;
         min-height: 48px;
         padding: 0 0 0 12px;
-        border-bottom: 2px solid var(--nuxeo-border, #eee);
+        border-bottom: 2px solid var(--mostly-border, #eee);
         box-shadow: 0 -1px 0 rgba(0,0,0,0.2) inset;
       }
 
@@ -133,12 +133,12 @@ Used by `playing-user-group-management`
         @apply --layout-horizontal;
         @apply --layout-center;
         padding: 12px 0 12px 12px;
-        border-bottom: 1px solid var(--nuxeo-border, #eee);
+        border-bottom: 1px solid var(--mostly-border, #eee);
         cursor: pointer;
       }
 
       .table-row:hover {
-        background: var(--nuxeo-container-hover, #fafafa);
+        background: var(--mostly-container-hover, #fafafa);
       }
 
       .table-row:last-of-type {
@@ -192,7 +192,7 @@ Used by `playing-user-group-management`
       }
 
       paper-card {
-        @apply --nuxeo-card;
+        @apply --mostly-card;
       }
 
     </style>
@@ -492,7 +492,7 @@ Used by `playing-user-group-management`
       /**
        * Fired when a group is deleted.
        *
-       * @event nuxeo-group-deleted
+       * @event playing-group-deleted
        */
       ready: function() {
         this.$.editForm.addEventListener('iron-form-presubmit', (event) => {
