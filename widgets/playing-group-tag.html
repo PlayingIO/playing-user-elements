@@ -66,6 +66,10 @@ Example:
         }
       },
 
+      _isEntity: function(group) {
+        return group && typeof group === 'object';
+      },
+
       _name: function(group) {
         return group.groupname || group.name;
       },
