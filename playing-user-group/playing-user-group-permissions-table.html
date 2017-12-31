@@ -263,7 +263,7 @@ Used by `playing-user-group-management`
         };
         this.$.permissions.execute().then(function(response) {
           this._numberOfPages = response.numberOfPages;
-          this._computePermissions(response.entries);
+          this._computePermissions(response.data);
         }.bind(this));
       },
 
