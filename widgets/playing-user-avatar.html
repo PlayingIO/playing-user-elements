@@ -112,12 +112,11 @@ Example:
       ],
 
       _username: function (user) {
-        return this._isEntity(user) ? user.properties.username || user.properties["user:username"] : this._id(user);
+        return user.username || this._id(user);
       },
 
       _isEntity: function(user) {
-        return user && user['entity-type'] && (user['entity-type'] === 'user'
-          || (user['entity-type'] === 'document' && user.type === 'user')) && user.properties;
+        return user && typeof user === 'object';
       },
 
       _id: function(user) {
@@ -129,17 +128,17 @@ Example:
 
       _name: function(user) {
         if (this._isEntity(user)) {
-          var firstName = user.properties.firstName || user.properties["user:firstName"];
-          var lastName = user.properties.lastName || user.properties["user:lastName"];
-          return (firstName || lastName) ? firstName + ' ' + lastName : this._id(user);
+          var firstName = user.firstName || '';
+          var lastName = user.lastName || '';
+          return (firstName || lastName) ? firstName + ' ' + lastName : user.username;
         } else {
-          return this._id(user);
+          return user.username;
         }
       },
 
       _email: function(user) {
         if (this._isEntity(user)) {
-          var email = user.properties.email || user.properties["user:email"];
+          var email = user.email || '';
           return email !== this._id(user) ? email : '';
         } else {
           return '';
@@ -189,13 +188,15 @@ Example:
               this.$.container.style.backgroundSize = this.height + 'px' + ' ' + this.height + 'px';
           } else {
             var name = this._name(this.user);
-            var colors = ["#1abc9c", "#16a085", "#f1c40f", "#f39c12", "#2196F3", "#3F51B5", "#673AB7", "#E91E63",
+            var colors = [
+                  "#1abc9c", "#16a085", "#f1c40f", "#f39c12", "#2196F3", "#3F51B5", "#673AB7", "#E91E63",
                   "#9C27B0", "#009688", "#4CAF50", "#FF9800", "#795548", "#FF5722", "#2ecc71", "#27ae60", "#e67e22",
                   "#d35400", "#3498db", "#2980b9", "#e74c3c", "#c0392b", "#9b59b6", "#8e44ad", "#bdc3c7", "#34495e",
                   "#2c3e50", "#95a5a6", "#7f8c8d", "#ec87bf", "#d870ad", "#f69785", "#9ba37e", "#b49255", "#b49255",
                   "#a94136"
                 ],
-                alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",
+                alphabet = [
+                  "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",
                   "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"
                 ],
                 tempName = '',

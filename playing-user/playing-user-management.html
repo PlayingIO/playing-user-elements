@@ -427,7 +427,6 @@ Used by `playing-user-group-management`
        * @event playing-user-deleted
        */
       ready: function() {
-        this.$.picker.$$('mostly-select2').queryResultsFilter = this.resultsFilter;
         this.$.editUserForm.addEventListener('iron-form-presubmit', (event) => {
           event.preventDefault();
           this._saveUser();
@@ -461,7 +460,7 @@ Used by `playing-user-group-management`
 
       _canEdit: function(readonly, currentUser, user) {
         return !readonly && this.user && currentUser && (this._hasAdministrationPermissions(currentUser) ||
-          this._isSameUsername(currentUser.properties.username, user.properties.username));
+          this._isSameUsername(currentUser.username, user.username));
       },
 
       _isSameUsername: function(username1, username2) {

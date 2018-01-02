@@ -5,13 +5,11 @@
 -->
 <dom-module id="playing-profile">
   <template>
-    <mostly-connection id="nxcon" user="{{currentUser}}"></mostly-connection>
-
     <mostly-page>
       <div slot="header">[[i18n('profile.heading')]]</div>
       <div>
         <paper-card>
-          <playing-user-profile username="[[_username(currentUser)]]"></playing-user-profile>
+          <playing-user-profile username="[[_username(user)]]"></playing-user-profile>
         </paper-card>
       </div>
     </mostly-page>
@@ -23,13 +21,7 @@
       is: 'playing-profile',
       behaviors: [Mostly.I18nBehavior],
       properties: {
-        currentUser: Object
-      },
-
-      ready: function() {
-        this.$.nxcon.connect().then(res => {
-          this.currentUser = res;
-        });
+        user: Object
       },
 
       _username: function(user) {
