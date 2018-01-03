@@ -28,7 +28,7 @@ Example:
     </style>
     <mostly-tag icon="mostly:group">
       <template is="dom-if" if="[[!disabled]]">
-        <a href$="[[_href(group)]]">[[_label(group)]]</a>
+        <a href$="[[urlFor('group', _name(group))]]">[[_label(group)]]</a>
       </template>
       <template is="dom-if" if="[[disabled]]">
         [[_label(group)]]
@@ -76,10 +76,6 @@ Example:
 
       _label: function(group) {
         return group.grouplabel || group.groupname;
-      },
-
-      _href: function(group) {
-        return this.urlFor('group', this._name(group));
       }
 
     });
