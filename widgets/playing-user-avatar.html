@@ -112,7 +112,7 @@ Example:
       ],
 
       _username: function (user) {
-        return user.username || this._id(user);
+        return user.username || this._id(user) || user;
       },
 
       _isEntity: function(user) {
@@ -132,7 +132,7 @@ Example:
           var lastName = user.lastName || '';
           return (firstName || lastName) ? firstName + ' ' + lastName : user.username;
         } else {
-          return user.username;
+          return user;
         }
       },
 
@@ -179,29 +179,27 @@ Example:
 
       __makeAvatar: function () {
         if (this.user) {
-          if (this.user.contextParameters
-            && this.user.contextParameters.userprofile
-            && this.user.contextParameters.userprofile.avatar) {
+          if (this.user.avatar) {
               this._output = '';
-              this.$.container.style.background = 'url(' + this.user.contextParameters.userprofile.avatar.data + ')';
+              this.$.container.style.background = 'url(' + this.user.avatar.url + ')';
               this.$.container.style.backgroundRepeat = "no-repeat";
               this.$.container.style.backgroundSize = this.height + 'px' + ' ' + this.height + 'px';
           } else {
             var name = this._name(this.user);
             var colors = [
-                  "#1abc9c", "#16a085", "#f1c40f", "#f39c12", "#2196F3", "#3F51B5", "#673AB7", "#E91E63",
-                  "#9C27B0", "#009688", "#4CAF50", "#FF9800", "#795548", "#FF5722", "#2ecc71", "#27ae60", "#e67e22",
-                  "#d35400", "#3498db", "#2980b9", "#e74c3c", "#c0392b", "#9b59b6", "#8e44ad", "#bdc3c7", "#34495e",
-                  "#2c3e50", "#95a5a6", "#7f8c8d", "#ec87bf", "#d870ad", "#f69785", "#9ba37e", "#b49255", "#b49255",
-                  "#a94136"
-                ],
-                alphabet = [
-                  "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",
-                  "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"
-                ],
-                tempName = '',
-                splitName = name.split(" "),
-                alphabetPosition = alphabet.indexOf(name.charAt(0).toLowerCase());
+              "#1abc9c", "#16a085", "#f1c40f", "#f39c12", "#2196F3", "#3F51B5", "#673AB7", "#E91E63",
+              "#9C27B0", "#009688", "#4CAF50", "#FF9800", "#795548", "#FF5722", "#2ecc71", "#27ae60", "#e67e22",
+              "#d35400", "#3498db", "#2980b9", "#e74c3c", "#c0392b", "#9b59b6", "#8e44ad", "#bdc3c7", "#34495e",
+              "#2c3e50", "#95a5a6", "#7f8c8d", "#ec87bf", "#d870ad", "#f69785", "#9ba37e", "#b49255", "#b49255",
+              "#a94136"
+            ];
+            var alphabet = [
+              "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",
+              "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"
+            ];
+            var tempName = '';
+            var splitName = name.split(" ");
+            var alphabetPosition = alphabet.indexOf(name.charAt(0).toLowerCase());
             this.$.container.style.backgroundColor = colors[alphabetPosition];
             for (var i = 0; i < splitName.length; i++) {
               tempName += splitName[i].charAt(0);
@@ -209,15 +207,13 @@ Example:
             this._output = tempName;
             if (this.fetchAvatar) {
               this.$.getUserProfile.path = "user/" + this._username(this.user);
-              this.$.getUserProfile.get().then(function(res) {
-                if (res.contextParameters
-                  && res.contextParameters.userprofile
-                  && res.contextParameters.userprofile.avatar) {
+              this.$.getUserProfile.get().then((res) => {
+                if (res && res.avatar) {
                     this.user = res;
                 }
-              }.bind(this)).catch(function() {
+              }).catch(() => {
                 log.warn("Cannot fetch profile for user " + this._username(this.user));
-              }.bind(this));
+              });
             }
           }
         }
