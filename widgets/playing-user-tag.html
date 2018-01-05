@@ -30,7 +30,6 @@ Example:
       a {
         @apply --mostly-link;
       }
-
       a:hover {
         @apply --mostly-link-hover;
       }
@@ -111,7 +110,7 @@ Example:
           var lastName = user.lastName;
           return (firstName || lastName) ? firstName + ' ' + lastName : user.username;
         } else {
-          return this._id(user);
+          return user? this._id(user) : 'Nobody';
         }
       },
 
