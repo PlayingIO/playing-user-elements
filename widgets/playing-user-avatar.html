@@ -121,8 +121,8 @@ Example:
 
       _id: function(user) {
         if (user) {
-          var id = user.id || user.uid;
-          return id ? id : user.replace('user:', '');
+          var id = user.id;
+          return id? id : user.replace('user:', '');
         }
       },
 
