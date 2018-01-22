@@ -674,7 +674,7 @@ Used by `playing-user-group-management`
         this.$.deleteGroupDialog.toggle();
         this.$.editRequest.data = this.group;
         this.$.editRequest.remove().then((response) => {
-          this.fire('playing-group-removed', response.data);
+          this.fire('playing-group-deleted', response.data);
           this._goHome();
         });
       },

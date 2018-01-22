@@ -89,7 +89,6 @@ Example:
       paper-card {
         @apply --mostly-card;
       }
-
     </style>
 
     <mostly-resource id="latestCreatedUsersGroups" auto
@@ -193,10 +192,10 @@ Example:
         window.addEventListener('playing-group-created', () => {
           this._refreshLatest();
         });
-        window.addEventListener('playing-user-removed', () => {
+        window.addEventListener('playing-user-deleted', () => {
           this._refreshLatest();
         });
-        window.addEventListener('playing-group-removed', () => {
+        window.addEventListener('playing-group-deleted', () => {
           this._refreshLatest();
         });
       }
