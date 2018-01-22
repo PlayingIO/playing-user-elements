@@ -55,7 +55,7 @@ Custom property | Description | Default
       :host {
         display: block;
         position: relative;
-        @apply(--layout-flex);
+        @apply --layout-flex;
       }
 
       #createDropdown {
@@ -106,23 +106,25 @@ Custom property | Description | Default
       <section name="search">
         <div class="horizontal layout center">
           <template is="dom-if" if="[[_canCreateUserGroup(readonly, _currentUser)]]">
-            <paper-menu-button no-animations id="createDropdown" no-overlap
-                    horizontal-align="right" vertical-align="top" vertical-offset="-4">
-              <paper-button noink class="primary" id="createButton" slot="dropdown-trigger">
-                <iron-icon icon="mostly:add"></iron-icon>
-                <div>[[i18n('userGroupManagement.new.usergroup')]]</div>
-              </paper-button>
-              <paper-listbox no-animation id="menu" selectable="item" slot="dropdown-content">
-                <paper-icon-item name="user" on-tap="_createUser">
-                  <iron-icon icon="mostly:user" slot="item-icon"></iron-icon>
-                  <span>[[i18n('userGroupManagement.new.user')]]</span>
-                </paper-icon-item>
-                <paper-icon-item name="group" on-tap="_createGroup">
-                  <iron-icon icon="mostly:group" slot="item-icon"></iron-icon>
-                  <span>[[i18n('userGroupManagement.new.group')]]</span>
-                </paper-icon-item>
-              </paper-listbox>
-            </paper-menu-button>
+            <div class="flex">
+              <paper-menu-button no-animations id="createDropdown" no-overlap
+                      horizontal-align="right" vertical-align="top" vertical-offset="-4">
+                <paper-button noink class="primary" id="createButton" slot="dropdown-trigger">
+                  <iron-icon icon="mostly:add"></iron-icon>
+                  <div>[[i18n('userGroupManagement.new.usergroup')]]</div>
+                </paper-button>
+                <paper-listbox no-animation id="menu" selectable="item" slot="dropdown-content">
+                  <paper-icon-item name="user" on-tap="_createUser">
+                    <iron-icon icon="mostly:user" slot="item-icon"></iron-icon>
+                    <span>[[i18n('userGroupManagement.new.user')]]</span>
+                  </paper-icon-item>
+                  <paper-icon-item name="group" on-tap="_createGroup">
+                    <iron-icon icon="mostly:group" slot="item-icon"></iron-icon>
+                    <span>[[i18n('userGroupManagement.new.group')]]</span>
+                  </paper-icon-item>
+                </paper-listbox>
+              </paper-menu-button>
+            </div>
           </template>
         </div>
         <playing-user-group-search></playing-user-group-search>
