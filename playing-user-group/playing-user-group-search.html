@@ -1,5 +1,4 @@
 <link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../iron-icons/editor-icons.html">
 <link rel="import" href="../../paper-button/paper-button.html">
@@ -21,7 +20,7 @@
 -->
 <dom-module id="playing-user-group-search">
   <template>
-    <style include="iron-flex iron-flex-alignment iron-flex-factors mostly-styles">
+    <style include="mostly-styles">
       :host {
         display: block;
         @apply --playing-user-group-search-layout;
@@ -36,34 +35,6 @@
         padding: 0;
       }
 
-      .table-header {
-        @apply --layout-horizontal;
-        @apply --layout-center;
-        background-color: var(--mostly-table-header-background, #fafafa);
-        color: var(--mostly-text-default, rgba(0, 0, 0, 0.54));
-        font-weight: 400;
-        min-height: 48px;
-        padding: 0 0 0 12px;
-        border-bottom: 2px solid var(--mostly-border, #eee);
-        box-shadow: 0 -1px 0 rgba(0,0,0,0.2) inset;
-      }
-
-      .table-row {
-        @apply --layout-horizontal;
-        @apply --layout-center;
-        padding: 12px 0 12px 12px;
-        border-bottom: 1px solid var(--mostly-border, #eee);
-        cursor: pointer;
-      }
-
-      .table-row:hover {
-        background: var(--mostly-container-hover, #fafafa);
-      }
-
-      .table {
-        border: 1px solid var(--mostly-border, #eee);
-      }
-
       .counter {
         margin-right: 2em;
       }
@@ -71,14 +42,6 @@
       h3 iron-icon {
         width: 1.3em;
         margin-right: .2rem;
-      }
-
-      .emptyResult {
-        opacity: .5;
-        display: block;
-        font-weight: 300;
-        padding: 1.5em .7em;
-        text-align: center;
       }
 
       paper-card {
@@ -130,7 +93,7 @@
             </template>
             <template is="dom-if" if=[[_empty(groups.data)]]>
               <div class="table-row">
-                <div class="emptyResult">[[i18n('userGroupSearch.empty.groups')]]</div>
+                <div class="empty-result">[[i18n('userGroupSearch.empty.groups')]]</div>
               </div>
             </template>
           </div>
@@ -163,7 +126,7 @@
             </template>
             <template is="dom-if" if=[[_empty(users.data)]]>
               <div class="table-row">
-                <div class="emptyResult">[[i18n('userGroupSearch.empty.users')]]</div>
+                <div class="empty-result">[[i18n('userGroupSearch.empty.users')]]</div>
               </div>
             </template>
           </div>

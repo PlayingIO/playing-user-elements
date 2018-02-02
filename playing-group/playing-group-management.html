@@ -28,7 +28,7 @@ Example:
 -->
 <dom-module id="playing-group-management">
   <template>
-    <style include="iron-flex iron-flex-alignment iron-flex-factors mostly-styles">
+    <style include="mostly-styles">
       :host {
         display: block;
       }
@@ -112,42 +112,6 @@ Example:
         padding: 0;
       }
 
-      .table {
-        border: 1px solid var(--mostly-border, #e3e3e3);
-      }
-
-      .table-header {
-        @apply --layout-horizontal;
-        @apply --layout-center;
-        background-color: var(--mostly-table-header-background, #fafafa);
-        color: var(--mostly-table-header-titles, rgba(0, 0, 0, 0.54));
-        font-weight: 400;
-        min-height: 48px;
-        padding: 0 0 0 12px;
-        border-bottom: 2px solid var(--mostly-border, #eee);
-        box-shadow: 0 -1px 0 rgba(0,0,0,0.2) inset;
-      }
-
-      .table-row {
-        @apply --layout-horizontal;
-        @apply --layout-center;
-        padding: 12px 0 12px 12px;
-        border-bottom: 1px solid var(--mostly-border, #eee);
-        cursor: pointer;
-      }
-
-      .table-row:hover {
-        background: var(--mostly-container-hover, #fafafa);
-      }
-
-      .table-row:last-of-type {
-        border-bottom: none;
-      }
-
-      .table-actions {
-        width: 3em;
-      }
-
       .filter-wrapper {
         margin-top: 1em;
       }
@@ -180,14 +144,6 @@ Example:
 
       .confirm {
         padding: 2em;
-      }
-
-      .emptyResult {
-        opacity: .5;
-        display: block;
-        font-weight: 300;
-        padding: 1.5em .7em;
-        text-align: center;
       }
 
       paper-card {
@@ -342,7 +298,7 @@ Example:
           </template>
           <template is="dom-if" if=[[_empty(memberUsers)]]>
             <div class="table-row">
-              <div class="emptyResult">[[i18n('groupManagement.noSearchResults')]]</div>
+              <div class="empty-result">[[i18n('groupManagement.noSearchResults')]]</div>
             </div>
           </template>
         </div>
