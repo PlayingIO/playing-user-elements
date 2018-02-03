@@ -13,12 +13,16 @@
 -->
 <dom-module id="playing-user-group-management-page">
   <template>
-
+    <style>
+      .main {
+        position: relative;
+      }
+    </style>
     <mostly-page>
       <div slot="header">
         <span class="flex">[[i18n('admin.usersAndGroups.heading')]]</span>
       </div>
-      <div>
+      <div class="main">
         <template is="dom-if" if="[[visible]]">
           <playing-user-group-management id="management" page="{{page}}"></playing-user-group-management>
           <template is="dom-if" if="[[_displayLatest]]">
