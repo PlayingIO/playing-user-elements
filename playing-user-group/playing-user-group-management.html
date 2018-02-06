@@ -3,7 +3,6 @@
 <link rel="import" href="../../iron-pages/iron-pages.html">
 <link rel="import" href="../../iron-form/iron-form.html">
 
-<link rel="import" href="../../paper-card/paper-card.html">
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
@@ -17,18 +16,19 @@
 <link rel="import" href="../../iron-icons/iron-icons.html">
 <link rel="import" href="../../iron-icons/social-icons.html">
 
-<link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
-<link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
 <link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
 <link rel="import" href="../../mostly-elements/behaviors/mostly-filters-behavior.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-card.html">
 
-<link rel="import" href="../widgets/playing-user-suggestion.html">
 <link rel="import" href="../playing-group/playing-create-group.html">
 <link rel="import" href="../playing-group/playing-group-management.html">
 <link rel="import" href="../playing-user/playing-create-user.html">
 <link rel="import" href="../playing-user/playing-user-management.html">
 <link rel="import" href="../playing-user/playing-user-profile.html">
 <link rel="import" href="../playing-user-group/playing-user-group-search.html">
+<link rel="import" href="../widgets/playing-user-suggestion.html">
 
 <!--
 An element for managing users and groups in Playing user services.
@@ -42,7 +42,7 @@ Example:
 -->
 <dom-module id="playing-user-group-management">
   <template>
-    <style include="iron-flex iron-flex-alignment mostly-styles">
+    <style include="mostly-styles">
       :host {
         display: block;
         position: relative;
@@ -89,8 +89,17 @@ Example:
         cursor: pointer;
       }
 
-      paper-card {
-        @apply --mostly-card;
+      /* buttons */
+      paper-button.primary {
+        background-color: var(--nuxeo-button-primary, #00adff);
+        color: #fff;
+      }
+
+      paper-button.primary:hover,
+      paper-button.primary:focus {
+        background-color: var(--nuxeo-button-primary-focus, #0079b3);
+        font-weight: inherit;
+        color: #fff !important;
       }
     </style>
 
@@ -126,9 +135,9 @@ Example:
       </section>
 
       <section name="create-user">
-        <paper-card>
+        <mostly-card>
           <playing-create-user readonly$="[[readonly]]"></playing-create-user>
-        </paper-card>
+        </mostly-card>
       </section>
 
       <section name="manage-user">
@@ -138,9 +147,9 @@ Example:
       </section>
 
       <section name="create-group">
-        <paper-card>
+        <mostly-card>
           <playing-create-group></playing-create-group>
-        </paper-card>
+        </mostly-card>
       </section>
 
       <section name="manage-group">

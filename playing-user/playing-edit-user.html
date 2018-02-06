@@ -14,25 +14,22 @@ Example:
     <style>
       :host {
         display: block;
-        width: 100%;
       }
     </style>
 
-    <div class="layout vertical">
-      <mostly-input label="[[i18n('editUser.firstName')]]"
-            value="{{user.firstName}}"
-            name="firstname"></mostly-input>
-      <mostly-input label="[[i18n('editUser.lastName')]]"
-            value="{{user.lastName}}"
-            name="lastname"></mostly-input>
-      <mostly-input label="[[i18n('editUser.company')]]"
-            value="{{user.company}}"
-            name="company"></mostly-input>
-      <mostly-input label="[[i18n('editUser.email')]]"
-            value="{{user.email}}"
-            name="email"
-            type="email" required></mostly-input>
-    </div>
+    <mostly-input label="[[i18n('editUser.firstName')]]"
+          value="{{user.firstName}}"
+          name="firstname"></mostly-input>
+    <mostly-input label="[[i18n('editUser.lastName')]]"
+          value="{{user.lastName}}"
+          name="lastname"></mostly-input>
+    <mostly-input label="[[i18n('editUser.company')]]"
+          value="{{user.company}}"
+          name="company"></mostly-input>
+    <mostly-input label="[[i18n('editUser.email')]]"
+          value="{{user.email}}"
+          name="email"
+          type="email" required></mostly-input>
 
     <template is="dom-if" if="[[new]]">
       <playing-user-suggestion id="picker"

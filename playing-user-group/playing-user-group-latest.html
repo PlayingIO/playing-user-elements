@@ -8,6 +8,7 @@
 <link rel="import" href="../../paper-menu-button/paper-menu-button.html">
 
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-card.html">
 <link rel="import" href="../widgets/playing-user-tag.html">
 <link rel="import" href="../widgets/playing-group-tag.html">
 
@@ -39,21 +40,13 @@ Example:
          width: 1.3em;
          margin-right: .2rem;
       }
-
-      paper-card {
-        @apply --mostly-card;
-      }
     </style>
 
     <mostly-resource id="latestCreatedUsersGroups" auto
             path="user-groups"
             response="{{latestCreatedUsersGroups}}"></mostly-resource>
 
-    <paper-card>
-      <h3 class="title">
-        <iron-icon icon="mostly:recent" prefix></iron-icon>
-        [[i18n('userGroupLatest.recentlyCreated')]]
-      </h3>
+    <mostly-card icon="mostly:recent" heading="[[i18n('userGroupLatest.recentlyCreated')]]">
       <div class="table">
         <div class="table-header">
           <div class="flex">[[i18n('userGroupLatest.name')]]</div>
@@ -86,7 +79,7 @@ Example:
           </template>
         </div>
       </div>
-    </paper-card>
+    </mostly-card>
  </template>
 
   <script>

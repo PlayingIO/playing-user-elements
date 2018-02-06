@@ -8,6 +8,7 @@
 <link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-card.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 <link rel="import" href="../../mostly-elements/mostly-layout.html">
@@ -32,6 +33,10 @@ Example:
     <style include="mostly-styles">
       :host {
         display: block;
+      }
+
+      [hidden] {
+        display: none !important;
       }
 
       label {
@@ -119,13 +124,17 @@ Example:
         margin-top: 2em;
       }
 
-      .confirm {
-        padding: 2em;
-        font-size: 1.1rem;
+      /* buttons */
+      paper-button.primary {
+        background-color: var(--mostly-button-primary, #00adff);
+        color: #fff;
       }
 
-      paper-card {
-        @apply --mostly-card;
+      paper-button.primary:hover,
+      paper-button.primary:focus {
+        background-color: var(--mostly-button-primary-focus, #0079b3);
+        font-weight: inherit;
+        color: #fff !important;
       }
     </style>
 
@@ -140,7 +149,7 @@ Example:
 
     <paper-toast id="toast"></paper-toast>
 
-    <paper-card>
+    <mostly-card>
       <div class="header horizontal layout">
         <paper-icon-button class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
         <iron-icon icon="mostly:user" class="avatar"></iron-icon>
@@ -178,10 +187,10 @@ Example:
       <!-- user -->
       <playing-view-user id="userViewer" user="[[user]]"></playing-view-user>
 
-    </paper-card>
+    </mostly-card>
 
     <!-- groups -->
-    <paper-card>
+    <mostly-card>
       <div class="layout horizontal center">
         <h3 class="flex">[[i18n('userManagement.groups')]]</h3>
         <template is="dom-if" if="[[_canEdit(readonly, _currentUser, user)]]">
@@ -238,24 +247,24 @@ Example:
           </div>
         </template>
       </div>
-    </paper-card>
+    </mostly-card>
 
     <!-- local permissions -->
-    <paper-card>
-    <playing-user-group-permissions-table
-            label="[[i18n('userManagement.localPermissions.heading')]]"
-            entity="[[username]]" readonly="[[readonly]]">
-    </playing-user-group-permissions-table>
-    </paper-card>
+    <mostly-card>
+      <playing-user-group-permissions-table
+              label="[[i18n('userManagement.localPermissions.heading')]]"
+              entity="[[username]]" readonly="[[readonly]]">
+      </playing-user-group-permissions-table>
+    </mostly-card>
 
     <!-- group permissions -->
     <template is="dom-repeat" items="[[user.groups]]">
-      <paper-card>
+      <mostly-card>
         <playing-user-group-permissions-table
                 label="[[i18n('userManagement.entityPermissions', item.groupname)]]"
                 entity="[[item.groupname]]" readonly="[[readonly]]">
         </playing-user-group-permissions-table>
-      </paper-card>
+      </mostly-card>
     </template>
 
     <mostly-dialog id="dialog" with-backdrop>
@@ -301,7 +310,7 @@ Example:
         <form class="vertical layout">
           <mostly-input label="[[i18n('userManagement.username')]]" value="[[user.username]]"
                   readonly required></mostly-input>
-          <nuxeo-layout id="layout" href="[[_layoutHref('nuxeo-edit-user.html')]]"></nuxeo-layout>
+          <mostly-layout id="layout" href="[[_layoutHref('playing-edit-user.html')]]"></mostly-layout>
         </form>
       </iron-form>
       <div class="buttons horizontal end-justified layout">
@@ -503,7 +512,7 @@ Example:
       },
 
       _toggleEditUser: function() {
-        this.$.layout.model = { user: JSON.parse(JSON.stringify(this.user.properties)) };
+        this.$.layout.model = { user: JSON.parse(JSON.stringify(this.user)) };
         this.$.editUserDialog.toggle();
       },
 

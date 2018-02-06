@@ -4,11 +4,11 @@
 <link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../iron-form/iron-form.html">
 <link rel="import" href="../../paper-button/paper-button.html">
-<link rel="import" href="../../paper-card/paper-card.html">
 <link rel="import" href="../../paper-dialog/paper-dialog.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../paper-toast/paper-toast.html">
 
+<link rel="import" href="../../mostly-elements/widgets/mostly-card.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
@@ -96,10 +96,6 @@ Example:
         @apply --buttons-bar;
         margin-top: 2em;
       }
-
-      paper-card {
-        @apply --mostly-card;
-      }
     </style>
 
     <mostly-connection id="nxcon"></mostly-connection>
@@ -112,7 +108,7 @@ Example:
 
     <paper-toast id="toast"></paper-toast>
 
-    <paper-card>
+    <mostly-card>
 
       <div class="horizontal layout center">
 
@@ -169,11 +165,10 @@ Example:
       <!-- user -->
       <playing-view-user id="userViewer" user="[[user]]"></playing-view-user>
 
-    </paper-card>
+    </mostly-card>
 
     <!-- groups -->
-    <paper-card>
-      <h3 class="flex">[[i18n('userManagement.groups')]]</h3>
+    <mostly-card heading="[[i18n('userManagement.groups')]]">
       <div class="table">
         <div class="header">
           <div class="flex">[[i18n('userManagement.name')]]</div>
@@ -186,25 +181,25 @@ Example:
           </div>
         </template>
       </div>
-    </paper-card>
+    </mostly-card>
 
     <!-- local permissions -->
-    <paper-card>
+    <mostly-card>
       <playing-user-group-permissions-table
               label="[[i18n('userManagement.localPermissions.heading')]]"
               entity="[[username]]" readonly>
       </playing-user-group-permissions-table>
-    </paper-card>
+    </mostly-card>
 
     <!-- group permissions -->
-    <paper-card>
+    <mostly-card>
       <template is="dom-repeat" items="[[user.groups]]">
         <playing-user-group-permissions-table
                 label="[[i18n('userManagement.entityPermissions', item.name)]]"
                 entity="[[item.name]]" readonly>
         </playing-user-group-permissions-table>
       </template>
-    </paper-card>
+    </mostly-card>
 
   </template>
 

@@ -8,6 +8,7 @@
 <link rel="import" href="../../paper-menu-button/paper-menu-button.html">
 
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-card.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-pagination-controls.html">
 <link rel="import" href="../widgets/playing-user-tag.html">
@@ -43,11 +44,6 @@
         width: 1.3em;
         margin-right: .2rem;
       }
-
-      paper-card {
-        @apply --mostly-card;
-      }
-
     </style>
 
     <mostly-resource id="userSearch" auto
@@ -58,20 +54,17 @@
             schemas='users,groups,*'
             response="{{groups}}"></mostly-resource>
 
-    <paper-card class="search">
+    <mostly-card class="search">
       <mostly-input autofocus value="{{searchTerm}}" type="search"
               placeholder="[[i18n('userGroupSearch.search.placeholder')]]">
         <iron-icon icon="mostly:search" prefix></iron-icon>
       </mostly-input>
-    </paper-card>
+    </mostly-card>
 
     <template is="dom-if" if="[[!_showResults(searchTerm)]]">
 
       <!-- groups -->
-      <paper-card name="groups">
-        <h3 class="title">
-          <iron-icon icon="mostly:group"></iron-icon> [[i18n('userGroupSearch.groups')]]
-        </h3>
+      <mostly-card name="groups" icon="mostly:group" heading="[[i18n('userGroupSearch.groups')]]">
         <div class="table">
           <div class="table-header">
             <div class="flex-4">[[i18n('userGroupSearch.name')]]</div>
@@ -99,13 +92,10 @@
           </div>
         </div>
         <mostly-pagination-controls page="{{groupsCurrentPage}}" number-of-pages="[[groups.numberOfPages]]"></mostly-pagination-controls>
-      </paper-card>
+      </mostly-card>
 
       <!-- users -->
-      <paper-card name="users">
-        <h3 class="title">
-          <iron-icon icon="mostly:user"></iron-icon> [[i18n('userGroupSearch.users.heading')]]
-        </h3>
+      <mostly-card name="users" icon="mostly:user" heading="[[i18n('userGroupSearch.users.heading')]]">
         <div class="table">
           <div class="table-header">
             <div class="flex-4">[[i18n('userGroupSearch.name')]]</div>
@@ -132,7 +122,7 @@
           </div>
         </div>
         <mostly-pagination-controls page="{{usersCurrentPage}}" number-of-pages="[[users.numberOfPages]]"></mostly-pagination-controls>
-      </paper-card>
+      </mostly-card>
     </template>
   </template>
 
