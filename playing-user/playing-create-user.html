@@ -9,6 +9,7 @@
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
+<link rel="import" href="../../mostly-elements/mostly-layout.html">
 <link rel="import" href="../widgets/playing-user-suggestion.html">
 <link rel="import" href="playing-edit-password.html">
 
@@ -94,7 +95,9 @@
                 name="username" required>
         </mostly-input>
 
-        <playing-edit-user id="propertyEditor" user="{{user}}" new></playing-edit-user>
+        <mostly-layout id="layout" href="[[_layoutHref('playing-edit-user.html')]]"
+                model="[[_layoutModel(user, new)]]"
+                on-element-changed="_layoutElementChanged"></mostly-layout>
 
         <label class="label-password">[[i18n('createUser.setPassword')]]</label>
         <paper-toggle-button checked="{{usePassword}}" name="password-toggle"></paper-toggle-button>
@@ -235,6 +238,23 @@
 
       _isAdministrator: function(user) {
         return user && user.isAdministrator;
+      },
+
+      _layoutHref: function(layout) {
+        return this.resolveUrl(layout);
+      },
+
+      _layoutModel: function() {
+        return {
+          user: this.user,
+          "new": this.new
+        };
+      },
+
+      _layoutElementChanged: function() {
+        this.$.layout.element.addEventListener('user-changed', (e) => {
+          this.set(e.detail.path, e.detail.value);
+        });
       }
     });
   </script>

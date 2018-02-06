@@ -10,6 +10,7 @@
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
+<link rel="import" href="../../mostly-elements/mostly-layout.html">
 <link rel="import" href="../playing-user-group/playing-user-group-permissions-table.html">
 <link rel="import" href="../widgets/playing-user-suggestion.html">
 <link rel="import" href="../widgets/playing-group-tag.html">
@@ -300,7 +301,7 @@ Example:
         <form class="vertical layout">
           <mostly-input label="[[i18n('userManagement.username')]]" value="[[user.username]]"
                   readonly required></mostly-input>
-          <playing-edit-user id="userEditor"></playing-edit-user>
+          <nuxeo-layout id="layout" href="[[_layoutHref('nuxeo-edit-user.html')]]"></nuxeo-layout>
         </form>
       </iron-form>
       <div class="buttons horizontal end-justified layout">
@@ -502,7 +503,7 @@ Example:
       },
 
       _toggleEditUser: function() {
-        this.$.userEditor.user = JSON.parse(JSON.stringify(this.user));
+        this.$.layout.model = { user: JSON.parse(JSON.stringify(this.user.properties)) };
         this.$.editUserDialog.toggle();
       },
 
@@ -513,7 +514,7 @@ Example:
       _saveUser: function() {
         this.$.editUserDialog.toggle();
         var editedUser = JSON.parse(JSON.stringify(this.user));
-        editedUser = this.$.userEditor.user;
+        editedUser = this.$.layout.model.user;
         this.$.editRequest.data = editedUser;
         this.$.editRequest.patch().then((response) => {
           this.user = response.data;
@@ -553,6 +554,10 @@ Example:
       _toast: function(msg) {
         this.$.toast.text = msg;
         this.$.toast.open();
+      },
+
+      _layoutHref: function(layout) {
+        return this.resolveUrl(layout);
       }
     });
   </script>
