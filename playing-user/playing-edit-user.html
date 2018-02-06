@@ -1,5 +1,3 @@
-<link rel="import" href="../widgets/playing-user-suggestion.html">
-
 <!--
 An element for creating and editing user data, which is dynamically loaded by `playing-user-management`.
 This element can be overridden with custom fields.
@@ -21,23 +19,19 @@ Example:
     </style>
 
     <div class="layout vertical">
-      <paper-input label="[[i18n('editUser.firstName')]]"
+      <mostly-input label="[[i18n('editUser.firstName')]]"
             value="{{user.firstName}}"
-            name="firstname"
-            always-float-label></paper-input>
-      <paper-input label="[[i18n('editUser.lastName')]]"
+            name="firstname"></mostly-input>
+      <mostly-input label="[[i18n('editUser.lastName')]]"
             value="{{user.lastName}}"
-            name="lastname"
-            always-float-label></paper-input>
-      <paper-input label="[[i18n('editUser.company')]]"
+            name="lastname"></mostly-input>
+      <mostly-input label="[[i18n('editUser.company')]]"
             value="{{user.company}}"
-            name="company"
-            always-float-label></paper-input>
-      <paper-input label="[[i18n('editUser.email')]]"
+            name="company"></mostly-input>
+      <mostly-input label="[[i18n('editUser.email')]]"
             value="{{user.email}}"
             name="email"
-            always-float-label
-            type="email" required></paper-input>
+            type="email" required></mostly-input>
     </div>
 
     <template is="dom-if" if="[[new]]">

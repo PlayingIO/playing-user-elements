@@ -4,11 +4,11 @@
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../paper-item/paper-icon-item.html">
-<link rel="import" href="../../paper-input/paper-input.html">
 <link rel="import" href="../../paper-listbox/paper-listbox.html">
 <link rel="import" href="../../paper-menu-button/paper-menu-button.html">
 
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-pagination-controls.html">
 <link rel="import" href="../widgets/playing-user-tag.html">
 <link rel="import" href="../widgets/playing-group-tag.html">
@@ -59,10 +59,10 @@
             response="{{groups}}"></mostly-resource>
 
     <paper-card class="search">
-      <paper-input noink autofocus="true" value="{{searchTerm}}" type="search"
+      <mostly-input autofocus value="{{searchTerm}}" type="search"
               placeholder="[[i18n('userGroupSearch.search.placeholder')]]">
         <iron-icon icon="mostly:search" prefix></iron-icon>
-      </paper-input>
+      </mostly-input>
     </paper-card>
 
     <template is="dom-if" if="[[!_showResults(searchTerm)]]">

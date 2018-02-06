@@ -1,4 +1,5 @@
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-form/iron-form.html">
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-dialog/paper-dialog.html">
@@ -10,6 +11,7 @@
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-pagination-controls.html">
 <link rel="import" href="../widgets/playing-group-tag.html">
 <link rel="import" href="../widgets/playing-user-tag.html">
@@ -264,10 +266,10 @@ Example:
         <iron-icon icon="mostly:user"></iron-icon> [[i18n('groupManagement.users.heading')]]
       </h3>
       <div class="filter-wrapper">
-        <paper-input autofocus="true" value="{{usersFilter}}" type="search"
-                     placeholder="[[i18n('groupManagement.filterUsers.placeholder')]]" no-label-float>
+        <mostly-input autofocus value="{{usersFilter}}" type="search"
+                     placeholder="[[i18n('groupManagement.filterUsers.placeholder')]]">
           <iron-icon icon="mostly:search" prefix></iron-icon>
-        </paper-input>
+        </mostly-input>
       </div>
       <div class="table">
         <div class="table-header">
@@ -312,10 +314,10 @@ Example:
         <iron-icon icon="mostly:group"></iron-icon> [[i18n('groupManagement.nestedGroups.heading')]]
       </h3>
       <div class="filter-wrapper">
-        <paper-input autofocus="true" value="{{groupsFilter}}" type="search"
-                     placeholder="[[i18n('groupManagement.filterGroups.placeholder')]]" no-label-float>
+        <mostly-input autofocus value="{{groupsFilter}}" type="search"
+                     placeholder="[[i18n('groupManagement.filterGroups.placeholder')]]">
           <iron-icon icon="mostly:search" prefix></iron-icon>
-        </paper-input>
+        </mostly-input>
       </div>
       <div class="table">
         <div class="table-header">

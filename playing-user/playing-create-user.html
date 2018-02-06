@@ -1,6 +1,5 @@
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../iron-form/iron-form.html">
-<link rel="import" href="../../paper-input/paper-input.html">
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
@@ -9,6 +8,7 @@
 <link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 <link rel="import" href="../widgets/playing-user-suggestion.html">
 <link rel="import" href="playing-edit-password.html">
 
@@ -89,9 +89,10 @@
 
     <iron-form id="form">
       <form class="vertical layout">
-        <paper-input label="[[i18n('createUser.username')]]" value="{{user.username}}"
-                name="username" required always-float-label>
-        </paper-input>
+        <mostly-input label="[[i18n('createUser.username')]]"
+                value="{{user.username}}"
+                name="username" required>
+        </mostly-input>
 
         <playing-edit-user id="propertyEditor" user="{{user}}" new></playing-edit-user>
 

@@ -1,7 +1,6 @@
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../paper-input/paper-input.html">
-<link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../paper-toast/paper-toast.html">
 
@@ -10,6 +9,7 @@
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 <link rel="import" href="../playing-user-group/playing-user-group-permissions-table.html">
 <link rel="import" href="../widgets/playing-user-suggestion.html">
 <link rel="import" href="../widgets/playing-group-tag.html">
@@ -298,8 +298,8 @@ Example:
       <h2>[[i18n('userManagement.editUser.heading')]]</h2>
       <iron-form id="editUserForm">
         <form class="vertical layout">
-          <paper-input label="[[i18n('userManagement.username')]]" value="[[user.username]]"
-                  always-float-label readonly required></paper-input>
+          <mostly-input label="[[i18n('userManagement.username')]]" value="[[user.username]]"
+                  readonly required></mostly-input>
           <playing-edit-user id="userEditor"></playing-edit-user>
         </form>
       </iron-form>
