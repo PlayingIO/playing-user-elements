@@ -72,7 +72,7 @@ Example:
               <div class="table-actions"></div>
             </div>
           </template>
-          <template is="dom-if" if=[[_empty(latestCreatedUsersGroups.data)]]>
+          <template is="dom-if" if=[[!latestCreatedUsersGroups.data.length]]>
             <div class="table-row">
               <div class="empty-result">[[i18n('userGroupLatest.emptyRecentUserOrGroup')]]</div>
             </div>
@@ -89,10 +89,6 @@ Example:
       properties: {
         // Holds the list of last created users or groups
         latestCreatedUsersGroups: Object
-      },
-
-      _empty: function(entries) {
-        return entries && entries.length === 0;
       },
 
       _userHasName: function(user) {

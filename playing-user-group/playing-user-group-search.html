@@ -84,7 +84,7 @@
                 </div>
               </div>
             </template>
-            <template is="dom-if" if=[[_empty(groups.data)]]>
+            <template is="dom-if" if=[[!groups.data.length]]>
               <div class="table-row">
                 <div class="empty-result">[[i18n('userGroupSearch.empty.groups')]]</div>
               </div>
@@ -114,7 +114,7 @@
                 <div class="flex-4">[[item.email]]</div>
               </div>
             </template>
-            <template is="dom-if" if=[[_empty(users.data)]]>
+            <template is="dom-if" if=[[!users.data.length]]>
               <div class="table-row">
                 <div class="empty-result">[[i18n('userGroupSearch.empty.users')]]</div>
               </div>
@@ -189,10 +189,6 @@
 
       _manageGroup: function(e) {
         this.fire('manageGroup', { group: e.model.item.id });
-      },
-
-      _empty: function(entries) {
-        return entries && entries.length === 0;
       },
 
       _countUsers: function(users) {

@@ -272,27 +272,25 @@ Example:
           <div class="table-actions"></div>
         </div>
         <div class="table-rows">
-          <template is="dom-if" if=[[!_empty(memberUsers)]]>
-            <template is="dom-repeat" items="[[memberUsers]]">
-              <div class="table-row">
-                <div class="flex-4">
-                  <template is="dom-if" if="[[_userHasName(item)]]">
-                    <playing-user-tag user="[[item]]"></playing-user-tag>
-                  </template>
-                </div>
-                <div class="flex-4">[[item.id]]</div>
-                <div class="table-actions">
-                  <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
-                    <paper-icon-button icon="mostly:clear" noink
-                            title="[[i18n('groupManagement.removeFrom', item.label)]]"
-                            on-tap="_toggleDeleteDialog">
-                    </paper-icon-button>
-                  </template>
-                </div>
+          <template is="dom-repeat" items="[[memberUsers]]">
+            <div class="table-row">
+              <div class="flex-4">
+                <template is="dom-if" if="[[_userHasName(item)]]">
+                  <playing-user-tag user="[[item]]"></playing-user-tag>
+                </template>
               </div>
-            </template>
+              <div class="flex-4">[[item.id]]</div>
+              <div class="table-actions">
+                <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
+                  <paper-icon-button icon="mostly:clear" noink
+                          title="[[i18n('groupManagement.removeFrom', item.label)]]"
+                          on-tap="_toggleDeleteDialog">
+                  </paper-icon-button>
+                </template>
+              </div>
+            </div>
           </template>
-          <template is="dom-if" if=[[_empty(memberUsers)]]>
+          <template is="dom-if" if=[[!memberUsers.length]]>
             <div class="table-row">
               <div class="empty-result">[[i18n('groupManagement.noSearchResults')]]</div>
             </div>
@@ -317,25 +315,23 @@ Example:
           <div class="table-actions"></div>
         </div>
         <div class="table-rows">
-          <template is="dom-if" if=[[!_empty(memberGroups)]]>
-            <template is="dom-repeat" items="[[memberGroups]]">
-              <div class="table-row">
-                <div class="flex-4">
-                  <playing-group-tag group="[[item]]"></playing-group-tag>
-                </div>
-                <div class="flex-4">[[item.label]]</div>
-                <div class="table-actions">
-                  <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
-                    <paper-icon-button icon="mostly:clear" noink
-                            title="[[i18n('groupManagement.removeFrom', item.label)]]"
-                            on-tap="_toggleDeleteDialog">
-                    </paper-icon-button>
-                  </template>
-                </div>
+          <template is="dom-repeat" items="[[memberGroups]]">
+            <div class="table-row">
+              <div class="flex-4">
+                <playing-group-tag group="[[item]]"></playing-group-tag>
               </div>
-            </template>
+              <div class="flex-4">[[item.label]]</div>
+              <div class="table-actions">
+                <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
+                  <paper-icon-button icon="mostly:clear" noink
+                          title="[[i18n('groupManagement.removeFrom', item.label)]]"
+                          on-tap="_toggleDeleteDialog">
+                  </paper-icon-button>
+                </template>
+              </div>
+            </div>
           </template>
-          <template is="dom-if" if=[[_empty(memberGroups)]]>
+          <template is="dom-if" if=[[!memberGroups.length]]>
             <div class="table-row">
               <div>[[i18n('groupManagement.noSearchResults')]]</div>
             </div>
@@ -643,10 +639,6 @@ Example:
 
       _toggleDeleteGroup: function() {
         this.$.deleteGroupDialog.toggle();
-      },
-
-      _empty: function(data) {
-        return data && data.length === 0;
       },
 
       _goHome: function() {
