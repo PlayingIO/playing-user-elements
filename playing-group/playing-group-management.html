@@ -14,10 +14,12 @@
 <link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-pagination-controls.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
+<link rel="import" href="../../playing-elements/playing-styles.html">
+
+<link rel="import" href="../playing-user-group/playing-user-group-permissions-table.html">
 <link rel="import" href="../widgets/playing-group-tag.html">
 <link rel="import" href="../widgets/playing-user-tag.html">
 <link rel="import" href="../widgets/playing-user-suggestion.html">
-<link rel="import" href="../playing-user-group/playing-user-group-permissions-table.html">
 
 <!--
 `playing-group-management` is an element for managing a group.
@@ -31,13 +33,9 @@ Example:
 -->
 <dom-module id="playing-group-management">
   <template>
-    <style include="mostly-styles">
+    <style include="mostly-styles playing-styles">
       :host {
         display: block;
-      }
-
-      [hidden] {
-        display: none !important;
       }
 
       h2 {
@@ -46,6 +44,11 @@ Example:
 
       playing-user-group-permissions-table {
         margin-top: 1em;
+      }
+
+      .header {
+        height: 100%;
+        padding-bottom: 1em;
       }
 
       .header-actions paper-button {
@@ -57,10 +60,6 @@ Example:
         margin-right: .5rem;
       }
 
-      .backButton {
-        color: var(--mostly-button-primary, #00adff);
-      }
-
       .card {
         background: none var(--mostly-box, #fff);
         box-shadow: 0 3px 5px rgba(0,0,0,0.04);
@@ -68,21 +67,11 @@ Example:
         padding: 2em 1.5em;
       }
 
-      .header {
-        margin-bottom: 2rem;
-        @apply --layout-start;
-      }
-
       h3 iron-icon {
         width: 1.3em;
         margin-right: .2rem;
       }
 
-      .groupname {
-        margin: .5rem 0 0;
-      }
-
-      .grouplabel,
       .counter {
         font-weight: normal;
         margin: .5rem 0 0;
@@ -102,17 +91,6 @@ Example:
         margin-top: 15px;
       }
 
-      .remove {
-        @apply --mostly-link;
-        text-decoration: underline;
-        padding-left: .5em;
-        font-size: .8rem;
-      }
-
-      .remove:hover {
-        @apply --mostly-link-hover;
-      }
-
       /* Table */
       .title {
         margin: 0 0 .8em 0;
@@ -127,35 +105,9 @@ Example:
         width: 40%;
       }
 
-      .buttons {
-        @apply --buttons-bar;
-      }
-
       #editForm {
         padding: 1em 2em 2em;
       }
-
-      .emptyResult {
-        opacity: .5;
-        display: block;
-        font-weight: 300;
-        padding: 1.5em .7em;
-        text-align: center;
-      }
-
-      /* buttons */
-      paper-button.primary {
-        background-color: var(--mostly-button-primary, #00adff);
-        color: #fff;
-      }
-
-      paper-button.primary:hover,
-      paper-button.primary:focus {
-        background-color: var(--mostly-button-primary-focus, #0079b3);
-        font-weight: inherit;
-        color: #fff !important;
-      }
-
     </style>
 
     <mostly-connection user="{{_currentUser}}"></mostly-connection>
@@ -216,11 +168,10 @@ Example:
       <div class="header horizontal layout">
         <paper-icon-button noink class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
         <iron-icon icon="mostly:user" class="avatar"></iron-icon>
-        <div class="layout vertical flex">
-          <h3 class="groupname">[[group.groupname]]</h3>
-          <h4 class="grouplabel">[[group.label]]</h4>
+        <div id="names" class="layout vertical flex">
+          <h3 class="name">[[group.groupname]]</h3>
+          <h4 class="subname">[[group.label]]</h4>
           <h5 class="counter">[[_countUsers(group.users)]] + [[_countGroups(group.groups)]]</h5>
-          <h4 class="grouplabel">[[group.description]]</h4>
         </div>
 
         <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
@@ -236,6 +187,11 @@ Example:
             </paper-button>
           </div>
         </template>
+      </div>
+
+      <div role="widget" hidden$="[[!group.description]]">
+        <label>[[i18n('groupManagement.group.description')]]</label>
+        <div name="description" class="multiline">[[group.description]]</div>
       </div>
     </mostly-card>
 
@@ -269,7 +225,7 @@ Example:
         <div class="table-header">
           <div class="flex-4">[[i18n('groupManagement.name')]]</div>
           <div class="flex-4">[[i18n('groupManagement.identifier')]]</div>
-          <div class="table-actions"></div>
+          <div class="table-actions">&nbsp;</div>
         </div>
         <div class="table-rows">
           <template is="dom-repeat" items="[[memberUsers]]">
@@ -282,7 +238,7 @@ Example:
               <div class="flex-4">[[item.id]]</div>
               <div class="table-actions">
                 <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
-                  <paper-icon-button icon="mostly:clear" noink
+                  <paper-icon-button icon="mostly:remove" noink
                           title="[[i18n('groupManagement.removeFrom', item.label)]]"
                           on-tap="_toggleDeleteDialog">
                   </paper-icon-button>
