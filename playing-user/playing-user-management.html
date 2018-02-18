@@ -132,10 +132,9 @@ Example:
         <playing-user-suggestion id="picker" class="flex"
                 search-type="group"
                 placeholder="[[i18n('userManagement.search.groups')]]"
-                value="{{selectedGroup}}"
-                selected-items="{{selectedGroup}}"
+                selected-item="{{selectedGroup}}"
                 result-formatter="[[resultFormatter]]"
-                query-results-filter="[[resultsFilter]]>
+                query-results-filter="[[resultsFilter]]">
         </playing-user-suggestion>
         <div id="errors" hidden$="[[!errors]]">[[errors]]</div>
         <template is="dom-repeat" items="[[activity]]">
