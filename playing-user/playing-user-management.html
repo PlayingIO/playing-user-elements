@@ -12,6 +12,8 @@
 <link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 <link rel="import" href="../../mostly-elements/mostly-layout.html">
+<link rel="import" href="../../playing-elements/playing-styles.html">
+
 <link rel="import" href="../playing-user-group/playing-user-group-permissions-table.html">
 <link rel="import" href="../widgets/playing-user-suggestion.html">
 <link rel="import" href="../widgets/playing-group-tag.html">
@@ -30,55 +32,13 @@ Example:
 
 <dom-module id="playing-user-management">
   <template>
-    <style include="mostly-styles">
+    <style include="mostly-styles playing-styles">
       :host {
         display: block;
       }
 
-      [hidden] {
-        display: none !important;
-      }
-
-      label {
-        font-weight: bold;
-        margin-bottom: 5px;
-      }
-
-      .header {
-        @apply --layout-start;
-      }
-
-      .backButton {
-        color: var(--mostly-button-primary, #00adff);
-      }
-
-      .username {
-        margin: 10px 0 5px 5px;
-      }
-
-      .name {
-        font-weight: normal;
-        margin: 0 0 0 5px;
-      }
-
       .avatar {
         margin-top: 10px;
-      }
-
-      .actions {
-        @apply --layout-horizontal;
-        @apply --layout-flex;
-        @apply --layout-center;
-        @apply --layout-end-justified;
-      }
-
-      .actions paper-button {
-        margin-left: 1em;
-      }
-
-      paper-button iron-icon {
-        width: 1.3rem;
-        margin-right: .5rem;
       }
 
       .activity-entry:nth-of-type(1) {
@@ -87,14 +47,6 @@ Example:
 
       .activity-entry {
         margin-top: 15px;
-      }
-
-      .remove {
-        color: red;
-        cursor: pointer;
-        font-size: .8rem;
-        margin-left: 10px;
-        text-decoration: underline;
       }
 
       .table {
@@ -109,32 +61,9 @@ Example:
         margin-top: 1.5em;
       }
 
-      paper-dialog {
-        min-width: 400px;
-        padding-top: 24px;
-      }
-
       #errors {
         color: red;
         margin-top: 20px;
-      }
-
-      .buttons {
-        @apply --buttons-bar;
-        margin-top: 2em;
-      }
-
-      /* buttons */
-      paper-button.primary {
-        background-color: var(--mostly-button-primary, #00adff);
-        color: #fff;
-      }
-
-      paper-button.primary:hover,
-      paper-button.primary:focus {
-        background-color: var(--mostly-button-primary-focus, #0079b3);
-        font-weight: inherit;
-        color: #fff !important;
       }
     </style>
 
@@ -154,8 +83,8 @@ Example:
         <paper-icon-button class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
         <iron-icon icon="mostly:user" class="avatar"></iron-icon>
         <div class="layout vertical">
-          <h3 class="username">[[user.username]]</h3>
-          <h4 class="name">[[user.displayLabel]]</h4>
+          <h3 class="name">[[user.username]]</h3>
+          <h4 class="subname">[[user.displayLabel]]</h4>
         </div>
 
         <div class="actions">

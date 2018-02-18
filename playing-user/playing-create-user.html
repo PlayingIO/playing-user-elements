@@ -10,6 +10,8 @@
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 <link rel="import" href="../../mostly-elements/mostly-layout.html">
+<link rel="import" href="../../playing-elements/playing-styles.html">
+
 <link rel="import" href="../widgets/playing-user-suggestion.html">
 <link rel="import" href="playing-edit-password.html">
 
@@ -20,45 +22,14 @@
 -->
 <dom-module id="playing-create-user">
   <template>
-    <style include="mostly-styles">
+    <style include="mostly-styles playing-styles">
       :host {
         display: block;
-      }
-
-      .header {
-        @apply --layout-horizontal;
-        @apply --layout-center;
-        margin-bottom: 16px;
-      }
-
-      .header > iron-icon {
-        padding: 8px;
-      }
-
-      .backButton {
-        color: var(--mostly-button-primary, #00adff);
-      }
-
-      .form-buttons {
-        margin-top: 16px;
       }
 
       #errors {
         color: red;
         margin: 1em 0;
-      }
-
-      /* buttons */
-      paper-button.primary {
-        background-color: var(--mostly-button-primary, #00adff);
-        color: #fff;
-      }
-
-      paper-button.primary:hover,
-      paper-button.primary:focus {
-        background-color: var(--mostly-button-primary-focus, #0079b3);
-        font-weight: inherit;
-        color: #fff !important;
       }
     </style>
 
@@ -67,18 +38,19 @@
 
     <mostly-operation id="invite" path="users" op="invite" input="me" method="put"></mostly-operation>
 
-    <div class="header">
+    <div class="header horizontal layout">
       <paper-icon-button class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
-      <iron-icon icon="mostly:user"></iron-icon>
-      <h3>[[i18n('createUser.heading')]]</h3>
+      <iron-icon icon="mostly:user" class="icon"></iron-icon>
+      <div class="layout vertical">
+        <h3 class="name">[[i18n('createUser.heading')]]</h3>
+      </div>
     </div>
 
     <iron-form id="form">
       <form>
         <mostly-input label="[[i18n('createUser.username')]]"
                 value="{{user.username}}"
-                name="username" required>
-        </mostly-input>
+                name="username" required></mostly-input>
 
         <mostly-layout id="layout" href="[[_layoutHref('playing-edit-user.html')]]"
                 model="[[_layoutModel(user, new)]]"
