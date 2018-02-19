@@ -47,13 +47,11 @@
       }
     </style>
 
-    <mostly-resource id="userSearch" auto
-            path="users"
-            response="{{users}}"></mostly-resource>
-    <mostly-resource id="groupSearch" auto
-            path="groups"
+    <mostly-resource id="userSearch" path="users"
+            response-data="{{users}}" auto></mostly-resource>
+    <mostly-resource id="groupSearch" path="groups"
             schemas='users,groups,*'
-            response="{{groups}}"></mostly-resource>
+            response-data="{{groups}}" auto></mostly-resource>
 
     <mostly-card class="search">
       <mostly-input autofocus value="{{searchTerm}}" type="search"
@@ -73,7 +71,7 @@
             <div class="flex-4">[[i18n('userGroupSearch.contains')]]</div>
           </div>
           <div class="table-rows">
-            <template is="dom-repeat" items="[[groups.data]]" as="item">
+            <template is="dom-repeat" items="[[groups]]" as="item">
               <div class="table-row" on-tap="_manageGroup">
                 <div class="flex-4">
                   <playing-group-tag group="[[item]]"></playing-group-tag>
@@ -85,7 +83,7 @@
                 </div>
               </div>
             </template>
-            <template is="dom-if" if=[[!groups.data.length]]>
+            <template is="dom-if" if=[[!groups.length]]>
               <div class="table-row">
                 <div class="empty-result">[[i18n('userGroupSearch.empty.groups')]]</div>
               </div>
@@ -104,7 +102,7 @@
             <div class="flex-4">[[i18n('userGroupSearch.email')]]</div>
           </div>
           <div class="table-rows">
-            <template is="dom-repeat" items="[[users.data]]" as="item">
+            <template is="dom-repeat" items="[[users]]" as="item">
               <div class="table-row" on-tap="_manageUser">
                 <div class="flex-4">
                   <template is="dom-if" if="[[_userHasName(item)]]">
@@ -115,7 +113,7 @@
                 <div class="flex-4">[[item.email]]</div>
               </div>
             </template>
-            <template is="dom-if" if=[[!users.data.length]]>
+            <template is="dom-if" if=[[!users.length]]>
               <div class="table-row">
                 <div class="empty-result">[[i18n('userGroupSearch.empty.users')]]</div>
               </div>
