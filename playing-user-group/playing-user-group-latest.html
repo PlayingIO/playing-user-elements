@@ -43,9 +43,9 @@ Example:
       }
     </style>
 
-    <mostly-resource id="latestCreatedUsersGroups" auto
+    <mostly-resource id="searchRequest" auto
             path="user-groups"
-            response="{{latestCreatedUsersGroups}}"></mostly-resource>
+            response-data="{{latestCreatedUsersGroups}}"></mostly-resource>
 
     <mostly-card icon="mostly:recent" heading="[[i18n('userGroupLatest.recentlyCreated')]]">
       <div class="table">
@@ -57,7 +57,7 @@ Example:
           </div>
         </div>
         <div class="table-rows">
-          <template is="dom-repeat" items="[[latestCreatedUsersGroups.data]]" as="item">
+          <template is="dom-repeat" items="[[latestCreatedUsersGroups]]" as="item">
             <div class="table-row" on-tap="_manageUserOrGroup">
               <div class="flex">
                 <template is="dom-if" if="[[_isUser(item)]]">
@@ -73,7 +73,7 @@ Example:
               <div class="table-actions"></div>
             </div>
           </template>
-          <template is="dom-if" if=[[!latestCreatedUsersGroups.data.length]]>
+          <template is="dom-if" if=[[!latestCreatedUsersGroups.length]]>
             <div class="table-row">
               <div class="empty-result">[[i18n('userGroupLatest.emptyRecentUserOrGroup')]]</div>
             </div>
@@ -126,7 +126,7 @@ Example:
 
       _refreshLatest: function() {
         this.latestCreatedUsersGroups = {};
-        this.$.latestCreatedUsersGroups.execute();
+        this.$.searchRequest.execute();
       },
 
       ready: function() {
