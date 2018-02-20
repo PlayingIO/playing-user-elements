@@ -67,12 +67,14 @@
         }
         var management = this.root.querySelector('playing-user-group-management');
         if (this.entity && this.entity.id && this.entity.type) {
-          if (this.entity.type === 'group') {
-            management.selectedGroup = this.entity.id;
-            management.page = 'manage-group';
-          } else if (this.entity.type === 'user') {
-            management.selectedUser = this.entity.id;
-            management.page = 'manage-user';
+          if (this.entity.route === 'user-group-management') {
+            if (this.entity.type === 'group') {
+              management.selectedGroup = this.entity.id;
+              management.page = 'manage-group';
+            } else if (this.entity.type === 'user') {
+              management.selectedUser = this.entity.id;
+              management.page = 'manage-user';
+            }
           }
         } else {
           management.$$('playing-user-group-search')._searchTermChanged();
@@ -98,13 +100,11 @@
       },
 
       _handleUGMmanageUser: function(e) {
-        this.entity = {type: 'user', id: e.detail.user};
         var url = 'user-group-management' + '/' + this.entity.type + '/' + this.entity.id;
         this.navigateTo('administration', url);
       },
 
       _handleUGMmanageGroup: function(e) {
-        this.entity = {type: 'group', id: e.detail.group};
         var url = 'user-group-management' + '/' + this.entity.type + '/' + this.entity.id;
         this.navigateTo('administration', url);
       },
