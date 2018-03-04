@@ -16,7 +16,7 @@
 <link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
 <link rel="import" href="../../playing-elements/playing-styles.html">
 
-<link rel="import" href="../behaviors/playing-user-behavior.html">
+<link rel="import" href="../behaviors/playing-group-behavior.html">
 <link rel="import" href="../playing-user-group/playing-user-group-permissions-table.html">
 <link rel="import" href="../widgets/playing-group-tag.html">
 <link rel="import" href="../widgets/playing-user-tag.html">
@@ -119,12 +119,14 @@ Example:
     <mostly-resource id="editRequest"
             path="groups/[[groupname]]"
             response-data="{{group}}"></mostly-resource>
+
     <mostly-resource id="users" auto
             path="[[_usersPath(groupname)]]"
             response-data="{{memberUsers}}"></mostly-resource>
     <mostly-resource id="groups" auto
             path="[[_groupsPath(groupname)]]"
             response-data="{{memberGroups}}"></mostly-resource>
+
     <mostly-operation id="addUserGroup"
             path="users" op="addGroup"></mostly-operation>
     <mostly-operation id="removeUserGroup"
@@ -160,7 +162,11 @@ Example:
       <h2>[[i18n('groupManagement.editGroup.heading')]]</h2>
       <iron-form id="editForm">
         <form>
-          <mostly-input label="[[i18n('groupManagement.group.label')]]" value="{{_editableGroup.label}}" ></mostly-input>
+          <mostly-input label="[[i18n('groupManagement.group.groupname')]]" value="[[group.groupname]]"
+                  readonly required></mostly-input>
+          <mostly-layout id="layout"
+                  href="[[layoutHref('playing-edit-group.html')]]"
+                  model="[[layoutModel(group)]]"></mostly-layout>
         </form>
       </iron-form>
       <div class="buttons horizontal end-justified layout">
@@ -327,7 +333,7 @@ Example:
   <script>
     Polymer({
       is: 'playing-group-management',
-      behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior, Playing.UserBehavior],
+      behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior, Playing.GroupBehavior],
       properties: {
         groupname: {
           type: String,
@@ -335,6 +341,11 @@ Example:
         },
 
         group: Object,
+
+        /**
+         * original group object
+         */
+        origGroup: Object,
 
         selectedMember: {
           type: Object
