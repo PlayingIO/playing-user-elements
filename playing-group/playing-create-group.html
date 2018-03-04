@@ -8,6 +8,7 @@
 <link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 <link rel="import" href="../../playing-elements/playing-styles.html">
 
+<link rel="import" href="../behaviors/playing-group-behavior.html">
 <link rel="import" href="../widgets/playing-user-suggestion.html">
 
 <!--
@@ -70,42 +71,14 @@
 
     <iron-form id="form">
       <form>
-
         <mostly-input id="groupName"
-                label="[[i18n('createGroup.group.name')]]"
-                value="{{groupName}}" required></mostly-input>
-        <mostly-input id="groupLabel"
-                label="[[i18n('createGroup.group.label')]]"
-                value="{{groupLabel}}"></mostly-input>
+                label="[[i18n('groupManagement.group.groupname')]]"
+                value="{{group.groupname}}" required></mostly-input>
 
-        <playing-user-suggestion id="picker"
-                label="[[i18n('createGroup.members')]]"
-                search-type="user-group"
-                placeholder="[[i18n('createGroup.search.placeholder')]]"
-                value="[[selectedUser]]"
-                selected-items="{{selectedUser}}"
-                result-formatter="[[resultFormatter]]"
-                query-results-filter="[[resultsFilter]]">
-        </playing-user-suggestion>
-
-        <!-- selected members -->
-        <template is="dom-repeat" items="[[selectedUsers]]">
-          <div class="row">
-            <div class="label">
-              <iron-icon icon="mostly:user" hidden="[[item.groupname]]"></iron-icon>
-              <iron-icon icon="mostly:group" hidden="[[item.username]]"></iron-icon>
-              <span>[[item.displayLabel]]</span>
-            </div>
-            <div class="name">
-              <span hidden="[[item.groupname]]">[[item.username]]</span>
-              <span hidden="[[item.username]]">[[item.groupname]]</span>
-            </div>
-            <div class="email">
-              <span class="email">[[item.email]]</span>
-            </div>
-            <paper-icon-button icon="mostly:remove" title="remove" on-tap="_remove"></paper-icon-button>
-          </div>
-        </template>
+        <mostly-layout id="layout"
+                href="[[layoutHref('playing-edit-group.html')]]"
+                model="[[layoutModel(group, new)]]"
+                on-element-changed="layoutElementChanged"></mostly-layout>
 
         <div class="form-buttons">
           <paper-button noink id="cancelButton" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
@@ -115,7 +88,7 @@
           </paper-button>
         </div>
 
-        <span id="errors" hidden$="[[!_hasErrors(errors)]]">[[errors]]</span>
+        <span id="errors" hidden$="[[!hasErrors(errors)]]">[[errors]]</span>
 
       </form>
     </iron-form>
@@ -124,40 +97,12 @@
   <script>
     Polymer({
       is: 'playing-create-group',
-      behaviors: [Mostly.I18nBehavior],
+      behaviors: [Mostly.I18nBehavior, Playing.GroupBehavior],
       properties: {
-        groupName: {
-          type: String,
-          notify: true
-        },
-
-        groupLabel: {
-          type: String,
-          notify: true
-        },
-
-        selectedUser: {
+        group: {
           type: Object,
-          notify: true
-        },
-
-        selectedUsers: {
-          type: Array,
-          value: [],
-          notify: true
-        },
-
-        resultsFilter: {
-          type: Function,
-          value: function() {
-            return this._resultsFilter.bind(this);
-          }
-        },
-
-        resultFormatter: {
-          type: Function,
-          value: function() {
-            return this._resultFormatter.bind(this);
+          value() {
+            return this.emptyGroup();
           }
         },
 
@@ -175,10 +120,6 @@
         }
       },
 
-      observers: [
-        '_observeSelectedUser(selectedUser)'
-      ],
-
       ready: function() {
         this.$.form.addEventListener('iron-form-presubmit', (event) => {
           event.preventDefault();
@@ -187,20 +128,8 @@
       },
 
       _goHome: function() {
+        this.resetFields();
         this.fire('goHome');
-      },
-
-      _observeSelectedUser: function() {
-        if (this.selectedUser && this.selectedUsers.indexOf(this.selectedUser) === -1) {
-          this.push('selectedUsers', this.selectedUser);
-        }
-        this.selectedUser = null;
-      },
-
-      _remove: function(e) {
-        if (e.model.item) {
-          this.splice('selectedUsers', this.selectedUsers.indexOf(e.model.item), 1);
-        }
       },
 
       /**
@@ -223,11 +152,9 @@
        * Creates a new group if the form was successfully submitted.
        */
       _create: function() {
-        this.$.request.data = this._computeData();
-        this.$.request.post().then((response) => {
-          this.fire('playing-group-created', response.data);
-          this._resetFields();
-          if (!this.$.another.checked) {
+        this._doCreate(this.group).then((group) => {
+          this.resetFields();
+          if (!this._createAnother) {
             this._goHome();
           }
         }).catch((error) => {
@@ -235,51 +162,15 @@
         });
       },
 
+      _doCreate: function(group) {
+        this.$.request.data = group;
+        return this.$.request.post().then((response) => {
+          this.fire('playing-group-created', response.data);
+        })
+      },
+
       _cancel: function() {
-        this._resetFields();
         this._goHome();
-      },
-
-      _resetFields: function() {
-        this.groupName = '';
-        this.groupLabel = '';
-        this.errors = '';
-        this.selectedUsers = [];
-      },
-
-      _computeData: function() {
-        return {
-          "type": "group",
-          "groupname": this.groupName,
-          "label": this.groupLabel,
-          "users": this.selectedUsers.filter((record) => {
-            return record.type === 'user';
-          }).map((record) => {
-            return record.id;
-          }),
-          "groups": this.selectedUsers.filter((record) => {
-            return record.type === 'group';
-          }).map((record) => {
-            return record.id;
-          })
-        };
-      },
-
-      _resultsFilter: function(entry) {
-        for (var i = 0; i < this.selectedUsers.length; i++) {
-          if (entry.id === this.selectedUsers[i].id) {
-            return false;
-          }
-        }
-        return true;
-      },
-
-      _resultFormatter: function(item) {
-        return item.displayLabel + ' (' + (item.groupname || item.username) + ')';
-      },
-
-      _hasErrors: function() {
-        return this.errors !== '';
       }
     });
   </script>
