@@ -58,8 +58,6 @@
 
       listeners: {
         'goHome': '_handleUGMgoHome',
-        'manageUser': '_handleUGMmanageUser',
-        'manageGroup': '_handleUGMmanageGroup',
       },
 
       _entityChanged: function() {
@@ -98,16 +96,6 @@
         this.entity = {};
         this.page = 'search';
         this.navigateTo('administration', 'user-group-management');
-      },
-
-      _handleUGMmanageUser: function(e) {
-        var url = 'user-group-management' + '/' + this.entity.type + '/' + this.entity.id;
-        this.navigateTo('administration', url);
-      },
-
-      _handleUGMmanageGroup: function(e) {
-        var url = 'user-group-management' + '/' + this.entity.type + '/' + this.entity.id;
-        this.navigateTo('administration', url);
       },
 
       _observePage: function() {

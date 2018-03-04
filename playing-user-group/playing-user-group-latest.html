@@ -118,9 +118,9 @@ Example:
 
       _manageUserOrGroup: function(e) {
         if (this._isUser(e.model.item)) {
-          this.fire('manageUser', { user: e.model.item.id });
+          this.fire('manageUser', { type: e.model.item.type, user: e.model.item.id });
         } else if (this._isGroup(e.model.item)) {
-          this.fire('manageGroup', { group: e.model.item.id });
+          this.fire('manageGroup', { type: e.model.item.type, group: e.model.item.id });
         }
       },
 

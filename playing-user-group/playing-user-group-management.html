@@ -112,7 +112,7 @@ Example:
     Polymer({
       is: 'playing-user-group-management',
 
-      behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior],
+      behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior, Mostly.RoutingBehavior],
 
       properties: {
         /**
@@ -182,15 +182,13 @@ Example:
       },
 
       _manageUser: function(e) {
-        this.selectedUser = null;
-        this.selectedUser = e.detail.user;
-        this.page = 'manage-user';
+        var url = 'user-group-management/user/' + e.detail.user;
+        this.navigateTo('administration', url);
       },
 
       _manageGroup: function(e) {
-        this.selectedGroup = null;
-        this.selectedGroup = e.detail.group;
-        this.page = 'manage-group';
+        var url = 'user-group-management/group/' + e.detail.group;
+        this.navigateTo('administration', url);
       },
 
       _hasAdministrationPermissions: function(user) {

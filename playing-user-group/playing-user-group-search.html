@@ -50,7 +50,7 @@
     <mostly-resource id="userSearch" path="users"
             response-data="{{users}}" auto></mostly-resource>
     <mostly-resource id="groupSearch" path="groups"
-            schemas='users,groups,*'
+            schemas='users,groups.group,*'
             response-data="{{groups}}" auto></mostly-resource>
 
     <mostly-card class="search">
@@ -183,11 +183,11 @@
       },
 
       _manageUser: function(e) {
-        this.fire('manageUser', { user: e.model.item.id });
+        this.fire('manageUser', { type: e.model.item.type, user: e.model.item.id });
       },
 
       _manageGroup: function(e) {
-        this.fire('manageGroup', { group: e.model.item.id });
+        this.fire('manageGroup', { type: e.model.item.type, group: e.model.item.id });
       },
 
       _countUsers: function(users) {
