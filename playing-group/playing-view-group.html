@@ -1,0 +1,43 @@
+<link rel="import" href="../behaviors/playing-group-behavior.html">
+
+<!--
+An element for displaying group data.
+
+Example:
+
+    <playing-view-group group=[[group]] new></playing-view-group>
+
+@group Playing Elements
+@element playing-view-group
+-->
+<dom-module id="playing-view-group">
+  <template>
+    <style include="mostly-styles playing-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <div role="widget" hidden$="[[!group.description]]">
+      <label>[[i18n('groupManagement.group.description')]]</label>
+      <div name="description" class="multiline">[[group.description]]</div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-view-group',
+      behaviors: [Mostly.I18nBehavior],
+      properties: {
+        /**
+         * The group object to be displayed.
+         */
+        group: {
+          type: Object,
+          value: {}
+        }
+      }
+    });
+  </script>
+</dom-module>
