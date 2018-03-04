@@ -84,25 +84,27 @@ Example:
 
       <section name="create-user">
         <mostly-card>
-          <playing-create-user readonly$="[[readonly]]"></playing-create-user>
+          <playing-create-user id="userCreator"
+                readonly$="[[readonly]]"></playing-create-user>
         </mostly-card>
       </section>
 
       <section name="manage-user">
-        <playing-user-management
+        <playing-user-management id="userManager"
                 username="[[selectedUser]]"
                 readonly$="[[readonly]]"></playing-user-management>
       </section>
 
       <section name="create-group">
         <mostly-card>
-          <playing-create-group></playing-create-group>
+          <playing-create-group id="groupCreator"
+                readonly$="[[readonly]]"></playing-create-group>
         </mostly-card>
       </section>
 
       <section name="manage-group">
-        <playing-group-management
-                groupname="[[selectedGroup]]"
+        <playing-group-management id="groupManager"
+                group="[[selectedGroup]]"
                 readonly$="[[readonly]]"></playing-group-management>
       </section>
     </iron-pages>

@@ -113,18 +113,14 @@ Example:
 
     <mostly-connection user="{{_currentUser}}"></mostly-connection>
 
-    <mostly-resource id="request"
-            path="groups/[[groupname]]"
-            response-data="{{group}}"></mostly-resource>
-    <mostly-resource id="editRequest"
-            path="groups/[[groupname]]"
-            response-data="{{group}}"></mostly-resource>
+    <mostly-resource id="request" path="[[path]]" schemas="*"></mostly-resource>
+    <mostly-resource id="editRequest" path="[[path]]" schemas="*"></mostly-resource>
 
     <mostly-resource id="users" auto
-            path="[[_usersPath(groupname)]]"
+            path="[[_usersPath(group)]]"
             response-data="{{memberUsers}}"></mostly-resource>
     <mostly-resource id="groups" auto
-            path="[[_groupsPath(groupname)]]"
+            path="[[_groupsPath(group)]]"
             response-data="{{memberGroups}}"></mostly-resource>
 
     <mostly-operation id="addUserGroup"
@@ -187,7 +183,7 @@ Example:
           <h5 class="counter">[[_countUsers(group.users)]] + [[_countGroups(group.groups)]]</h5>
         </div>
 
-        <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
+        <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, group)]]">
           <div class="layout horizontal header-actions">
             <paper-button id="deleteGroupButton" noink class="flex-end" on-tap="_toggleDeleteGroup">
               <iron-icon icon="mostly:delete"></iron-icon> [[i18n('command.delete')]]
@@ -258,9 +254,9 @@ Example:
                 </template>
               </div>
               <div class="flex-4">[[user.id]]</div>
-              <div class="flex-4">[[findByProp(user.groups, 'group', groupname, 'role')]]</div>
+              <div class="flex-4">[[findByProp(user.groups, 'group', group.id, 'role')]]</div>
               <div class="table-actions">
-                <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
+                <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, group)]]">
                   <paper-icon-button icon="mostly:remove" noink
                           title="[[i18n('groupManagement.removeFrom', user.label)]]"
                           data-item="[[user]]"
@@ -302,7 +298,7 @@ Example:
               </div>
               <div class="flex-4">[[item.label]]</div>
               <div class="table-actions">
-                <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
+                <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, group)]]">
                   <paper-icon-button icon="mostly:clear" noink
                           title="[[i18n('groupManagement.removeFrom', item.label)]]"
                           data-item="[[item]]"
@@ -324,7 +320,7 @@ Example:
 
     <!-- permissions -->
     <mostly-card heading="[[i18n('groupManagement.permissions.heading')]]">
-      <playing-user-group-permissions-table entity="[[groupname]]"></playing-user-group-permissions-table>
+      <playing-user-group-permissions-table entity="[[group]]"></playing-user-group-permissions-table>
     </mostly-card>
 
   </template>
@@ -333,17 +329,23 @@ Example:
       is: 'playing-group-management',
       behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior, Playing.GroupBehavior],
       properties: {
-        groupname: {
-          type: String,
+        /**
+         * the current group
+         */
+        group: {
+          type: Object,
           observer: '_fetch'
         },
-
-        group: Object,
 
         /**
          * original group object
          */
         origGroup: Object,
+
+        path: {
+          type: String,
+          computed: 'groupPath(group)'
+        },
 
         selectedMember: {
           type: Object
@@ -435,12 +437,11 @@ Example:
       },
 
       _hasAdministrationPermissions: function(user) {
-        return user && (user.isAdministrator || (this.isMember(user, 'powerusers')
-          && this.groupname !== 'administrators'));
+        return user && (user.isAdministrator || this.isMember(user, 'powerusers'));
       },
 
-      _canEditGroup: function(readonly, currentUser, groupname) {
-        return !readonly && this._hasAdministrationPermissions(currentUser, groupname);
+      _canEditGroup: function(readonly, currentUser, group) {
+        return !readonly && this._hasAdministrationPermissions(currentUser, group);
       },
 
       _userHasName: function(user) {
@@ -456,8 +457,10 @@ Example:
       },
 
       _fetch: function() {
-        if (this.groupname) {
+        if (typeof this.group === 'string') {
           this.$.request.get().then((response) => {
+            this.group = response.data;
+            this.origGroup = this.fp.clone(this.group);
             this.activity = [];
             this.showEditMembers = false;
             this.selectedMember = null;
@@ -470,6 +473,8 @@ Example:
       _saveGroup: function() {
         this.$.editRequest.data = this._editableGroup;
         this.$.editRequest.patch().then((response) => {
+          this.group = response.data;
+          this.origGroup = this.fp.clone(this.group);
           this._toast(this.i18n('groupManagement.group.updated'));
           this.$.editGroupDialog.toggle();
         });
@@ -552,7 +557,6 @@ Example:
 
       _removeMember: function() {
         var member = this._removedMember;
-        var idx;
         switch (member.type) {
           case 'user':
             this.$.removeUserGroup.input = member.id;
@@ -633,6 +637,10 @@ Example:
         this.$.editGroupDialog.toggle();
       },
 
+      _cancelEditGroup: function() {
+        this.set('group', this.fp.clone(this.origGroup));
+      },
+
       _toggleDeleteGroup: function() {
         this.$.deleteGroupDialog.toggle();
       },
@@ -690,14 +698,14 @@ Example:
       },
 
       _usersPath: function() {
-        if (this.groupname) {
-          return 'groups/' + this.groupname + '/users';
+        if (this.group) {
+          return 'groups/' + (this.group.id || this.group) + '/users';
         }
       },
 
       _groupsPath: function() {
-        if (this.groupname) {
-          return 'groups/' + this.groupname + '/groups';
+        if (this.group) {
+          return 'groups/' + (this.group.id || this.group) + '/groups';
         }
       }
     });

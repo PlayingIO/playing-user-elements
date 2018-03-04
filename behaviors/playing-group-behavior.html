@@ -11,11 +11,17 @@
     properties: {
     },
 
-    layoutHref: function(layout) {
+    groupPath(group) {
+      if (group) {
+        return 'groups/' + (group.id || group);
+      }
+    },
+
+    layoutHref(layout) {
       return this.resolveUrl(layout);
     },
 
-    layoutModel: function() {
+    layoutModel() {
       return {
         group: this.group,
         "new": true
@@ -29,7 +35,7 @@
     },
 
     resetFields() {
-      this.group = this.emptyTeam();
+      this.group = this.emptyGroup();
       this.errors = '';
     },
 

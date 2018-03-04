@@ -1,3 +1,5 @@
+<link rel="import" href="../behaviors/playing-group-behavior.html">
+
 <!--
 An element for creating and editing group data, which is dynamically loaded by `playing-group-management`.
 This element can be overridden with custom fields.
@@ -11,7 +13,7 @@ Example:
 -->
 <dom-module id="playing-edit-group">
   <template>
-    <style>
+    <style include="mostly-styles playing-styles">
       :host {
         display: block;
       }
