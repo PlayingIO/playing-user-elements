@@ -1,0 +1,40 @@
+<link rel="import" href="../../mostly-elements/behaviors/mostly-func-behavior.html">
+
+<script>
+  var Playing = Playing || {};
+
+  /**
+   * @polymerBehavior Playing.GroupBehavior
+   */
+  Playing.GroupBehavior = [Mostly.FuncBehavior, {
+
+    properties: {
+    },
+
+    layoutHref: function(layout) {
+      return this.resolveUrl(layout);
+    },
+
+    layoutModel: function() {
+      return {
+        group: this.group,
+        "new": true
+      };
+    },
+
+    emptyGroup() {
+      return {
+        roles: []
+      };
+    },
+
+    resetFields() {
+      this.group = this.emptyTeam();
+      this.errors = '';
+    },
+
+    hasErrors() {
+      return this.errors !== '';
+    }
+  }];
+</script>
