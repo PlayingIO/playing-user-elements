@@ -16,6 +16,7 @@
 <link rel="import" href="../../mostly-elements/widgets/mostly-tag.html">
 <link rel="import" href="../../playing-elements/playing-styles.html">
 
+<link rel="import" href="../behaviors/playing-user-behavior.html">
 <link rel="import" href="../playing-user-group/playing-user-group-permissions-table.html">
 <link rel="import" href="../widgets/playing-group-tag.html">
 <link rel="import" href="../widgets/playing-user-tag.html">
@@ -114,7 +115,9 @@ Example:
 
     <mostly-resource id="request"
             path="groups/[[groupname]]"
-            schemas='users,groups,*'
+            response-data="{{group}}"></mostly-resource>
+    <mostly-resource id="editRequest"
+            path="groups/[[groupname]]"
             response-data="{{group}}"></mostly-resource>
     <mostly-resource id="users" auto
             path="[[_usersPath(groupname)]]"
@@ -122,10 +125,14 @@ Example:
     <mostly-resource id="groups" auto
             path="[[_groupsPath(groupname)]]"
             response-data="{{memberGroups}}"></mostly-resource>
-    <mostly-resource id="editRequest"
-            path="groups/[[groupname]]"
-            schemas='users,groups,*'
-            response-data="{{group}}"></mostly-resource>
+    <mostly-operation id="addUserGroup"
+            path="users" op="addGroup"></mostly-operation>
+    <mostly-operation id="removeUserGroup"
+            path="users" op="removeGroup"></mostly-operation>
+    <mostly-operation id="addSubGroup"
+            path="groups" op="addGroup"></mostly-operation>
+    <mostly-operation id="removeSubGroup"
+            path="groups" op="removeGroup"></mostly-operation>
 
     <paper-toast id="toast"></paper-toast>
 
@@ -196,19 +203,29 @@ Example:
     </mostly-card>
 
     <div class="card layout vertical" hidden$="[[!showEditMembers]]">
+      <mostly-select
+              label="[[i18n('groupManagement.selectRole')]]"
+              placeholder="[[i18n('groupManagement.selectRole.placeholder')]]"
+              selected="{{selectedRole}}"
+              attr-for-selected="name">
+        <template is="dom-repeat" items="[[group.roles]]" as="item">
+          <paper-item name="[[item.role]]">[[item.role]]</paper-item>
+        </template>
+      </mostly-select>
       <playing-user-suggestion id="picker"
               search-type="user-group"
               placeholder="[[i18n('groupManagement.addEntity')]]"
               value="[[selectedMember]]"
-              selected-items="{{selectedMember}}"
+              selected-item="{{selectedMember}}"
               result-formatter="[[resultFormatter]]"
               query-results-filter="[[resultsFilter]]">
       </playing-user-suggestion>
+
       <template is="dom-repeat" items="[[activity]]">
         <div class="activity-entry">
           <mostly-tag icon="[[_icon(item)]]">[[item.displayLabel]]</mostly-tag>
           <span>[[i18n('groupManagement.addedToGroup')]]</span>
-          <span class="remove" on-tap="_toggleDeleteDialog">[[i18n('groupManagement.remove')]]</span>
+          <span class="remove" data-item="[[item]]" on-tap="_toggleDeleteDialog">[[i18n('groupManagement.remove')]]</span>
         </div>
       </template>
     </div>
@@ -225,21 +242,24 @@ Example:
         <div class="table-header">
           <div class="flex-4">[[i18n('groupManagement.name')]]</div>
           <div class="flex-4">[[i18n('groupManagement.identifier')]]</div>
+          <div class="flex-4">[[i18n('groupManagement.role')]]</div>
           <div class="table-actions">&nbsp;</div>
         </div>
         <div class="table-rows">
-          <template is="dom-repeat" items="[[memberUsers]]">
+          <template is="dom-repeat" items="[[memberUsers]]" as="user">
             <div class="table-row">
               <div class="flex-4">
-                <template is="dom-if" if="[[_userHasName(item)]]">
-                  <playing-user-tag user="[[item]]"></playing-user-tag>
+                <template is="dom-if" if="[[_userHasName(user)]]">
+                  <playing-user-tag user="[[user]]"></playing-user-tag>
                 </template>
               </div>
-              <div class="flex-4">[[item.id]]</div>
+              <div class="flex-4">[[user.id]]</div>
+              <div class="flex-4">[[findByProp(user.groups, 'group', groupname, 'role')]]</div>
               <div class="table-actions">
                 <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
                   <paper-icon-button icon="mostly:remove" noink
-                          title="[[i18n('groupManagement.removeFrom', item.label)]]"
+                          title="[[i18n('groupManagement.removeFrom', user.label)]]"
+                          data-item="[[user]]"
                           on-tap="_toggleDeleteDialog">
                   </paper-icon-button>
                 </template>
@@ -281,6 +301,7 @@ Example:
                 <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, groupname)]]">
                   <paper-icon-button icon="mostly:clear" noink
                           title="[[i18n('groupManagement.removeFrom', item.label)]]"
+                          data-item="[[item]]"
                           on-tap="_toggleDeleteDialog">
                   </paper-icon-button>
                 </template>
@@ -306,7 +327,7 @@ Example:
   <script>
     Polymer({
       is: 'playing-group-management',
-      behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior],
+      behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior, Playing.UserBehavior],
       properties: {
         groupname: {
           type: String,
@@ -316,8 +337,11 @@ Example:
         group: Object,
 
         selectedMember: {
-          type: Object,
-          observer: '_memberSelected'
+          type: Object
+        },
+
+        selectedRole: {
+          type: Object
         },
 
         memberUsers: Object,
@@ -385,7 +409,8 @@ Example:
         '_fetchUsers(usersCurrentPage)',
         '_filterUsers(usersFilter)',
         '_fetchGroups(groupsCurrentPage)',
-        '_filterGroups(groupsFilter)'
+        '_filterGroups(groupsFilter)',
+        '_memberSelected(selectedMember, selectedRole)'
       ],
 
       /**
@@ -485,30 +510,35 @@ Example:
           var member = this.selectedMember;
           switch (member.type) {
             case 'user':
-              var users = this.group.users || [];
-              users.push(member);
-              member.type = 'user';
-              this.group.users = users;
+              if (this.selectedRole) {
+                member.role = this.selectedRole;
+                this.$.addUserGroup.input = member.id;
+                this.$.addUserGroup.params = {
+                  group: this.group.id,
+                  role: member.role
+                };
+                this.$.addUserGroup.execute().then((response) => {
+                  this._fetchUsers();
+                  this._toast(this.i18n('groupManagement.addedUserToGroup', member.username, this.group.groupname));
+                });
+              } else {
+                  this._toast(this.i18n('groupManagement.selectRole.empty'));
+              }
               break;
             case 'group':
-              var groups = this.group.groups || [];
-              groups.push(member);
-              member.type = 'group';
-              this.group.groups = groups;
+              this.$.addSubGroup.input = this.group.id;
+              this.$.addSubGroup.params = {
+                group: member.id,
+              };
+              this.$.addSubGroup.execute().then((response) => {
+                this._fetchGroups();
+                this._toast(this.i18n('groupManagement.addedUserToGroup', member.groupname, this.group.groupname));
+              });
               break;
           }
           this.push('activity', member);
-          this.$.editRequest.data = this._cloneGroup(this.group);
-          this.$.editRequest.patch().then((response) => {
-            if (member.type === 'user') {
-              this._fetchUsers();
-            } else {
-              this._fetchGroups();
-            }
-            this._toast(this.i18n('groupManagement.addedUserToGroup', member.username, this.group.groupname));
-          });
+          this.selectedMember = null;
         }
-        this.selectedMember = null;
       },
 
       _removeMember: function() {
@@ -516,29 +546,31 @@ Example:
         var idx;
         switch (member.type) {
           case 'user':
-            if (this.group.users) {
-              idx = this.group.users.indexOf(member.id);
-              this.group.users.splice(idx, 1);
-            }
+            this.$.removeUserGroup.input = member.id;
+            this.$.removeUserGroup.params = {
+              group: this.group.id,
+              role: member.role
+            };
+            this.$.removeUserGroup.execute().then((response) => {
+              this._fromDelete = true;
+              this._fetchUsers();
+              this._removeRecent(member.id);
+              this._toast(this.i18n('groupManagement.removedUserFromGroup', member.displayLabel));
+            });
             break;
           case 'group':
-            if (this.group.groups) {
-              idx = this.group.groups.indexOf(member.id);
-              this.group.groups.splice(idx, 1);
-              break;
-            }
+            this.$.removeSubGroup.input = this.group.id;
+            this.$.removeSubGroup.params = {
+              group: member.id,
+            };
+            this.$.removeSubGroup.execute().then((response) => {
+              this._fromDelete = true;
+              this._fetchGroups();
+              this._removeRecent(member.id);
+              this._toast(this.i18n('groupManagement.removedUserFromGroup', member.displayLabel));
+            });
+            break;
         }
-        this.$.editRequest.data = this._cloneGroup(this.group);
-        this.$.editRequest.patch().then((response) => {
-          this._fromDelete = true;
-          if (member.type === 'user') {
-            this._fetchUsers();
-          } else {
-            this._fetchGroups();
-          }
-          this._removeRecent(member.id);
-          this._toast(this.i18n('groupManagement.removedUserFromGroup', member.displayLabel));
-        });
       },
 
       _removeRecent: function(group) {
@@ -583,8 +615,7 @@ Example:
       },
 
       _toggleDeleteDialog: function(e) {
-        var type = e.model.item.type;
-        this._removedMember = e.model.item;
+        this._removedMember = e.target.dataItem;
         this.$.rmFromGroupDialog.toggle();
       },
 
