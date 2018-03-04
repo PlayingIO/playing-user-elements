@@ -202,10 +202,8 @@ Example:
         </template>
       </div>
 
-      <div role="widget" hidden$="[[!group.description]]">
-        <label>[[i18n('groupManagement.group.description')]]</label>
-        <div name="description" class="multiline">[[group.description]]</div>
-      </div>
+      <mostly-layout id="viewerLayout" href="[[layoutHref('playing-view-group.html')]]"
+                  model="[[layoutModel(group)]]"></mostly-layout>
     </mostly-card>
 
     <div class="card layout vertical" hidden$="[[!showEditMembers]]">
