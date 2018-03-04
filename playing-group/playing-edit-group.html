@@ -1,0 +1,52 @@
+<!--
+An element for creating and editing group data, which is dynamically loaded by `playing-group-management`.
+This element can be overridden with custom fields.
+
+Example:
+
+    <playing-edit-group group=[[group]] new></playing-edit-group>
+
+@group Playing Elements
+@element playing-edit-group
+-->
+<dom-module id="playing-edit-group">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <mostly-input id="groupLabel"
+            label="[[i18n('groupManagement.group.label')]]"
+            value="{{group.label}}" required></mostly-input>
+    <mostly-input name="description"
+            label="[[i18n('groupManagement.group.description')]]"
+            value="{{group.description}}" maxlength="300"
+            char-counter always-float-label></mostly-input>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'playing-edit-group',
+      behaviors: [Mostly.I18nBehavior],
+      properties: {
+        /**
+         * The group object to be edited or created.
+         */
+        group: {
+          type: Object,
+          value: {}
+        }
+      },
+
+      /**
+       * Resets the form fields to empty values.
+       */
+      resetFields: function() {
+        this.group = {};
+      }
+    });
+  </script>
+</dom-module>
