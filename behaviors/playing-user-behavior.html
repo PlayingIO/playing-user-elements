@@ -11,5 +11,15 @@
     properties: {
     },
 
+    layoutHref: function(layout) {
+      return this.resolveUrl(layout);
+    },
+
+    layoutModel: function() {
+      return {
+        user: this.user,
+        "new": true
+      };
+    },
   }];
 </script>
