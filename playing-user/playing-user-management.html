@@ -138,35 +138,38 @@ Example:
           <div class="activity-entry">
             [[i18n('userManagement.memberOf.group', user.username)]]
             <playing-group-tag group="[[item]]"></playing-group-tag>
-            <span class="remove" on-tap="_toggleDialog">[[i18n('userManagement.group.remove')]]</span>
+            <span class="remove" data-item="[[item]] on-tap="_toggleRemoveDialog">[[i18n('userManagement.group.remove')]]</span>
           </div>
         </template>
       </div>
       <div class="table">
         <div class="table-header">
-          <div class="flex">[[i18n('userManagement.name')]]</div>
-          <div class="flex-4">[[i18n('userManagement.identifier')]]</div>
+          <div class="flex">[[i18n('groupManagement.name')]]</div>
+          <div class="flex">[[i18n('groupManagement.identifier')]]</div>
+          <div class="flex">[[i18n('groupManagement.label')]]</div>
+          <div class="flex">[[i18n('groupManagement.role')]]</div>
           <div class="table-actions">&nbsp;</div>
         </div>
-        <template is="dom-if" if=[[!empty]]>
-          <template is="dom-repeat" items="[[user.groups]]">
-            <div class="table-row">
-              <div class="flex">
-                <playing-group-tag group="[[item]]"></playing-group-tag>
-              </div>
-              <div class="flex-4">[[item.groupname]]</div>
-              <div class="table-actions">
-                <template is="dom-if" if="[[_canEdit(readonly, _currentUser, user)]]">
-                  <paper-icon-button icon="mostly:remove"
-                          title="[[i18n('userManagement.removeFrom.group', item.label)]]"
-                          on-tap="_toggleDialog">
-                  </paper-icon-button>
-                </template>
-              </div>
+        <template is="dom-repeat" items="[[user.groups]]" as="item">
+          <div class="table-row">
+            <div class="flex">
+              <playing-group-tag group="[[item.group]]"></playing-group-tag>
             </div>
-          </template>
+            <div class="flex">[[item.group.id]]</div>
+            <div class="flex">[[item.group.label]]</div>
+            <div class="flex">[[item.role]]</div>
+            <div class="table-actions">
+              <template is="dom-if" if="[[_canEdit(readonly, _currentUser, user)]]">
+                <paper-icon-button icon="mostly:remove"
+                        title="[[i18n('userManagement.removeFrom.group', item.group.label)]]"
+                        data-item="[[item.group]]"
+                        on-tap="_toggleRemoveDialog">
+                </paper-icon-button>
+              </template>
+            </div>
+          </div>
         </template>
-        <template is="dom-if" if=[[empty]]>
+        <template is="dom-if" if=[[!user.groups.length]]>
           <div class="table-row">
             <div>[[i18n('userManagement.noSearchResults')]]</div>
           </div>
@@ -192,7 +195,7 @@ Example:
       </mostly-card>
     </template>
 
-    <mostly-dialog id="dialog" with-backdrop>
+    <mostly-dialog id="rmFromGroupDialog" with-backdrop>
       <h2>[[i18n('userManagement.removeUserFromGroup.confirm', user.username, _removedGroup.groupname)]]</h2>
       <div class="buttons horizontal end-justified layout">
         <div class="flex start-justified">
@@ -300,8 +303,6 @@ Example:
           value: false
         },
 
-        empty: Boolean,
-
         _removedGroup: Object,
 
         readonly: {
@@ -319,10 +320,6 @@ Example:
           type: Object
         }
       },
-
-      observers: [
-        '_userRemovedFromGroup(user.groups)'
-      ],
 
       /**
        * Fired when a user is deleted.
@@ -381,7 +378,8 @@ Example:
           var group = {
             'id': this.selectedGroup.id,
             'groupname': this.selectedGroup.groupname,
-            'label': this.selectedGroup.label
+            'label': this.selectedGroup.label,
+            'role': this.selectedGroup.role
           };
           this.push('activity', group);
           this.$.request.path = 'users/' + this.user.id + '/addGroup';
@@ -413,17 +411,13 @@ Example:
         this.set('user.groups', this.user.groups.filter(it => it.id !== group));
       },
 
-      _userRemovedFromGroup: function() {
-        this.empty = this.user.groups && this.user.groups.length === 0;
-      },
-
       _toggleEditGroups: function() {
         this.showEditGroups = !this.showEditGroups;
       },
 
-      _toggleDialog: function(e) {
-        this._removedGroup = e.model.item;
-        this.$.dialog.toggle();
+      _toggleRemoveDialog: function(e) {
+        this._removedGroup = e.target.dataItem;
+        this.$.rmFromGroupDialog.toggle();
       },
 
       _toggleChangePassword: function() {
@@ -486,9 +480,11 @@ Example:
       },
 
       _resultsFilter: function(entry) {
-        for (var i = 0; i < this.user.groups.length; i++) {
-          if (entry.id === this.user.groups[i].id) {
-            return false;
+        if (this.user.groups) {
+          for (var i = 0; i < this.user.groups.length; i++) {
+            if (entry.id === this.user.groups[i].id) {
+              return false;
+            }
           }
         }
         return true;

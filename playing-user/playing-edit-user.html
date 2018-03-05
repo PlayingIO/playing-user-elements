@@ -33,18 +33,6 @@ Example:
           name="email"
           type="email" required></mostly-input>
 
-    <template is="dom-if" if="[[new]]">
-      <playing-user-suggestion id="picker"
-              name="group"
-              search-type="group"
-              label="[[i18n('editUser.groups')]]"
-              placeholder="[[i18n('editUser.searchGroups')]]"
-              value="{{user.groups}}"
-              multiple
-              result-formatter="[[resultFormatter]]">
-      </playing-user-suggestion>
-    </template>
-
   </template>
 
   <script>
@@ -59,31 +47,14 @@ Example:
           type: Object,
           value: {}
         },
+
         /**
          * If true, a new user is being created; if false, an already existing user is being edited.
          */
         new: {
           type: Boolean,
           value: false
-        },
-
-        resultFormatter: {
-          type: Function,
-          value: function() {
-            return this._resultFormatter.bind(this);
-          }
         }
-      },
-
-      /**
-       * Resets the form fields to empty values.
-       */
-      resetFields: function() {
-        this.user = {};
-      },
-
-      _resultFormatter: function(item) {
-        return item.displayLabel + ' (' + (item.groupname) + ')';
       }
     });
   </script>

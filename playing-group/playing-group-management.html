@@ -240,21 +240,21 @@ Example:
       </div>
       <div class="table">
         <div class="table-header">
-          <div class="flex-4">[[i18n('groupManagement.name')]]</div>
-          <div class="flex-4">[[i18n('groupManagement.identifier')]]</div>
-          <div class="flex-4">[[i18n('groupManagement.role')]]</div>
+          <div class="flex">[[i18n('groupManagement.name')]]</div>
+          <div class="flex">[[i18n('groupManagement.identifier')]]</div>
+          <div class="flex">[[i18n('groupManagement.role')]]</div>
           <div class="table-actions">&nbsp;</div>
         </div>
         <div class="table-rows">
           <template is="dom-repeat" items="[[memberUsers]]" as="user">
             <div class="table-row">
-              <div class="flex-4">
+              <div class="flex">
                 <template is="dom-if" if="[[_userHasName(user)]]">
                   <playing-user-tag user="[[user]]"></playing-user-tag>
                 </template>
               </div>
-              <div class="flex-4">[[user.id]]</div>
-              <div class="flex-4">[[findByProp(user.groups, 'group', group.id, 'role')]]</div>
+              <div class="flex">[[user.id]]</div>
+              <div class="flex">[[findByProp(user.groups, 'group', group.id, 'role')]]</div>
               <div class="table-actions">
                 <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, group)]]">
                   <paper-icon-button icon="mostly:remove" noink
