@@ -14,6 +14,7 @@
 <link rel="import" href="../../mostly-elements/mostly-layout.html">
 <link rel="import" href="../../playing-elements/playing-styles.html">
 
+<link rel="import" href="../behaviors/playing-user-behavior.html">
 <link rel="import" href="../playing-user-group/playing-user-group-permissions-table.html">
 <link rel="import" href="../widgets/playing-user-suggestion.html">
 <link rel="import" href="../widgets/playing-group-tag.html">
@@ -69,12 +70,8 @@ Example:
 
     <mostly-connection user="{{_currentUser}}"></mostly-connection>
 
-    <mostly-resource id="request"
-            path="users/[[username]]"
-            schemas='groups.group,*'></mostly-resource>
-    <mostly-resource id="editRequest"
-            path="users/[[username]]"
-            schemas='groups.group,*'></mostly-resource>
+    <mostly-resource id="request" path="[[path]]" schemas='groups.group,*'></mostly-resource>
+    <mostly-resource id="editRequest" path="[[path]]" schemas='groups.group,*'></mostly-resource>
 
     <paper-toast id="toast"></paper-toast>
 
@@ -181,7 +178,7 @@ Example:
     <mostly-card>
       <playing-user-group-permissions-table
               label="[[i18n('userManagement.localPermissions.heading')]]"
-              entity="[[username]]" readonly="[[readonly]]">
+              entity="[[user]]" readonly="[[readonly]]">
       </playing-user-group-permissions-table>
     </mostly-card>
 
@@ -238,7 +235,9 @@ Example:
         <form class="vertical layout">
           <mostly-input label="[[i18n('userManagement.username')]]" value="[[user.username]]"
                   readonly required></mostly-input>
-          <mostly-layout id="layout" href="[[_layoutHref('playing-edit-user.html')]]"></mostly-layout>
+          <mostly-layout id="layout"
+                  href="[[layoutHref('playing-edit-user.html')]]"
+                  model="[[layoutModel(user)]]"></mostly-layout>
         </form>
       </iron-form>
       <div class="buttons horizontal end-justified layout">
@@ -255,14 +254,22 @@ Example:
   <script>
     Polymer({
       is: 'playing-user-management',
-      behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior],
+      behaviors: [Mostly.I18nBehavior, Mostly.FiltersBehavior, Playing.UserBehavior],
       properties: {
-        username: {
+        user: {
           type: String,
           observer: '_fetch'
         },
 
-        user: Object,
+        /**
+         * original user object
+         */
+        origUser: Object,
+
+        path: {
+          type: String,
+          computed: 'userPath(user)'
+        },
 
         selectedGroup: {
           type: Object,
@@ -334,10 +341,11 @@ Example:
       },
 
       _fetch: function() {
-        if (this.username) {
+        if (typeof this.user === 'string') {
           this.$.request.get().then((response) => {
             delete response.data.password;
             this.user = response.data;
+            this.origUser = this.fp.clone(this.user);
             this.activity = [];
             this.showEditGroups = false;
             this.selectedGroup = null;
@@ -432,6 +440,7 @@ Example:
         this.$.editRequest.data.password = this.$.passwordEditor.password;
         this.$.editRequest.patch().then((response) => {
           this.user = response.data;
+          this.origUser = this.fp.clone(this.user);
           this._toast(this.i18n('userManagement.password.changed'));
           if (!!this.$.passwordEditor.resetFields) {
             this.$.passwordEditor.resetFields();
@@ -455,6 +464,7 @@ Example:
         this.$.editRequest.data = editedUser;
         this.$.editRequest.patch().then((response) => {
           this.user = response.data;
+          this.origUser = this.fp.clone(this.user);
           this._toast(this.i18n('userManagement.user.updated'));
         });
       },
@@ -491,10 +501,6 @@ Example:
       _toast: function(msg) {
         this.$.toast.text = msg;
         this.$.toast.open();
-      },
-
-      _layoutHref: function(layout) {
-        return this.resolveUrl(layout);
       }
     });
   </script>

@@ -12,6 +12,7 @@
 <link rel="import" href="../../mostly-elements/mostly-layout.html">
 <link rel="import" href="../../playing-elements/playing-styles.html">
 
+<link rel="import" href="../behaviors/playing-user-behavior.html">
 <link rel="import" href="../widgets/playing-user-suggestion.html">
 <link rel="import" href="playing-edit-password.html">
 
@@ -52,8 +53,8 @@
                 value="{{user.username}}"
                 name="username" required></mostly-input>
 
-        <mostly-layout id="layout" href="[[_layoutHref('playing-edit-user.html')]]"
-                model="[[_layoutModel(user, new)]]"
+        <mostly-layout id="layout" href="[[layoutHref('playing-edit-user.html')]]"
+                model="[[layoutModel(user, new)]]"
                 on-element-changed="_layoutElementChanged"></mostly-layout>
 
         <label>[[i18n('createUser.setPassword')]]</label>
@@ -83,7 +84,7 @@
   <script>
     Polymer({
       is: 'playing-create-user',
-      behaviors: [Mostly.I18nBehavior],
+      behaviors: [Mostly.I18nBehavior, Playing.UserBehavior],
       properties: {
         user: {
           type: Object,
@@ -195,17 +196,6 @@
 
       _isAdministrator: function(user) {
         return user && user.isAdministrator;
-      },
-
-      _layoutHref: function(layout) {
-        return this.resolveUrl(layout);
-      },
-
-      _layoutModel: function() {
-        return {
-          user: this.user,
-          "new": true
-        };
       },
 
       _layoutElementChanged: function() {

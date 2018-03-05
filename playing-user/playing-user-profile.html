@@ -13,6 +13,7 @@
 <link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
 
+<link rel="import" href="../behaviors/playing-user-behavior.html">
 <link rel="import" href="../playing-user-group/playing-user-group-permissions-table.html">
 <link rel="import" href="../widgets/playing-group-tag.html">
 
@@ -207,7 +208,7 @@ Example:
   <script>
     Polymer({
       is: 'playing-user-profile',
-      behaviors: [Mostly.I18nBehavior],
+      behaviors: [Mostly.I18nBehavior, Playing.UserBehavior],
       properties: {
         username: {
           type: String,

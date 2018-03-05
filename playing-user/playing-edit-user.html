@@ -1,3 +1,5 @@
+<link rel="import" href="../behaviors/playing-user-behavior.html">
+
 <!--
 An element for creating and editing user data, which is dynamically loaded by `playing-user-management`.
 This element can be overridden with custom fields.
@@ -48,7 +50,7 @@ Example:
   <script>
     Polymer({
       is: 'playing-edit-user',
-      behaviors: [Mostly.I18nBehavior],
+      behaviors: [Mostly.I18nBehavior, Playing.UserBehavior],
       properties: {
         /**
          * The user object to be edited or created.
