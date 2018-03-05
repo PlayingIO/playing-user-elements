@@ -97,11 +97,11 @@ Example:
       },
 
       _isUser: function(docModel) {
-        return docModel.type === 'user';
+        return docModel && docModel.type === 'user';
       },
 
       _isGroup: function(docModel) {
-        return docModel.type === 'group';
+        return docModel && docModel.type === 'group';
       },
 
       _displayLCUserGroup: function(docModel) {
@@ -125,7 +125,7 @@ Example:
       },
 
       _refreshLatest: function() {
-        this.latestCreatedUsersGroups = {};
+        this.latestCreatedUsersGroups = [];
         this.$.searchRequest.execute();
       },
 
