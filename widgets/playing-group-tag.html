@@ -71,11 +71,11 @@ Example:
       },
 
       _name: function(group) {
-        return group.groupname || group.name;
+        return group && (group.groupname || group.name);
       },
 
       _label: function(group) {
-        return group.grouplabel || group.groupname;
+        return group && (group.grouplabel || group.groupname);
       }
 
     });
