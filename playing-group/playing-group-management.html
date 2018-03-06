@@ -113,8 +113,10 @@ Example:
 
     <mostly-connection user="{{_currentUser}}"></mostly-connection>
 
-    <mostly-resource id="request" path="[[path]]" schemas="*"></mostly-resource>
-    <mostly-resource id="editRequest" path="[[path]]" schemas="*"></mostly-resource>
+    <mostly-resource id="request" path="[[path]]"
+            schemas="owner,roles.permissions.subject,roles.permissions.creator,*"></mostly-resource>
+    <mostly-resource id="editRequest" path="[[path]]"
+            schemas="owner,roles.permissions.subject,roles.permissions.creator,*"></mostly-resource>
 
     <mostly-resource id="users" auto
             path="[[_usersPath(group)]]"
@@ -320,7 +322,9 @@ Example:
 
     <!-- permissions -->
     <mostly-card heading="[[i18n('groupManagement.permissions.heading')]]">
-      <playing-user-group-permissions-table entity="[[group]]"></playing-user-group-permissions-table>
+      <playing-user-group-permissions-table
+              entity="[[group.id]]"
+              permissions="[[group.roles]]"></playing-user-group-permissions-table>
     </mostly-card>
 
   </template>
