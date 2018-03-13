@@ -52,7 +52,7 @@ Example:
         font-weight: bold;
       }
 
-      .ace-permission-tag {
+      .ace-action-tag {
         background-color: var(--mostly-secondary-color, #7e90a5);
         border-radius: 3px;
         color: #fff;
@@ -61,11 +61,6 @@ Example:
         text-transform: uppercase;
         white-space: nowrap;
         @apply --mostly-tag;
-      }
-
-      .ace-permission-path {
-        color: var(--mostly-secondary-color, #213f7d);
-        font-size: .8rem;
       }
 
       .buttons {
@@ -87,51 +82,47 @@ Example:
 
     <div class="table">
       <div class="table-header">
-        <div class="flex-2">[[i18n('userGroupPermissions.role')]]</div>
-        <div class="flex-8 layout horizontal">
-          <div class="flex-2">[[i18n('userGroupPermissions.right')]]</div>
-          <div class="flex-2">[[i18n('userGroupPermissions.on')]]</div>
-          <div class="flex-2">[[i18n('userGroupPermissions.timeFrame')]]</div>
-          <div class="flex-2">[[i18n('userGroupPermissions.grantedBy')]]</div>
-          <div class="table-actions"></div>
-        </div>
+        <div class="flex">[[i18n('userGroupPermissions.right')]]</div>
+        <div class="flex">[[i18n('userGroupPermissions.role')]]</div>
+        <div class="flex">[[i18n('userGroupPermissions.on')]]</div>
+        <div class="flex">[[i18n('userGroupPermissions.timeFrame')]]</div>
+        <div class="flex">[[i18n('userGroupPermissions.grantedBy')]]</div>
+        <div class="table-actions"></div>
       </div>
-      <template is="dom-repeat" items="[[permissions]]" as="role">
+
+      <template is="dom-repeat" items="[[permissions]]" as="permission">
         <div class="table-row">
-          <div class="flex-2">
-            <div>[[role.role]]</div>
+          <div class="flex">
+            <template is="dom-repeat" items="[[permission.actions]]" as="action" sort="_sort" strip-whitespace>
+              <span class="ace-action-tag">[[action]]</span>
+            </template>
           </div>
-          <div class="flex-8 layout vertical ace-row">
-            <template is="dom-repeat" items="[[role.permissions]]" as="permission">
-              <div class="layout horizontal center">
-                <div class="flex-2">
-                  <span class="ace-permission-tag">[[permission.action]]</span>
-                </div>
-                <div class="flex-2">
-                  <mostly-tag class="[[_subjectIcon(permission.subject)]]">[[_formatSubject(permission.subject)]]</span>
-                </div>
-                <div class="flex-2">
-                  <span>[[_formatTimeFrame(permission)]]</span>
-                </div>
-                <div class="flex-2">
-                  <template is="dom-if" if=[[permission.creator]]>
-                    <playing-user-tag user="[[permission.creator]]"></playing-user-tag>
-                  </template>
-                </div>
-                <div class="table-actions">
-                  <template is="dom-if" if=[[!readonly]]>
-                    <paper-icon-button icon="mostly:delete" noink
-                            title="[[i18n('userGroupPermissions.delete.button')]]"
-                            on-tap="_toggleDialog"
-                            hidden$="[[!_canDelete(permission)]]">
-                    </paper-icon-button>
-                  </template>
-                </div>
-              </div>
+          <div class="flex">
+            <span>[[permission.role]]</span>
+          </div>
+          <div class="flex">
+            <mostly-tag icon="[[_subjectIcon(permission.subject)]]">[[_formatSubject(permission.subject)]]</mostly-tag>
+          </div>
+          <div class="flex">
+            <span>[[_formatTimeFrame(permission)]]</span>
+          </div>
+          <div class="flex">
+            <template is="dom-if" if=[[permission.creator]]>
+              <playing-user-tag user="[[permission.creator]]"></playing-user-tag>
+            </template>
+          </div>
+          <div class="table-actions">
+            <template is="dom-if" if=[[!readonly]]>
+              <paper-icon-button icon="mostly:delete" noink
+                      title="[[i18n('userGroupPermissions.delete.button')]]"
+                      on-tap="_toggleDialog"
+                      hidden$="[[!_canDelete(permission)]]">
+              </paper-icon-button>
             </template>
           </div>
         </div>
       </template>
+
       <template is="dom-if" if=[[!permissions.length]]>
         <div class="table-row">
           <div class="empty-result">[[i18n('userGroupPermissions.noPermissions', entity)]]</div>
@@ -275,7 +266,7 @@ Example:
       },
 
       _formatSubject: function(subject) {
-        return subject && (subject.displayLabel || subject.name || subject.username || subject.groupname) || subject;
+        return subject && (subject.displayLabel || subject.title || subject.name || subject.username || subject.groupname || subject.id) || subject;
       },
 
       _subjectIcon: function(subject) {

@@ -103,10 +103,10 @@ Example:
     <mostly-connection id="nxcon"></mostly-connection>
     <mostly-resource id="request"
             path="users/me"
-            schemas='groups,*'></mostly-resource>
+            schemas='[[userSchema]]'></mostly-resource>
     <mostly-resource id="changePassword"
             path="users/me/changePassword"
-            schemas='groups,*'></mostly-resource>
+            schemas='[[userSchema]]'></mostly-resource>
 
     <paper-toast id="toast"></paper-toast>
 
@@ -173,13 +173,15 @@ Example:
     <mostly-card heading="[[i18n('userManagement.groups')]]">
       <div class="table">
         <div class="header">
-          <div class="flex">[[i18n('userManagement.name')]]</div>
-          <div class="flex-4">[[i18n('userManagement.identifier')]]</div>
+          <div class="flex">[[i18n('groupManagement.name')]]</div>
+          <div class="flex">[[i18n('groupManagement.role')]]</div>
+          <div class="flex-4">[[i18n('groupManagement.identifier')]]</div>
         </div>
         <template is="dom-repeat" items="[[user.groups]]">
           <div class="row">
-            <div class="flex"><playing-group-tag group="[[item]]"></playing-group-tag></div>
-            <div class="flex-4">[[item.name]]</div>
+            <div class="flex"><playing-group-tag group="[[item.group]]"></playing-group-tag></div>
+            <div class="flex">[[item.role]]</div>
+            <div class="flex-4">[[item.group.id]]</div>
           </div>
         </template>
       </div>
@@ -189,7 +191,8 @@ Example:
     <mostly-card>
       <playing-user-group-permissions-table
               label="[[i18n('userManagement.localPermissions.heading')]]"
-              entity="[[username]]" readonly>
+              entity="[[username]]"
+              permissions="[[user.permissions]]" readonly>
       </playing-user-group-permissions-table>
     </mostly-card>
 
@@ -197,8 +200,9 @@ Example:
     <mostly-card>
       <template is="dom-repeat" items="[[user.groups]]">
         <playing-user-group-permissions-table
-                label="[[i18n('userManagement.entityPermissions', item.name)]]"
-                entity="[[item.name]]" readonly>
+                label="[[i18n('userManagement.entityPermissions', item.group.displayLabel)]]"
+                entity="[[item.group.groupname]]"
+                permissions="[[item.group.permissions]]" readonly>
         </playing-user-group-permissions-table>
       </template>
     </mostly-card>
@@ -216,6 +220,15 @@ Example:
         },
 
         user: Object,
+
+        userSchema: {
+          type: String,
+          value: 'groups.group.permissions.subject,' +
+            'groups.group.permissions.creator,' +
+            'permissions.subject,' +
+            'permissions.creator,' +
+            '*'
+        },
 
         readonly: {
           type: Boolean,
