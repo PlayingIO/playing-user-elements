@@ -70,8 +70,8 @@ Example:
 
     <mostly-connection user="{{_currentUser}}"></mostly-connection>
 
-    <mostly-resource id="request" path="[[path]]" schemas='groups.group,*'></mostly-resource>
-    <mostly-resource id="editRequest" path="[[path]]" schemas='groups.group,*'></mostly-resource>
+    <mostly-resource id="request" path="[[path]]" schemas='[[userSchema]]'></mostly-resource>
+    <mostly-resource id="editRequest" path="[[path]]" schemas='[[userSchema]]'></mostly-resource>
 
     <mostly-operation id="addUserGroup"
             path="users" op="addGroup"></mostly-operation>
@@ -199,7 +199,9 @@ Example:
     <mostly-card>
       <playing-user-group-permissions-table
               label="[[i18n('userManagement.localPermissions.heading')]]"
-              entity="[[user]]" readonly="[[readonly]]">
+              entity="[[user.username]]"
+              permissions="[[user.permissions]]"
+              readonly="[[readonly]]">
       </playing-user-group-permissions-table>
     </mostly-card>
 
@@ -207,8 +209,10 @@ Example:
     <template is="dom-repeat" items="[[user.groups]]">
       <mostly-card>
         <playing-user-group-permissions-table
-                label="[[i18n('userManagement.entityPermissions', item.groupname)]]"
-                entity="[[item.groupname]]" readonly="[[readonly]]">
+                label="[[i18n('userManagement.entityPermissions', item.group.displayLabel)]]"
+                entity="[[item.group.groupname]]"
+                permissions="[[item.group.permissions]]"
+                readonly="[[readonly]]">
         </playing-user-group-permissions-table>
       </mostly-card>
     </template>
@@ -286,6 +290,15 @@ Example:
          * original user object
          */
         origUser: Object,
+
+        userSchema: {
+          type: String,
+          value: 'groups.group.permissions.subject,' +
+            'groups.group.permissions.creator,' +
+            'permissions.subject,' +
+            'permissions.creator,' +
+            '*'
+        },
 
         path: {
           type: String,
