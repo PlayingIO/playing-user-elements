@@ -74,9 +74,9 @@ Example:
     <mostly-resource id="editRequest" path="[[path]]" schemas='[[userSchema]]'></mostly-resource>
 
     <mostly-operation id="addUserGroup"
-            path="users" op="addGroup"></mostly-operation>
+            path="users" op="groups" method="post"></mostly-operation>
     <mostly-operation id="removeUserGroup"
-            path="users" op="removeGroup"></mostly-operation>
+            path="users" op="groups/remove" method="delete"></mostly-operation>
 
     <paper-toast id="toast"></paper-toast>
 
@@ -144,8 +144,8 @@ Example:
                 placeholder="[[i18n('userManagement.selectRole.placeholder')]]"
                 selected="{{selectedRole}}"
                 attr-for-selected="name">
-          <template is="dom-repeat" items="[[selectedGroup.roles]]" as="item">
-            <paper-item name="[[item.role]]">[[item.role]]</paper-item>
+          <template is="dom-repeat" items="[[selectedGroup.roles]]" as="role">
+            <paper-item name="[[role]]">[[role]]</paper-item>
           </template>
         </mostly-select>
 
