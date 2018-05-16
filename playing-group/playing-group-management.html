@@ -121,18 +121,18 @@ Example:
     <mostly-resource id="users" auto
             path="[[_usersPath(group)]]"
             response-data="{{memberUsers}}"></mostly-resource>
-    <mostly-resource id="groups" auto
-            path="[[_groupsPath(group)]]"
+    <mostly-resource id="subgroups" auto
+            path="[[_subgroupsPath(group)]]"
             response-data="{{memberGroups}}"></mostly-resource>
 
     <mostly-operation id="addUserGroup"
-            path="users" op="addGroup"></mostly-operation>
+            path="users" op="groups" method="post"></mostly-operation>
     <mostly-operation id="removeUserGroup"
-            path="users" op="removeGroup"></mostly-operation>
-    <mostly-operation id="addSubGroup"
-            path="groups" op="addGroup"></mostly-operation>
-    <mostly-operation id="removeSubGroup"
-            path="groups" op="removeGroup"></mostly-operation>
+            path="users" op="groups/remove" method="delete"></mostly-operation>
+    <mostly-operation id="addSubgroup"
+            path="groups" op="subgroups" method="post"></mostly-operation>
+    <mostly-operation id="removeSubgroup"
+            path="groups" op="subgroups/remove" method="delete"></mostly-operation>
 
     <paper-toast id="toast"></paper-toast>
 
@@ -210,8 +210,8 @@ Example:
               placeholder="[[i18n('groupManagement.selectRole.placeholder')]]"
               selected="{{selectedRole}}"
               attr-for-selected="name">
-        <template is="dom-repeat" items="[[group.roles]]" as="item">
-          <paper-item name="[[item.role]]">[[item.role]]</paper-item>
+        <template is="dom-repeat" items="[[group.roles]]" as="role">
+          <paper-item name="[[role]]">[[role]]</paper-item>
         </template>
       </mostly-select>
       <playing-user-suggestion id="picker"
@@ -504,7 +504,7 @@ Example:
             'groupname[$like]': this.groupsFilter,
             '$skip': (this.groupsCurrentPage - 1) * this.currentPageSize
           };
-          this.$.groups.params = params;
+          this.$.subgroups.params = params;
         }
       },
 
@@ -552,11 +552,11 @@ Example:
               }
               break;
             case 'group':
-              this.$.addSubGroup.input = this.group.id;
-              this.$.addSubGroup.params = {
+              this.$.addSubgroup.input = this.group.id;
+              this.$.addSubgroup.params = {
                 group: member.id,
               };
-              this.$.addSubGroup.execute().then((response) => {
+              this.$.addSubgroup.execute().then((response) => {
                 this._fetchGroups();
                 this._toast(this.i18n('groupManagement.addedUserToGroup', member.groupname, this.group.groupname));
               });
@@ -584,11 +584,11 @@ Example:
             });
             break;
           case 'group':
-            this.$.removeSubGroup.input = this.group.id;
-            this.$.removeSubGroup.params = {
+            this.$.removeSubgroup.input = this.group.id;
+            this.$.removeSubgroup.params = {
               group: member.id,
             };
-            this.$.removeSubGroup.execute().then((response) => {
+            this.$.removeSubgroup.execute().then((response) => {
               this._fromDelete = true;
               this._fetchGroups();
               this._removeRecent(member.id);
@@ -715,9 +715,9 @@ Example:
         }
       },
 
-      _groupsPath: function() {
+      _subgroupsPath: function() {
         if (this.group) {
-          return 'groups/' + (this.group.id || this.group) + '/groups';
+          return 'groups/' + (this.group.id || this.group) + '/subgroups';
         }
       }
     });
