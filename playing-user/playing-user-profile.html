@@ -179,9 +179,9 @@ Example:
         </div>
         <template is="dom-repeat" items="[[user.groups]]">
           <div class="row">
-            <div class="flex"><playing-group-tag group="[[item.group]]"></playing-group-tag></div>
+            <div class="flex"><playing-group-tag group="[[item]]"></playing-group-tag></div>
             <div class="flex">[[item.role]]</div>
-            <div class="flex-4">[[item.group.id]]</div>
+            <div class="flex-4">[[item.id]]</div>
           </div>
         </template>
       </div>
@@ -200,9 +200,9 @@ Example:
     <mostly-card>
       <template is="dom-repeat" items="[[user.groups]]">
         <playing-user-group-permissions-table
-                label="[[i18n('userManagement.entityPermissions', item.group.displayLabel)]]"
-                entity="[[item.group.groupname]]"
-                permissions="[[item.group.permissions]]" readonly>
+                label="[[i18n('userManagement.entityPermissions', item.displayLabel)]]"
+                entity="[[item.groupname]]"
+                permissions="[[item.permissions]]" readonly>
         </playing-user-group-permissions-table>
       </template>
     </mostly-card>
