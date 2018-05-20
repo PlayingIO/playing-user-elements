@@ -145,10 +145,7 @@
        * Creates a new user if the form was successfully submitted.
        */
       _create: function() {
-        if (!this._isAdministrator(this._currentUser)
-            && this.user.groups
-            && this.user.groups.indexOf('administrators') !== -1)
-        {
+        if (!this._isAdministrator(this._currentUser)) {
           this.errors = this.i18n('createUser.errorAdministratorsGroup');
           return;
         }
@@ -195,7 +192,12 @@
       },
 
       _isAdministrator: function(user) {
-        return user && user.isAdministrator;
+        if (user) {
+          if (user.isAdministrator) return true;
+          if (user.groups) {
+            return findByProp(user.groups, 'groupname', 'administrators') !== null;
+          }
+        }
       },
 
       _layoutElementChanged: function() {
