@@ -256,7 +256,7 @@ Example:
                 </template>
               </div>
               <div class="flex">[[user.id]]</div>
-              <div class="flex">[[findByProp(user.groups, 'group', group.id, 'role')]]</div>
+              <div class="flex">[[findById(user.groups, group.id, 'role')]]</div>
               <div class="table-actions">
                 <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, group)]]">
                   <paper-icon-button icon="mostly:remove" noink
