@@ -171,10 +171,10 @@ Example:
         <template is="dom-repeat" items="[[user.groups]]" as="item">
           <div class="table-row">
             <div class="flex">
-              <playing-group-tag group="[[item.group]]"></playing-group-tag>
+              <playing-group-tag group="[[item]]"></playing-group-tag>
             </div>
-            <div class="flex">[[item.group.id]]</div>
-            <div class="flex">[[item.group.label]]</div>
+            <div class="flex">[[item.id]]</div>
+            <div class="flex">[[item.displayLabel]]</div>
             <div class="flex">[[item.role]]</div>
             <div class="table-actions">
               <template is="dom-if" if="[[_canEdit(readonly, _currentUser, user)]]">
@@ -209,9 +209,9 @@ Example:
     <template is="dom-repeat" items="[[user.groups]]">
       <mostly-card>
         <playing-user-group-permissions-table
-                label="[[i18n('userManagement.entityPermissions', item.group.displayLabel)]]"
-                entity="[[item.group.groupname]]"
-                permissions="[[item.group.permissions]]"
+                label="[[i18n('userManagement.entityPermissions', item.displayLabel)]]"
+                entity="[[item.groupname]]"
+                permissions="[[item.permissions]]"
                 readonly="[[readonly]]">
         </playing-user-group-permissions-table>
       </mostly-card>
