@@ -50,7 +50,7 @@
     <mostly-resource id="userSearch" path="users"
             response-data="{{users}}" auto></mostly-resource>
     <mostly-resource id="groupSearch" path="groups"
-            schemas='users,groups,*'
+            schemas='members,groups,*'
             response-data="{{groups}}" auto></mostly-resource>
 
     <mostly-card class="search">
@@ -78,7 +78,7 @@
                 </div>
                 <div name="id" class="flex-2">[[item.groupname]]</div>
                 <div class="flex-4">
-                  <span class="counter">[[_countUsers(item.users)]]</span>
+                  <span class="counter">[[_countUsers(item.members)]]</span>
                   <span class="counter">[[_countGroups(item.children)]]</span>
                 </div>
               </div>
