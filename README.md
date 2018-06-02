@@ -1,7 +1,7 @@
 Playing User Web Components
 ===========================
 
-User management web components for playful applications.
+Users and groups management web components for playful applications.
 
 # Usage
 
