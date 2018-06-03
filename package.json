@@ -1,6 +1,6 @@
 {
   "name": "playing-user-elements",
-  "description": "Users and groups management web components for playful applications",
+  "description": "Users and groups management web components for building playful applications",
   "version": "1.0.5",
   "license": "MIT",
   "devDependencies": {
