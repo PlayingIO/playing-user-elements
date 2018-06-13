@@ -28,14 +28,14 @@
     </style>
 
     <mostly-selectivity id="s2"
-            operation="find"
+            operation="[[operation]]"
             path="user-searches"
             label="[[label]]"
             search-field="term"
             display-field="displayLabel"
             min-chars="[[minChars]]"
             multiple="[[multiple]]"
-            params="[[params]]"
+            params="[[_computeParams(params.*, searchType)]]"
             placeholder="[[placeholder]]"
             error-message="[[errorMessage]]"
             readonly="[[readonly]]"
@@ -71,12 +71,17 @@
         label: String,
 
         /**
-         * Computed parameters for the `user-groups.suggestion` operation.
+         * Operation to call for suggestions.
          */
-        params: {
-          type: Object,
-          computed: '_computeParams(searchType)'
+        operation: {
+          type: String,
+          value: 'find'
         },
+
+        /**
+         * Parameters for the operation.
+         */
+        params: Object,
 
         /**
          * Selected value(s).
@@ -198,10 +203,10 @@
       },
 
       _computeParams: function() {
-        return this.params = {
+        return Object.assign({
           type: this.searchType,
           $limit: 100
-        };
+        }, this.params);
       },
 
       _selectionFormatter: function(item) {
