@@ -34,6 +34,7 @@
             search-field="term"
             display-field="displayLabel"
             min-chars="[[minChars]]"
+            frequency="[[frequency]]"
             multiple="[[multiple]]"
             params="[[_computeParams(params.*, searchType)]]"
             placeholder="[[placeholder]]"
@@ -122,6 +123,11 @@
           type: Number,
           value: 2
         },
+
+        /**
+         * Time in ms used to debounce requests.
+         */
+        frequency: Number,
 
         /**
          * Placeholder.
