@@ -260,7 +260,7 @@ Example:
               <div class="table-actions">
                 <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, group)]]">
                   <paper-icon-button icon="mostly:remove" noink
-                          title="[[i18n('groupManagement.removeFrom', user.label)]]"
+                          title="[[i18n('groupManagement.removeFrom', group.groupname)]]"
                           data-item="[[user]]"
                           on-tap="_toggleDeleteDialog">
                   </paper-icon-button>
@@ -302,7 +302,7 @@ Example:
               <div class="table-actions">
                 <template is="dom-if" if="[[_canEditGroup(readonly, _currentUser, group)]]">
                   <paper-icon-button icon="mostly:clear" noink
-                          title="[[i18n('groupManagement.removeFrom', item.label)]]"
+                          title="[[i18n('groupManagement.removeFrom', group.groupname)]]"
                           data-item="[[item]]"
                           on-tap="_toggleDeleteDialog">
                   </paper-icon-button>
