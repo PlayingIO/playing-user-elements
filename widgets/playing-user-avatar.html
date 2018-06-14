@@ -212,7 +212,7 @@ Example:
                     this.user = res;
                 }
               }).catch(() => {
-                log.warn("Cannot fetch profile for user " + this._username(this.user));
+                console.warn('Cannot fetch profile for user ' + this._username(this.user));
               });
             }
           }
