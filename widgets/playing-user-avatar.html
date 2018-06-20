@@ -207,9 +207,9 @@ Example:
             this._output = tempName;
             if (this.fetchAvatar) {
               this.$.getUserProfile.path = "user/" + this._username(this.user);
-              this.$.getUserProfile.get().then((res) => {
+              this.$.getUserProfile.get().then(res => {
                 if (res && res.avatar) {
-                    this.user = res;
+                  this.user = res;
                 }
               }).catch(() => {
                 console.warn('Cannot fetch profile for user ' + this._username(this.user));

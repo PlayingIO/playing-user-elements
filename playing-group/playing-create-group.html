@@ -120,7 +120,7 @@
       },
 
       ready: function() {
-        this.$.form.addEventListener('iron-form-presubmit', (event) => {
+        this.$.form.addEventListener('iron-form-presubmit', event => {
           event.preventDefault();
           this._create();
         });
@@ -151,19 +151,19 @@
        * Creates a new group if the form was successfully submitted.
        */
       _create: function() {
-        this._doCreate(this.group).then((group) => {
+        this._doCreate(this.group).then(group => {
           this.resetFields();
           if (!this._createAnother) {
             this._goHome();
           }
-        }).catch((error) => {
+        }).catch(error => {
           this.errors = error.message;
         });
       },
 
       _doCreate: function(group) {
         this.$.request.data = group;
-        return this.$.request.post().then((response) => {
+        return this.$.request.post().then(response => {
           this.fire('playing-group-created', response.data);
         })
       },

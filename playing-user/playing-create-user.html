@@ -115,7 +115,7 @@
       },
 
       ready: function() {
-        this.$.form.addEventListener('iron-form-presubmit', (event) => {
+        this.$.form.addEventListener('iron-form-presubmit', event => {
           event.preventDefault();
           this._create();
         });
@@ -149,12 +149,12 @@
           this.errors = this.i18n('createUser.errorAdministratorsGroup');
           return;
         }
-        this._doCreate(this.user).then((user) => {
+        this._doCreate(this.user).then(user => {
           this._resetFields();
           if (!this._createAnother) {
             this._goHome();
           }
-        }).catch((error) => {
+        }).catch(error => {
           this.errors = error.message;
         });
       },
@@ -162,12 +162,12 @@
       _doCreate: function(user) {
         if (this.usePassword) {
           this.$.request.data = user;
-          return this.$.request.post().then((response) => {
+          return this.$.request.post().then(response => {
             this.fire('playing-user-created', response.data);
           })
         } else {
           this.$.invite.params = { user: user };
-          return this.$.invite.execute().then((response) => {
+          return this.$.invite.execute().then(response => {
             this.fire('playing-user-invited', response.data);
           });
         }
@@ -201,7 +201,7 @@
       },
 
       _layoutElementChanged: function() {
-        this.$.layout.element.addEventListener('user-changed', (e) => {
+        this.$.layout.element.addEventListener('user-changed', e => {
           this.set(e.detail.path, e.detail.value);
         });
       }

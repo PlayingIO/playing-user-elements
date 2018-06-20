@@ -211,19 +211,19 @@ Example:
         this.$.permissions.headers = {
           'X-NXContext-Category': 'acls'
         };
-        this.$.permissions.execute().then(function(response) {
+        this.$.permissions.execute().then(response => {
           this._numberOfPages = response.numberOfPages;
           this._computePermissions(response.data);
-        }.bind(this));
+        });
       },
 
       _computePermissions: function(entries) {
-        entries.map(function(entry) {
+        entries.map(entry => {
           entry.aces = [];
-          entry.metadata.acls.map(function(acl) {
+          entry.metadata.acls.map(acl => {
             // in 6.0 the ace object is called 'ace' while in > 7.10 its called 'aces'
             var entryAces = acl.aces || acl.ace;
-            return entryAces.map(function(ace) {
+            return entryAces.map(ace => {
               if (!this.displayInherited && this._isInherited(acl)) {
                 return;
               }
@@ -234,9 +234,9 @@ Example:
                 ace.timeFrame = this._formatTimeFrame(ace);
                 entry.aces.push(ace);
               }
-            }.bind(this));
-          }.bind(this));
-        }.bind(this));
+            });
+          });
+        });
         this.documents = entries;
         this.empty = this.documents.length === 0;
       },
@@ -283,9 +283,9 @@ Example:
         this.$.rmPermission.params = {
           id: ace.id
         };
-        this.$.rmPermission.execute().then(function() {
+        this.$.rmPermission.execute().then(() => {
           this._fetchPermissions();
-        }.bind(this));
+        });
       },
 
       _isInherited: function(acl) {

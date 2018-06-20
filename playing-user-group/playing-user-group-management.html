@@ -233,10 +233,10 @@ Example:
           Polymer.Base.importHref(this.resolveUrl('../playing-user/playing-edit-user.html'));
         }
 
-        window.addEventListener('manageUser', (e) => {
+        window.addEventListener('manageUser', e => {
           this._manageUser(e);
         });
-        window.addEventListener('manageGroup', (e) => {
+        window.addEventListener('manageGroup', e => {
           this._manageGroup(e);
         });
       },

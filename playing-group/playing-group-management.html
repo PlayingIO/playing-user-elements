@@ -442,7 +442,7 @@ Example:
        * @event playing-group-deleted
        */
       ready: function() {
-        this.$.editForm.addEventListener('iron-form-presubmit', (event) => {
+        this.$.editForm.addEventListener('iron-form-presubmit', event => {
           event.preventDefault();
           this._saveGroup();
         });
@@ -470,7 +470,7 @@ Example:
 
       _fetch: function() {
         if (typeof this.group === 'string') {
-          this.$.request.get().then((response) => {
+          this.$.request.get().then(response => {
             this.group = response.data;
             this.origGroup = this.fp.clone(this.group);
             this.activity = [];
@@ -484,7 +484,7 @@ Example:
 
       _saveGroup: function() {
         this.$.editRequest.data = this._editableGroup;
-        this.$.editRequest.patch().then((response) => {
+        this.$.editRequest.patch().then(response => {
           this.group = response.data;
           this.origGroup = this.fp.clone(this.group);
           this._toast(this.i18n('groupManagement.group.updated'));
@@ -543,7 +543,7 @@ Example:
                   group: this.group.id,
                   role: member.role
                 };
-                this.$.addUserGroup.execute().then((response) => {
+                this.$.addUserGroup.execute().then(response => {
                   this._fetchUsers();
                   this._toast(this.i18n('groupManagement.addedUserToGroup', member.username, this.group.groupname));
                 });
@@ -556,7 +556,7 @@ Example:
               this.$.addSubgroup.params = {
                 group: member.id,
               };
-              this.$.addSubgroup.execute().then((response) => {
+              this.$.addSubgroup.execute().then(response => {
                 this._fetchGroups();
                 this._toast(this.i18n('groupManagement.addedUserToGroup', member.groupname, this.group.groupname));
               });
@@ -576,7 +576,7 @@ Example:
               group: this.group.id,
               role: member.role
             };
-            this.$.removeUserGroup.execute().then((response) => {
+            this.$.removeUserGroup.execute().then(response => {
               this._fromDelete = true;
               this._fetchUsers();
               this._removeRecent(member.id);
@@ -588,7 +588,7 @@ Example:
             this.$.removeSubgroup.params = {
               group: member.id,
             };
-            this.$.removeSubgroup.execute().then((response) => {
+            this.$.removeSubgroup.execute().then(response => {
               this._fromDelete = true;
               this._fetchGroups();
               this._removeRecent(member.id);
@@ -629,7 +629,7 @@ Example:
       _deleteGroup: function() {
         this.$.deleteGroupDialog.toggle();
         this.$.editRequest.data = this.group;
-        this.$.editRequest.remove().then((response) => {
+        this.$.editRequest.remove().then(response => {
           this.fire('playing-group-deleted', response.data);
           this._goHome();
         });

@@ -365,11 +365,11 @@ Example:
        * @event playing-user-deleted
        */
       ready: function() {
-        this.$.editUserForm.addEventListener('iron-form-presubmit', (event) => {
+        this.$.editUserForm.addEventListener('iron-form-presubmit', event => {
           event.preventDefault();
           this._saveUser();
         });
-        this.$.changePasswordForm.addEventListener('iron-form-presubmit', (event) => {
+        this.$.changePasswordForm.addEventListener('iron-form-presubmit', event => {
           event.preventDefault();
           this._savePassword();
         });
@@ -386,7 +386,7 @@ Example:
       },
 
       _fetchUser: function() {
-        return this.$.request.get().then((response) => {
+        return this.$.request.get().then(response => {
           delete response.data.password;
           this.user = response.data;
           this.origUser = this.fp.clone(this.user);
@@ -433,7 +433,7 @@ Example:
               group: item.group.id,
               role: item.role
             };
-            this.$.addUserGroup.execute().then((response) => {
+            this.$.addUserGroup.execute().then(response => {
               this._fetchUser();
               this._toast(this.i18n('userManagement.addedUserToGroup', this.user.username, item.group.groupname));
             });
@@ -452,7 +452,7 @@ Example:
           group: item.group.id,
           role: item.role
         };
-        this.$.removeUserGroup.execute().then((response) => {
+        this.$.removeUserGroup.execute().then(response => {
           this._fetchUser();
           this._removeRecent(item.group.id);
           this._toast(this.i18n('userManagement.removedUserFromGroup', this.user.username, item.group.groupname));
@@ -484,7 +484,7 @@ Example:
         this.$.changePasswordDialog.toggle();
         this.$.editRequest.data = JSON.parse(JSON.stringify(this.user));
         this.$.editRequest.data.password = this.$.passwordEditor.password;
-        this.$.editRequest.patch().then((response) => {
+        this.$.editRequest.patch().then(response => {
           this.user = response.data;
           this.origUser = this.fp.clone(this.user);
           this._toast(this.i18n('userManagement.password.changed'));
@@ -508,7 +508,7 @@ Example:
         var editedUser = JSON.parse(JSON.stringify(this.user));
         editedUser = this.$.layout.model.user;
         this.$.editRequest.data = editedUser;
-        this.$.editRequest.patch().then((response) => {
+        this.$.editRequest.patch().then(response => {
           this.user = response.data;
           this.origUser = this.fp.clone(this.user);
           this._toast(this.i18n('userManagement.user.updated'));
@@ -521,7 +521,7 @@ Example:
 
       _deleteUser: function() {
         this.$.deleteUserDialog.toggle();
-        this.$.editRequest.remove().then((response) => {
+        this.$.editRequest.remove().then(response => {
           this.fire('playing-user-deleted', this.user);
           this._goHome();
         });
