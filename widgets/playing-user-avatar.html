@@ -130,7 +130,7 @@ Example:
         if (this._isEntity(user)) {
           var firstName = user.firstName || '';
           var lastName = user.lastName || '';
-          return (firstName || lastName) ? firstName + ' ' + lastName : user.username;
+          return (firstName || lastName)? firstName + ' ' + lastName : user.username;
         } else {
           return user;
         }
@@ -139,7 +139,7 @@ Example:
       _email: function(user) {
         if (this._isEntity(user)) {
           var email = user.email || '';
-          return email !== this._id(user) ? email : '';
+          return email !== this._id(user)? email : '';
         } else {
           return '';
         }

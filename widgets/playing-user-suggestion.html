@@ -221,9 +221,9 @@
             case 'user':
               return item.username;
             case 'group':
-              return item.displayLabel ? item.displayLabel : item.groupname;
+              return item.displayLabel? item.displayLabel : item.groupname;
             default:
-              return item.displayLabel ? item.displayLabel : (item.id ? item.id : item);
+              return item.displayLabel? item.displayLabel : (item.id? item.id : item);
           }
         }
       },
@@ -241,7 +241,7 @@
       },
 
       _idFunction: function(item) {
-        return this.prefixed ? item.prefixed_id : item.id;
+        return this.prefixed? item.prefixed_id : item.id;
       }
 
     });

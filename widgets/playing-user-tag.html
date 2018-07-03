@@ -100,7 +100,7 @@ Example:
 
       _id: function(user) {
         if (user) {
-          return user.id ? user.id : user.replace('user:', '');
+          return user.id? user.id : user.replace('user:', '');
         }
       },
 
@@ -108,14 +108,14 @@ Example:
         if (this._isEntity(user)) {
           var firstName = user.firstName;
           var lastName = user.lastName;
-          return (firstName || lastName) ? firstName + ' ' + lastName : user.username;
+          return (firstName || lastName)? firstName + ' ' + lastName : user.username;
         } else {
           return user? this._id(user) : 'Nobody';
         }
       },
 
       _email: function(user) {
-        return this._isEntity(user) && user.email !== this._name(user) ? user.email : '';
+        return this._isEntity(user) && user.email !== this._name(user)? user.email : '';
       },
 
       _href: function(user) {
