@@ -59,7 +59,7 @@
 
         <label>[[i18n('createUser.setPassword')]]</label>
         <paper-toggle-button checked="{{usePassword}}" name="password-toggle"></paper-toggle-button>
-        
+
         <template is="dom-if" if="[[usePassword]]" restamp>
           <playing-edit-password id="passwordEditor"
                   password="{{user.password}}"
